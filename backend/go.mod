@@ -1,4 +1,4 @@
-module github.com/Mroxny/slamIt.git
+module github.com/Mroxny/slamIt
 
 go 1.25.0
 
