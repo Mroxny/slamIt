@@ -16,6 +16,9 @@ func main() {
 	repo := repository.NewUserRepository()
 	userService := service.NewUserService(repo)
 	userHandler := handler.NewUserHandler(userService)
+	slamRepo := repository.NewSlamRepository()
+	slamService := service.NewSlamService(slamRepo)
+	slamHandler := handler.NewSlamHandler(slamService)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -26,6 +29,14 @@ func main() {
 		r.Get("/{id}", userHandler.GetByID)
 		r.Put("/{id}", userHandler.Update)
 		r.Delete("/{id}", userHandler.Delete)
+	})
+
+	r.Route("/slams", func(r chi.Router) {
+		r.Get("/", slamHandler.GetAll)
+		r.Post("/", slamHandler.Create)
+		r.Get("/{id}", slamHandler.GetByID)
+		r.Put("/{id}", slamHandler.Update)
+		r.Delete("/{id}", slamHandler.Delete)
 	})
 
 	log.Println("Server starting on :8080")
