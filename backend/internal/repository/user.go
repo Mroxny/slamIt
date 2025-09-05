@@ -37,3 +37,27 @@ func (r *UserRepository) Create(user model.User) model.User {
 	r.users = append(r.users, user)
 	return user
 }
+
+func (r *UserRepository) Update(id int, updated model.User) (*model.User, error) {
+	for i, u := range r.users {
+		if u.ID == id {
+			if updated.Name == "" || updated.Email == "" {
+				return nil, errors.New("invalid input")
+			}
+			r.users[i].Name = updated.Name
+			r.users[i].Email = updated.Email
+			return &r.users[i], nil
+		}
+	}
+	return nil, errors.New("user not found")
+}
+
+func (r *UserRepository) Delete(id int) error {
+	for i, u := range r.users {
+		if u.ID == id {
+			r.users = append(r.users[:i], r.users[i+1:]...)
+			return nil
+		}
+	}
+	return errors.New("user not found")
+}

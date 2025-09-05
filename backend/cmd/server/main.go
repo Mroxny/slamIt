@@ -24,6 +24,8 @@ func main() {
 		r.Get("/", userHandler.GetAll)
 		r.Post("/", userHandler.Create)
 		r.Get("/{id}", userHandler.GetByID)
+		r.Put("/{id}", userHandler.Update)
+		r.Delete("/{id}", userHandler.Delete)
 	})
 
 	log.Println("Server starting on :8080")
