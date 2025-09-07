@@ -19,6 +19,9 @@ func main() {
 	slamRepo := repository.NewSlamRepository()
 	slamService := service.NewSlamService(slamRepo)
 	slamHandler := handler.NewSlamHandler(slamService)
+	partRepo := repository.NewSlamParticipationRepository()
+	partService := service.NewSlamParticipationService(repo, slamRepo, partRepo)
+	partHandler := handler.NewSlamParticipationHandler(partService)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -37,6 +40,13 @@ func main() {
 		r.Get("/{id}", slamHandler.GetByID)
 		r.Put("/{id}", slamHandler.Update)
 		r.Delete("/{id}", slamHandler.Delete)
+	})
+
+	r.Route("/participation", func(r chi.Router) {
+		r.Post("/users/{userID}/slams/{slamID}", partHandler.Join)
+		r.Delete("/users/{userID}/slams/{slamID}", partHandler.Leave)
+		r.Get("/users/{userID}/slams", partHandler.GetSlamsForUser)
+		r.Get("/slams/{slamID}/users", partHandler.GetUsersForSlam)
 	})
 
 	log.Println("Server starting on :8080")
