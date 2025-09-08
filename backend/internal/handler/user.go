@@ -11,7 +11,7 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-var validate = validator.New()
+var userValidator = validator.New()
 
 type UserHandler struct {
 	service *service.UserService
@@ -49,7 +49,7 @@ func (h *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := validate.Struct(u); err != nil {
+	if err := userValidator.Struct(u); err != nil {
 		http.Error(w, "invalid input: "+err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -73,7 +73,7 @@ func (h *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := validate.Struct(u); err != nil {
+	if err := userValidator.Struct(u); err != nil {
 		http.Error(w, "invalid input: "+err.Error(), http.StatusBadRequest)
 		return
 	}
