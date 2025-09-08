@@ -8,7 +8,10 @@ import (
 	"github.com/Mroxny/slamIt/internal/model"
 	"github.com/Mroxny/slamIt/internal/service"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-playground/validator/v10"
 )
+
+var validate = validator.New()
 
 type UserHandler struct {
 	service *service.UserService
@@ -45,6 +48,12 @@ func (h *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "invalid input", http.StatusBadRequest)
 		return
 	}
+
+	if err := validate.Struct(u); err != nil {
+		http.Error(w, "invalid input: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	created := h.service.Create(u)
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(created)
@@ -61,6 +70,11 @@ func (h *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 	var u model.User
 	if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
 		http.Error(w, "invalid input", http.StatusBadRequest)
+		return
+	}
+
+	if err := validate.Struct(u); err != nil {
+		http.Error(w, "invalid input: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
