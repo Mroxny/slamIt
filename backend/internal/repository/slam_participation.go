@@ -1,40 +1,34 @@
 package repository
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/Mroxny/slamIt/internal/model"
+)
 
 type SlamParticipationRepository struct {
-	relations []struct {
-		UserID int
-		SlamID int
-	}
+	relations []model.SlamParticipation
 }
 
 func NewSlamParticipationRepository() *SlamParticipationRepository {
 	return &SlamParticipationRepository{
-		relations: []struct {
-			UserID int
-			SlamID int
-		}{},
+		relations: []model.SlamParticipation{},
 	}
 }
 
-// User joins a slam
-func (r *SlamParticipationRepository) Add(userID, slamID int) error {
-	// prevent duplicates
+func (r *SlamParticipationRepository) Add(userID string, slamID int) error {
 	for _, rel := range r.relations {
 		if rel.UserID == userID && rel.SlamID == slamID {
 			return errors.New("user already joined this slam")
 		}
 	}
-	r.relations = append(r.relations, struct {
-		UserID int
-		SlamID int
-	}{UserID: userID, SlamID: slamID})
+	r.relations = append(r.relations, model.SlamParticipation{
+		UserID: userID,
+		SlamID: slamID})
 	return nil
 }
 
-// List all slams for a user
-func (r *SlamParticipationRepository) GetSlamsForUser(userID int) []int {
+func (r *SlamParticipationRepository) GetSlamsForUser(userID string) []int {
 	ids := []int{}
 	for _, rel := range r.relations {
 		if rel.UserID == userID {
@@ -44,9 +38,8 @@ func (r *SlamParticipationRepository) GetSlamsForUser(userID int) []int {
 	return ids
 }
 
-// List all users for a slam
-func (r *SlamParticipationRepository) GetUsersForSlam(slamID int) []int {
-	ids := []int{}
+func (r *SlamParticipationRepository) GetUsersForSlam(slamID int) []string {
+	ids := []string{}
 	for _, rel := range r.relations {
 		if rel.SlamID == slamID {
 			ids = append(ids, rel.UserID)
@@ -55,8 +48,7 @@ func (r *SlamParticipationRepository) GetUsersForSlam(slamID int) []int {
 	return ids
 }
 
-// Remove participation
-func (r *SlamParticipationRepository) Remove(userID, slamID int) error {
+func (r *SlamParticipationRepository) Remove(userID string, slamID int) error {
 	for i, rel := range r.relations {
 		if rel.UserID == userID && rel.SlamID == slamID {
 			r.relations = append(r.relations[:i], r.relations[i+1:]...)

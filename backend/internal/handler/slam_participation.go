@@ -18,7 +18,7 @@ func NewSlamParticipationHandler(service *service.SlamParticipationService) *Sla
 }
 
 func (h *SlamParticipationHandler) Join(w http.ResponseWriter, r *http.Request) {
-	userID, _ := strconv.Atoi(chi.URLParam(r, "userID"))
+	userID := chi.URLParam(r, "userID")
 	slamID, _ := strconv.Atoi(chi.URLParam(r, "slamID"))
 
 	if err := h.service.Join(userID, slamID); err != nil {
@@ -29,7 +29,7 @@ func (h *SlamParticipationHandler) Join(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *SlamParticipationHandler) Leave(w http.ResponseWriter, r *http.Request) {
-	userID, _ := strconv.Atoi(chi.URLParam(r, "userID"))
+	userID := chi.URLParam(r, "userID")
 	slamID, _ := strconv.Atoi(chi.URLParam(r, "slamID"))
 
 	if err := h.service.Leave(userID, slamID); err != nil {
@@ -40,7 +40,7 @@ func (h *SlamParticipationHandler) Leave(w http.ResponseWriter, r *http.Request)
 }
 
 func (h *SlamParticipationHandler) GetSlamsForUser(w http.ResponseWriter, r *http.Request) {
-	userID, _ := strconv.Atoi(chi.URLParam(r, "userID"))
+	userID := chi.URLParam(r, "userID")
 	slams, _ := h.service.GetSlamsForUser(userID)
 	json.NewEncoder(w).Encode(slams)
 }

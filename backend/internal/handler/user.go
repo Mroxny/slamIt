@@ -3,7 +3,6 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
 	"github.com/Mroxny/slamIt/internal/model"
 	"github.com/Mroxny/slamIt/internal/service"
@@ -27,12 +26,7 @@ func (h *UserHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *UserHandler) GetByID(w http.ResponseWriter, r *http.Request) {
-	idStr := chi.URLParam(r, "id")
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		http.Error(w, "invalid ID", http.StatusBadRequest)
-		return
-	}
+	id := chi.URLParam(r, "id")
 
 	user, err := h.service.GetByID(id)
 	if err != nil {
@@ -42,30 +36,8 @@ func (h *UserHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
-func (h *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
-	var u model.User
-	if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
-		http.Error(w, "invalid input", http.StatusBadRequest)
-		return
-	}
-
-	if err := userValidator.Struct(u); err != nil {
-		http.Error(w, "invalid input: "+err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	created := h.service.Create(u)
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(created)
-}
-
 func (h *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
-	idStr := chi.URLParam(r, "id")
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		http.Error(w, "invalid ID", http.StatusBadRequest)
-		return
-	}
+	id := chi.URLParam(r, "id")
 
 	var u model.User
 	if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
@@ -87,12 +59,7 @@ func (h *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
-	idStr := chi.URLParam(r, "id")
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		http.Error(w, "invalid ID", http.StatusBadRequest)
-		return
-	}
+	id := chi.URLParam(r, "id")
 
 	if err := h.service.Delete(id); err != nil {
 		http.Error(w, "user not found", http.StatusNotFound)
