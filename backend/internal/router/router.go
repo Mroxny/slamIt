@@ -16,7 +16,7 @@ var userRepo = repository.NewUserRepository()
 var slamRepo = repository.NewSlamRepository()
 var partRepo = repository.NewSlamParticipationRepository()
 
-func SetupRouter() *chi.Mux {
+func SetupV1Router() http.Handler {
 
 	// --- services ---
 	userService := service.NewUserService(userRepo)
@@ -82,8 +82,8 @@ func SetupRouter() *chi.Mux {
 	return r
 }
 
-func SetupTestRouter() *chi.Mux {
-	r := SetupRouter()
+func SetupTestRouter() http.Handler {
+	r := SetupV1Router()
 	authService := service.NewAuthService(userRepo)
 
 	u1, err := authService.Register("Alice", "alice@example.com", "P@ssw0rd")
