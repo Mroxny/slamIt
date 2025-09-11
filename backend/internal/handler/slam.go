@@ -7,11 +7,9 @@ import (
 
 	"github.com/Mroxny/slamIt/internal/model"
 	"github.com/Mroxny/slamIt/internal/service"
+	"github.com/Mroxny/slamIt/internal/utils"
 	"github.com/go-chi/chi/v5"
-	"github.com/go-playground/validator/v10"
 )
-
-var slamValidator = validator.New()
 
 type SlamHandler struct {
 	service *service.SlamService
@@ -42,7 +40,7 @@ func (h *SlamHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := slamValidator.Struct(s); err != nil {
+	if err := utils.Validate.Struct(s); err != nil {
 		http.Error(w, "invalid input: "+err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -64,7 +62,7 @@ func (h *SlamHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := slamValidator.Struct(s); err != nil {
+	if err := utils.Validate.Struct(s); err != nil {
 		http.Error(w, "invalid input: "+err.Error(), http.StatusBadRequest)
 		return
 	}

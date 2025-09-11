@@ -6,11 +6,9 @@ import (
 
 	"github.com/Mroxny/slamIt/internal/model"
 	"github.com/Mroxny/slamIt/internal/service"
+	"github.com/Mroxny/slamIt/internal/utils"
 	"github.com/go-chi/chi/v5"
-	"github.com/go-playground/validator/v10"
 )
-
-var userValidator = validator.New()
 
 type UserHandler struct {
 	service *service.UserService
@@ -45,7 +43,7 @@ func (h *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := userValidator.Struct(u); err != nil {
+	if err := utils.Validate.Struct(u); err != nil {
 		http.Error(w, "invalid input: "+err.Error(), http.StatusBadRequest)
 		return
 	}
