@@ -7,55 +7,55 @@ import (
 	"testing"
 
 	"github.com/Mroxny/slamIt/internal/router"
+	"github.com/Mroxny/slamIt/internal/utils"
 )
 
 func TestUserHandler(t *testing.T) {
 	r := router.SetupTestRouter()
+	uId, token := utils.GetAuthToken(r, "bob@example.com", "P@ssw0rd", false)
 
 	tests := []struct {
 		name     string
 		method   string
 		url      string
 		body     string
+		auth     bool
 		wantCode int
 	}{
 		{
-			name:     "create valid user",
-			method:   "POST",
+			name:     "get all users",
+			method:   "GET",
 			url:      "/users/",
-			body:     `{"name":"Bob","email":"bob@example.com"}`,
-			wantCode: http.StatusCreated,
-		},
-		{
-			name:     "create invalid user (missing email)",
-			method:   "POST",
-			url:      "/users/",
-			body:     `{"name":"Charlie"}`,
-			wantCode: http.StatusBadRequest,
+			auth:     true,
+			wantCode: http.StatusOK,
 		},
 		{
 			name:     "get existing user",
 			method:   "GET",
-			url:      "/users/1",
+			url:      "/users/" + uId,
+			auth:     true,
 			wantCode: http.StatusOK,
 		},
 		{
 			name:     "get non-existing user",
 			method:   "GET",
-			url:      "/users/999",
+			url:      "/users/xxx",
+			auth:     true,
 			wantCode: http.StatusNotFound,
 		},
 		{
 			name:     "update user valid",
 			method:   "PUT",
-			url:      "/users/1",
+			url:      "/users/" + uId,
 			body:     `{"name":"Alice Updated","email":"alice@new.com"}`,
+			auth:     true,
 			wantCode: http.StatusOK,
 		},
 		{
 			name:     "delete user valid",
 			method:   "DELETE",
-			url:      "/users/1",
+			url:      "/users/" + uId,
+			auth:     true,
 			wantCode: http.StatusNoContent,
 		},
 	}
@@ -64,6 +64,9 @@ func TestUserHandler(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			req := httptest.NewRequest(tt.method, tt.url, strings.NewReader(tt.body))
 			req.Header.Set("Content-Type", "application/json")
+			if tt.auth {
+				req.Header.Set("Authorization", "Bearer "+token)
+			}
 			w := httptest.NewRecorder()
 			r.ServeHTTP(w, req)
 
