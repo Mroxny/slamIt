@@ -44,12 +44,7 @@ func (s *AuthService) Register(name, email, password string) (*model.User, error
 	return u, nil
 }
 
-type LoginResponse struct {
-	ID    string `json:"id"`
-	Token string `json:"token"`
-}
-
-func (s *AuthService) Login(email, password string) (*LoginResponse, error) {
+func (s *AuthService) Login(email, password string) (*model.LoginResponse, error) {
 	user, err := s.userRepo.GetByEmail(email)
 	if err != nil {
 		return nil, errors.New("invalid credentials (no email)")
@@ -64,7 +59,7 @@ func (s *AuthService) Login(email, password string) (*LoginResponse, error) {
 		return nil, errors.New("error when creating the auth token")
 	}
 
-	res := &LoginResponse{
+	res := &model.LoginResponse{
 		ID:    user.ID,
 		Token: token,
 	}
