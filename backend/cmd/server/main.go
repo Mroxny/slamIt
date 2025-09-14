@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 
@@ -28,9 +29,21 @@ import (
 // @securityDefinitions.apikey	BearerAuth
 // @in							header
 // @name						Authorization
+// @description				Type "Bearer" followed by a space and JWT token.
 func main() {
+	testData := flag.Bool("test-data", false, "Start the server instance with some test data")
+	flag.Parse()
+
 	r := chi.NewRouter()
-	r.Mount("/api/v1", router.SetupV1Router())
+	var routeHandler http.Handler
+
+	if *testData {
+		routeHandler = router.SetupTestRouter()
+	} else {
+		routeHandler = router.SetupV1Router()
+	}
+
+	r.Mount("/api/v1", routeHandler)
 
 	r.Get("/swagger/*", httpSwagger.WrapHandler)
 
