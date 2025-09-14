@@ -29,6 +29,7 @@ import (
 // @securityDefinitions.apikey	BearerAuth
 // @in							header
 // @name						Authorization
+// @description				Type "Bearer" followed by a space and JWT token.
 func main() {
 	testData := flag.Bool("test-data", false, "Start the server instance with some test data")
 	flag.Parse()
