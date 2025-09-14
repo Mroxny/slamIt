@@ -22,7 +22,7 @@ func (r *UserRepository) GetAll() []model.User {
 	return r.users
 }
 
-func (r *UserRepository) GetByID(id int) (*model.User, error) {
+func (r *UserRepository) GetByID(id string) (*model.User, error) {
 	for _, u := range r.users {
 		if u.ID == id {
 			return &u, nil
@@ -31,14 +31,12 @@ func (r *UserRepository) GetByID(id int) (*model.User, error) {
 	return nil, errors.New("user not found")
 }
 
-func (r *UserRepository) Create(user model.User) model.User {
-	user.ID = r.nextID
-	r.nextID++
-	r.users = append(r.users, user)
-	return user
+func (r *UserRepository) Create(user *model.User) (*model.User, error) {
+	r.users = append(r.users, *user)
+	return user, nil
 }
 
-func (r *UserRepository) Update(id int, updated model.User) (*model.User, error) {
+func (r *UserRepository) Update(id string, updated model.User) (*model.User, error) {
 	for i, u := range r.users {
 		if u.ID == id {
 			if updated.Name == "" || updated.Email == "" {
@@ -52,7 +50,7 @@ func (r *UserRepository) Update(id int, updated model.User) (*model.User, error)
 	return nil, errors.New("user not found")
 }
 
-func (r *UserRepository) Delete(id int) error {
+func (r *UserRepository) Delete(id string) error {
 	for i, u := range r.users {
 		if u.ID == id {
 			r.users = append(r.users[:i], r.users[i+1:]...)
@@ -60,4 +58,13 @@ func (r *UserRepository) Delete(id int) error {
 		}
 	}
 	return errors.New("user not found")
+}
+
+func (r *UserRepository) GetByEmail(email string) (*model.User, error) {
+	for _, user := range r.users {
+		if user.Email == email {
+			return &user, nil
+		}
+	}
+	return nil, errors.New("user not found")
 }
