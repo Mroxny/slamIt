@@ -1,8 +1,6 @@
 package service
 
 import (
-	"fmt"
-
 	"github.com/Mroxny/slamIt/internal/api"
 	"github.com/Mroxny/slamIt/internal/model"
 	"github.com/Mroxny/slamIt/internal/repository"
@@ -22,9 +20,6 @@ func (s *UserService) GetAll() []api.User {
 	apiUsers := []api.User{}
 	copier.Copy(&apiUsers, &modelUsers)
 
-	fmt.Println("USERS: ", modelUsers)
-	fmt.Println("API USERS: ", apiUsers)
-
 	return apiUsers
 }
 
@@ -34,14 +29,14 @@ func (s *UserService) GetByID(id string) (*api.User, error) {
 		return nil, err
 	}
 	apiUser := api.User{}
-	copier.Copy(apiUser, modelUser)
+	copier.Copy(&apiUser, &modelUser)
 
 	return &apiUser, nil
 }
 
 func (s *UserService) Update(id string, u api.User) (*api.User, error) {
 	modelUser := model.User{}
-	copier.Copy(modelUser, u)
+	copier.Copy(&modelUser, &u)
 	_, err := s.repo.Update(id, modelUser)
 	return &u, err
 }
