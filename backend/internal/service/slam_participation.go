@@ -47,7 +47,12 @@ func (s *SlamParticipationService) GetUsersForSlam(slamID int) ([]api.User, erro
 	users := []api.User{}
 	for _, id := range ids {
 		if user, err := s.usersRepo.GetByID(id); err == nil {
-			users = append(users, *user)
+			u := api.User{
+				Id:    &user.Id,
+				Email: &user.Email,
+				Name:  &user.Name,
+			}
+			users = append(users, u)
 		}
 	}
 	return users, nil

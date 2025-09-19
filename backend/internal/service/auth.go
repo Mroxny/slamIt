@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/Mroxny/slamIt/internal/api"
+	"github.com/Mroxny/slamIt/internal/model"
 	"github.com/Mroxny/slamIt/internal/repository"
 	"github.com/Mroxny/slamIt/internal/utils"
 	"github.com/google/uuid"
@@ -23,24 +24,30 @@ func (s *AuthService) Register(name, email, password string) (*api.User, error) 
 		return nil, errors.New("user with email already exists")
 	}
 
-	// hash, err := HashPassword(password)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	hash, err := HashPassword(password)
+	if err != nil {
+		return nil, err
+	}
 
 	newId := uuid.New().String()
-	user := api.User{
+	modelUser := model.User{
+		Id:           newId,
+		Name:         name,
+		Email:        email,
+		PasswordHash: hash,
+	}
+	apiUser := &api.User{
 		Id:    &newId,
 		Name:  &name,
 		Email: &email,
 	}
 
-	u, err := s.userRepo.Create(&user)
+	_, err = s.userRepo.Create(&modelUser)
 	if err != nil {
 		return nil, err
 	}
 
-	return u, nil
+	return apiUser, nil
 }
 
 func (s *AuthService) Login(email, password string) (*api.LoginResponse, error) {
@@ -49,17 +56,17 @@ func (s *AuthService) Login(email, password string) (*api.LoginResponse, error) 
 		return nil, errors.New("invalid credentials (no email)")
 	}
 
-	// if !PasswordHashMatch(user.PasswordHash, password) {
-	// 	return nil, errors.New("invalid credentials (wrong password)")
-	// }
+	if !PasswordHashMatch(user.PasswordHash, password) {
+		return nil, errors.New("invalid credentials (wrong password)")
+	}
 
-	token, err := utils.GenerateJWT(*user.Id)
+	token, err := utils.GenerateJWT(user.Id)
 	if err != nil {
 		return nil, errors.New("error when creating the auth token")
 	}
 
 	res := &api.LoginResponse{
-		UserId: user.Id,
+		UserId: &user.Id,
 		Token:  &token,
 	}
 

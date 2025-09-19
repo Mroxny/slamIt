@@ -1,8 +1,12 @@
 package service
 
 import (
+	"fmt"
+
 	"github.com/Mroxny/slamIt/internal/api"
+	"github.com/Mroxny/slamIt/internal/model"
 	"github.com/Mroxny/slamIt/internal/repository"
+	"github.com/jinzhu/copier"
 )
 
 type UserService struct {
@@ -14,15 +18,32 @@ func NewUserService(repo *repository.UserRepository) *UserService {
 }
 
 func (s *UserService) GetAll() []api.User {
-	return s.repo.GetAll()
+	modelUsers := s.repo.GetAll()
+	apiUsers := []api.User{}
+	copier.Copy(&apiUsers, &modelUsers)
+
+	fmt.Println("USERS: ", modelUsers)
+	fmt.Println("API USERS: ", apiUsers)
+
+	return apiUsers
 }
 
 func (s *UserService) GetByID(id string) (*api.User, error) {
-	return s.repo.GetByID(id)
+	modelUser, err := s.repo.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+	apiUser := api.User{}
+	copier.Copy(apiUser, modelUser)
+
+	return &apiUser, nil
 }
 
 func (s *UserService) Update(id string, u api.User) (*api.User, error) {
-	return s.repo.Update(id, u)
+	modelUser := model.User{}
+	copier.Copy(modelUser, u)
+	_, err := s.repo.Update(id, modelUser)
+	return &u, err
 }
 
 func (s *UserService) Delete(id string) error {
