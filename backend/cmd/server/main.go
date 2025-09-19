@@ -5,48 +5,51 @@ import (
 	"log"
 	"net/http"
 
-	_ "github.com/Mroxny/slamIt/docs"
-	"github.com/Mroxny/slamIt/internal/router"
+	"github.com/Mroxny/slamIt/internal/api"
+	"github.com/Mroxny/slamIt/internal/handler"
+	"github.com/Mroxny/slamIt/internal/repository"
+	"github.com/Mroxny/slamIt/internal/service"
+	"github.com/Mroxny/slamIt/internal/utils"
 	"github.com/go-chi/chi/v5"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
-//	@title			SlamIt API
-//	@version		1.0
-//	@description	API for managing poetry slams and participation.
-//	@termsOfService	http://swagger.io/terms/
-
-//	@contact.name	API Support
-//	@contact.email	support@slamit.app
-
-//	@license.name	Apache 2.0
-//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
-
-//	@host		localhost:8080
-//	@BasePath	/api/v1
-//	@schemes	http
-
-// @securityDefinitions.apikey	BearerAuth
-// @in							header
-// @name						Authorization
-// @description				Type "Bearer" followed by a space and JWT token.
 func main() {
-	testData := flag.Bool("test-data", false, "Start the server instance with some test data")
+	// testData := flag.Bool("test-data", false, "Start the server instance with some test data")
 	flag.Parse()
 
-	r := chi.NewRouter()
-	var routeHandler http.Handler
+	userService := service.NewUserService(repository.NewUserRepository())
+	slamService := service.NewSlamService(repository.NewSlamRepository())
+	authService := service.NewAuthService(repository.NewUserRepository())
+	partService := service.NewSlamParticipationService(repository.NewUserRepository(), repository.NewSlamRepository(), repository.NewSlamParticipationRepository())
 
-	if *testData {
-		routeHandler = router.SetupTestRouter()
-	} else {
-		routeHandler = router.SetupV1Router()
+	r := chi.NewRouter()
+	server := handler.NewServer(userService, slamService, authService, partService)
+	// server := api.Unimplemented{}
+
+	spec, err := api.LoadSpec()
+	if err != nil {
+		panic(err)
 	}
 
-	r.Mount("/api/v1", routeHandler)
+	r.Route("/api/v1", func(apiV1 chi.Router) {
+		apiV1.Use(utils.AuthMiddleware(spec))
+		api.HandlerFromMux(server, apiV1)
+	})
 
-	r.Get("/swagger/*", httpSwagger.WrapHandler)
+	r.Get(api.SpecUrl, func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, api.SpecPath)
+	})
+
+	r.Get("/swagger/*", httpSwagger.Handler(
+		httpSwagger.URL(api.SpecUrl),
+	))
+
+	s := &http.Server{
+		Handler: r,
+		Addr:    "0.0.0.0:8080",
+	}
 
 	log.Println("Server starting on :8080")
-	log.Fatal(http.ListenAndServe(":8080", r))
+	log.Fatal(s.ListenAndServe())
 }
