@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/Mroxny/slamIt/internal/model"
+	"github.com/Mroxny/slamIt/internal/api"
 	"github.com/Mroxny/slamIt/internal/repository"
 )
 
@@ -13,15 +13,15 @@ func NewUserService(repo *repository.UserRepository) *UserService {
 	return &UserService{repo: repo}
 }
 
-func (s *UserService) GetAll() []model.User {
+func (s *UserService) GetAll() []api.User {
 	return s.repo.GetAll()
 }
 
-func (s *UserService) GetByID(id string) (*model.User, error) {
+func (s *UserService) GetByID(id string) (*api.User, error) {
 	return s.repo.GetByID(id)
 }
 
-func (s *UserService) Update(id string, u model.User) (*model.User, error) {
+func (s *UserService) Update(id string, u api.User) (*api.User, error) {
 	return s.repo.Update(id, u)
 }
 

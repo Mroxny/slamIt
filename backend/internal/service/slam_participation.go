@@ -3,7 +3,7 @@ package service
 import (
 	"errors"
 
-	"github.com/Mroxny/slamIt/internal/model"
+	"github.com/Mroxny/slamIt/internal/api"
 	"github.com/Mroxny/slamIt/internal/repository"
 )
 
@@ -31,9 +31,9 @@ func (s *SlamParticipationService) Leave(userID string, slamID int) error {
 	return s.repo.Remove(userID, slamID)
 }
 
-func (s *SlamParticipationService) GetSlamsForUser(userID string) ([]model.Slam, error) {
+func (s *SlamParticipationService) GetSlamsForUser(userID string) ([]api.Slam, error) {
 	ids := s.repo.GetSlamsForUser(userID)
-	slams := []model.Slam{}
+	slams := []api.Slam{}
 	for _, id := range ids {
 		if slam, err := s.slamsRepo.GetByID(id); err == nil {
 			slams = append(slams, *slam)
@@ -42,9 +42,9 @@ func (s *SlamParticipationService) GetSlamsForUser(userID string) ([]model.Slam,
 	return slams, nil
 }
 
-func (s *SlamParticipationService) GetUsersForSlam(slamID int) ([]model.User, error) {
+func (s *SlamParticipationService) GetUsersForSlam(slamID int) ([]api.User, error) {
 	ids := s.repo.GetUsersForSlam(slamID)
-	users := []model.User{}
+	users := []api.User{}
 	for _, id := range ids {
 		if user, err := s.usersRepo.GetByID(id); err == nil {
 			users = append(users, *user)
