@@ -16,41 +16,41 @@ func NewSlamParticipationRepository() *SlamParticipationRepository {
 	}
 }
 
-func (r *SlamParticipationRepository) Add(userID string, slamID int) error {
+func (r *SlamParticipationRepository) Add(userId string, slamId int) error {
 	for _, rel := range r.relations {
-		if rel.UserID == userID && rel.SlamID == slamID {
+		if rel.UserId == userId && rel.SlamId == slamId {
 			return errors.New("user already joined this slam")
 		}
 	}
 	r.relations = append(r.relations, model.SlamParticipation{
-		UserID: userID,
-		SlamID: slamID})
+		UserId: userId,
+		SlamId: slamId})
 	return nil
 }
 
-func (r *SlamParticipationRepository) GetSlamsForUser(userID string) []int {
+func (r *SlamParticipationRepository) GetSlamsForUser(userId string) []int {
 	ids := []int{}
 	for _, rel := range r.relations {
-		if rel.UserID == userID {
-			ids = append(ids, rel.SlamID)
+		if rel.UserId == userId {
+			ids = append(ids, rel.SlamId)
 		}
 	}
 	return ids
 }
 
-func (r *SlamParticipationRepository) GetUsersForSlam(slamID int) []string {
+func (r *SlamParticipationRepository) GetUsersForSlam(slamId int) []string {
 	ids := []string{}
 	for _, rel := range r.relations {
-		if rel.SlamID == slamID {
-			ids = append(ids, rel.UserID)
+		if rel.SlamId == slamId {
+			ids = append(ids, rel.UserId)
 		}
 	}
 	return ids
 }
 
-func (r *SlamParticipationRepository) Remove(userID string, slamID int) error {
+func (r *SlamParticipationRepository) Remove(userId string, slamId int) error {
 	for i, rel := range r.relations {
-		if rel.UserID == userID && rel.SlamID == slamID {
+		if rel.UserId == userId && rel.SlamId == slamId {
 			r.relations = append(r.relations[:i], r.relations[i+1:]...)
 			return nil
 		}
