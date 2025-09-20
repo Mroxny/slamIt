@@ -44,6 +44,8 @@ func main() {
 
 	r.Route("/api/v1", func(apiV1 chi.Router) {
 		apiV1.Use(utils.AuthMiddleware(spec))
+		apiV1.Use(JSONMiddleware)
+
 		api.HandlerFromMux(server, apiV1)
 	})
 
@@ -60,6 +62,13 @@ func main() {
 		Addr:    "0.0.0.0:" + cfg.Port,
 	}
 
-	log.Println("Server starting on :8080")
+	log.Println("Server starting on :" + cfg.Port)
 	log.Fatal(s.ListenAndServe())
+}
+
+func JSONMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		next.ServeHTTP(w, r)
+	})
 }
