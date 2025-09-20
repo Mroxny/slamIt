@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/Mroxny/slamIt/internal/api"
+	"github.com/Mroxny/slamIt/internal/config"
 	"github.com/Mroxny/slamIt/internal/handler"
 	"github.com/Mroxny/slamIt/internal/repository"
 	"github.com/Mroxny/slamIt/internal/service"
@@ -15,13 +16,22 @@ import (
 )
 
 func main() {
+	cfg, err := config.GetConfig()
+	if err != nil {
+		panic(err)
+	}
+
 	// testData := flag.Bool("test-data", false, "Start the server instance with some test data")
 	flag.Parse()
 
-	userService := service.NewUserService(repository.NewUserRepository())
-	slamService := service.NewSlamService(repository.NewSlamRepository())
-	authService := service.NewAuthService(repository.NewUserRepository())
-	partService := service.NewSlamParticipationService(repository.NewUserRepository(), repository.NewSlamRepository(), repository.NewSlamParticipationRepository())
+	userRepo := repository.NewUserRepository()
+	slamRepo := repository.NewSlamRepository()
+	slamPartRepo := repository.NewSlamParticipationRepository()
+
+	userService := service.NewUserService(userRepo)
+	slamService := service.NewSlamService(slamRepo)
+	authService := service.NewAuthService(userRepo)
+	partService := service.NewSlamParticipationService(userRepo, slamRepo, slamPartRepo)
 
 	r := chi.NewRouter()
 	server := handler.NewServer(userService, slamService, authService, partService)
@@ -47,7 +57,7 @@ func main() {
 
 	s := &http.Server{
 		Handler: r,
-		Addr:    "0.0.0.0:8080",
+		Addr:    "0.0.0.0:" + cfg.Port,
 	}
 
 	log.Println("Server starting on :8080")
