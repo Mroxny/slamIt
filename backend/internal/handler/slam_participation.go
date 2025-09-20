@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"encoding/json"
 	"net/http"
 )
 
@@ -28,8 +27,7 @@ func (s *Server) GetParticipationUsersUserIDSlams(w http.ResponseWriter, r *http
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(slams)
+	WriteJSON(w, http.StatusOK, slams)
 }
 
 func (s *Server) GetParticipationSlamsSlamIDUsers(w http.ResponseWriter, r *http.Request, slamID int) {
@@ -38,6 +36,5 @@ func (s *Server) GetParticipationSlamsSlamIDUsers(w http.ResponseWriter, r *http
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(users)
+	WriteJSON(w, http.StatusOK, users)
 }

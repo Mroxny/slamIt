@@ -10,7 +10,8 @@ import (
 
 func (s *Server) GetUsers(w http.ResponseWriter, r *http.Request) {
 	users := s.userService.GetAll()
-	json.NewEncoder(w).Encode(users)
+	WriteJSON(w, http.StatusOK, users)
+
 }
 
 func (s *Server) GetUsersId(w http.ResponseWriter, r *http.Request, id string) {
@@ -19,7 +20,7 @@ func (s *Server) GetUsersId(w http.ResponseWriter, r *http.Request, id string) {
 		http.Error(w, "user not found", http.StatusNotFound)
 		return
 	}
-	json.NewEncoder(w).Encode(user)
+	WriteJSON(w, http.StatusOK, user)
 }
 
 func (s *Server) PutUsersId(w http.ResponseWriter, r *http.Request, id string) {
@@ -39,7 +40,7 @@ func (s *Server) PutUsersId(w http.ResponseWriter, r *http.Request, id string) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	json.NewEncoder(w).Encode(updated)
+	WriteJSON(w, http.StatusCreated, updated)
 }
 
 func (s *Server) DeleteUsersId(w http.ResponseWriter, r *http.Request, id string) {

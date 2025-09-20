@@ -20,8 +20,7 @@ func (s *Server) PostAuthRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(user)
+	WriteJSON(w, http.StatusCreated, user)
 }
 
 func (s *Server) PostAuthLogin(w http.ResponseWriter, r *http.Request) {
@@ -37,5 +36,5 @@ func (s *Server) PostAuthLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(response)
+	WriteJSON(w, http.StatusOK, response)
 }

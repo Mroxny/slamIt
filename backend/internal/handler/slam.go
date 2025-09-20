@@ -9,7 +9,7 @@ import (
 )
 
 func (s *Server) GetSlams(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(s.slamService.GetAll())
+	WriteJSON(w, http.StatusOK, s.slamService.GetAll())
 }
 
 func (s *Server) GetSlamsId(w http.ResponseWriter, r *http.Request, id int) {
@@ -18,7 +18,7 @@ func (s *Server) GetSlamsId(w http.ResponseWriter, r *http.Request, id int) {
 		http.Error(w, "slam not found", http.StatusNotFound)
 		return
 	}
-	json.NewEncoder(w).Encode(slam)
+	WriteJSON(w, http.StatusOK, slam)
 }
 
 func (s *Server) PostSlams(w http.ResponseWriter, r *http.Request) {
@@ -38,8 +38,7 @@ func (s *Server) PostSlams(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(created)
+	WriteJSON(w, http.StatusCreated, created)
 }
 
 func (s *Server) PutSlamsId(w http.ResponseWriter, r *http.Request, id int) {
@@ -59,7 +58,7 @@ func (s *Server) PutSlamsId(w http.ResponseWriter, r *http.Request, id int) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	json.NewEncoder(w).Encode(updated)
+	WriteJSON(w, http.StatusOK, updated)
 }
 
 func (s *Server) DeleteSlamsId(w http.ResponseWriter, r *http.Request, id int) {
