@@ -34,12 +34,12 @@ var instance *Config
 var once sync.Once
 
 func GetConfig() (*Config, error) {
-	envFile, err := godotenv.Read(".env")
-	if err != nil {
-		return nil, err
-	}
-
 	once.Do(func() {
+		envFile, err := godotenv.Read(".env")
+		if err != nil {
+			panic(err)
+		}
+
 		instance = &Config{
 			Port: envFile["SERVER_PORT"],
 			// Logs: LogConfig{
