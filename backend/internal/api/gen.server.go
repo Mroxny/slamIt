@@ -13,10 +13,10 @@ import (
 )
 
 // ServerUrlDev defines the Server URL for Dev
-const ServerUrlDev = ""
+const ServerUrlDev = "http://localhost:8080/api/v1"
 
-// ServerUrlHttplocalhost8080apiv1 defines the Server URL for
-const ServerUrlHttplocalhost8080apiv1 = "http://localhost:8080/api/v1"
+// ServerUrlProd defines the Server URL for Prod
+const ServerUrlProd = "http://localhost:8080/api/v1"
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
