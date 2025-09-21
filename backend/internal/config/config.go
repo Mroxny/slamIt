@@ -1,10 +1,19 @@
 package config
 
 import (
+	"path"
+	"runtime"
 	"sync"
 
 	"github.com/joho/godotenv"
 )
+
+var RoothPath = rootDir()
+
+func rootDir() string {
+	_, b, _, _ := runtime.Caller(0)
+	return path.Join(path.Dir(b), "../..")
+}
 
 type Config struct {
 	// Logs LogConfig
@@ -33,9 +42,9 @@ type JwtConfig struct {
 var instance *Config
 var once sync.Once
 
-func GetConfig() (*Config, error) {
+func GetConfig() *Config {
 	once.Do(func() {
-		envFile, err := godotenv.Read(".env")
+		envFile, err := godotenv.Read(path.Join(RoothPath, ".env"))
 		if err != nil {
 			panic(err)
 		}
@@ -58,5 +67,5 @@ func GetConfig() (*Config, error) {
 		}
 	})
 
-	return instance, nil
+	return instance
 }

@@ -1,8 +1,13 @@
 package api
 
-import "github.com/getkin/kin-openapi/openapi3"
+import (
+	"path"
 
-var SpecPath = "./openapi.yaml"
+	"github.com/Mroxny/slamIt/internal/config"
+	"github.com/getkin/kin-openapi/openapi3"
+)
+
+var SpecPath = path.Join(config.RoothPath, "./openapi.yaml")
 var SpecUrl = "/swagger/openapi.yaml"
 
 func LoadSpec() (*openapi3.T, error) {

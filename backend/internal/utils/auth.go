@@ -26,12 +26,7 @@ var (
 	ErrClaimsInvalid     = errors.New("provided claims do not match expected scopes")
 )
 
-var jwtKey = getJwtKey()
-
-func getJwtKey() []byte {
-	cfg, _ := config.GetConfig()
-	return []byte(cfg.JWT.Key)
-}
+var jwtKey = []byte(config.GetConfig().JWT.Key)
 
 func GenerateJWT(userID string) (string, error) {
 	claims := &jwt.RegisteredClaims{

@@ -13,15 +13,11 @@ import (
 )
 
 func main() {
-	cfg, err := config.GetConfig()
-	if err != nil {
-		panic(err)
-	}
-
-	var r *chi.Mux
+	cfg := config.GetConfig()
 	testData := flag.Bool("test-data", false, "Start the server instance with some test data")
 	flag.Parse()
 
+	var r *chi.Mux
 	if *testData {
 		r = router.SetupTestRouter()
 	} else {
