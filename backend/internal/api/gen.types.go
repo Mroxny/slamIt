@@ -15,8 +15,8 @@ type LoginRequest struct {
 
 // LoginResponse defines model for LoginResponse.
 type LoginResponse struct {
-	Token  *string `json:"token,omitempty"`
 	UserId *string `json:"userId,omitempty"`
+	Token  *string `json:"token,omitempty"`
 }
 
 // RegisterRequest defines model for RegisterRequest.
@@ -28,17 +28,17 @@ type RegisterRequest struct {
 
 // Slam defines model for Slam.
 type Slam struct {
-	Description *string `json:"description,omitempty"`
 	Id          *int    `json:"id,omitempty"`
+	Title       string  `json:"title"`
+	Description *string `json:"description,omitempty"`
 	Location    *string `json:"location,omitempty"`
-	Public      *bool   `json:"public,omitempty"`
-	Title       *string `json:"title,omitempty"`
+	Public      bool    `json:"public"`
 }
 
 // User defines model for User.
 type User struct {
-	Email *string `json:"email,omitempty"`
 	Id    *string `json:"id,omitempty"`
+	Email *string `json:"email,omitempty"`
 	Name  *string `json:"name,omitempty"`
 }
 

@@ -5,9 +5,9 @@ info:
   description: API for managing poetry slams, user accounts, and participation.
 
 servers:
-  - url: http://localhost:8080/api/v1
+  - url: /api/v1
     description: "Dev"
-  - url: http://localhost:8080/api/v1
+  - url: /api/v1
     description: "Prod"
 
 tags:
@@ -51,9 +51,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/LoginRequest'
-            example:
-              email: bob@example.com
-              password: P@ssw0rd
       responses:
         "200":
           description: JWT token
@@ -331,18 +328,23 @@ components:
       properties:
         id:
           type: string
-        name:
-          type: string
+          x-order: 1
         email:
+          type: string
+          x-order: 2
+        name:
           type: string
 
     Slam:
       type: object
+      required: [title, public]
       properties:
         id:
           type: integer
+          x-order: 1
         title:
           type: string
+          x-order: 2
         description:
           type: string
         location:
@@ -354,12 +356,18 @@ components:
       type: object
       required: [name, email, password]
       properties:
-        name:
-          type: string
         email:
           type: string
+          x-order: 1
+        name:
+          type: string
+          x-order: 2
         password:
           type: string
+      example:
+        email: bob@example.com
+        name: Bob
+        password: P@ssw0rd
 
     LoginRequest:
       type: object
@@ -369,11 +377,16 @@ components:
           type: string
         password:
           type: string
+      example:
+        email: bob@example.com
+        password: P@ssw0rd
 
     LoginResponse:
       type: object
       properties:
         userId:
           type: string
+          x-order: 1
         token:
           type: string
+          x-order: 2

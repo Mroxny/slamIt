@@ -32,7 +32,7 @@ func (r *SlamRepository) GetByID(id int) (*api.Slam, error) {
 }
 
 func (r *SlamRepository) Create(s api.Slam) (api.Slam, error) {
-	if *s.Title == "" {
+	if s.Title == "" {
 		return api.Slam{}, errors.New("title required")
 	}
 	s.Id = &r.nextID
@@ -44,7 +44,7 @@ func (r *SlamRepository) Create(s api.Slam) (api.Slam, error) {
 func (r *SlamRepository) Update(id int, updated api.Slam) (*api.Slam, error) {
 	for i, s := range r.slams {
 		if *s.Id == id {
-			if *updated.Title == "" {
+			if updated.Title == "" {
 				return nil, errors.New("title required")
 			}
 			r.slams[i].Title = updated.Title
