@@ -1,4 +1,4 @@
-package handler_test
+package api_test
 
 import (
 	"net/http"
@@ -10,7 +10,7 @@ import (
 	"github.com/Mroxny/slamIt/internal/utils"
 )
 
-func TestSlamParticipationHandler(t *testing.T) {
+func TestSlamParticipation(t *testing.T) {
 	r := router.SetupTestRouter()
 	uId, token := utils.GetAuthToken(r, "bob@example.com", "P@ssw0rd", false)
 	slamId := "2"
