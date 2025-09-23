@@ -1,43 +1,58 @@
 package utils
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"strings"
+
+	"github.com/Mroxny/slamIt/internal/api"
 )
 
 func GetAuthToken(r http.Handler, email, password string, createUser bool) (string, string) {
-
 	if createUser {
-		registerBody := fmt.Sprintf(`{"name":"%s","email":"%s","password":"%s"}`, "TestUser", email, password)
-		req := httptest.NewRequest("POST", "/auth/register", strings.NewReader(registerBody))
+		registerBody := api.RegisterRequest{
+			Name:     "TestUser",
+			Email:    email,
+			Password: password,
+		}
+		buf := new(bytes.Buffer)
+		if err := json.NewEncoder(buf).Encode(registerBody); err != nil {
+			panic("failed to encode register body: " + err.Error())
+		}
+
+		req := httptest.NewRequest("POST", api.ServerUrlDev+"/auth/register", buf)
 		req.Header.Set("Content-Type", "application/json")
 		w := httptest.NewRecorder()
 		r.ServeHTTP(w, req)
 		if w.Code != http.StatusCreated && w.Code != http.StatusConflict {
-			panic("failed to register user in test")
+			panic(fmt.Sprintf("failed to register user in test: %d", w.Code))
 		}
 	}
 
-	loginBody := fmt.Sprintf(`{"email":"%s","password":"%s"}`, email, password)
-	req := httptest.NewRequest("POST", "/auth/login", strings.NewReader(loginBody))
+	loginBody := api.LoginRequest{
+		Email:    email,
+		Password: password,
+	}
+	buf := new(bytes.Buffer)
+	if err := json.NewEncoder(buf).Encode(loginBody); err != nil {
+		panic("failed to encode login body: " + err.Error())
+	}
+
+	req := httptest.NewRequest("POST", api.ServerUrlDev+"/auth/login", buf)
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 	if w.Code != http.StatusOK {
-		fmt.Println(w.Body)
+		fmt.Println("login failed, response body:", w.Body.String())
 		panic("failed to login user in test")
 	}
 
-	var resp struct {
-		ID    string `json:"id"`
-		Token string `json:"token"`
-	}
+	var resp api.LoginResponse
 	if err := json.NewDecoder(w.Body).Decode(&resp); err != nil {
-		panic("failed to parse login response in test")
+		panic("failed to parse login response in test: " + err.Error())
 	}
 
-	return resp.ID, resp.Token
+	return *resp.UserId, *resp.Token
 }

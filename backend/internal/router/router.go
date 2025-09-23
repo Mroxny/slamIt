@@ -42,35 +42,32 @@ func SetupTestRouter() *chi.Mux {
 	r := SetupV1Router()
 	authService := service.NewAuthService(userRepo)
 
-	u1, err := authService.Register("Alice", "alice@example.com", "P@ssw0rd")
+	u1, err := authService.Register("Bob", "bob@example.com", "P@ssw0rd")
 	if err != nil {
 		panic("Error when creating test user 1")
 	}
-	u2, err := authService.Register("Bob", "bob@example.com", "P@ssw0rd")
+	_, err = authService.Register("Alice", "alice@example.com", "P@ssw0rd")
 	if err != nil {
 		panic("Error when creating test user 2")
 	}
 
-	slamId := 1
 	slamTitle := "Poetry Night"
 	slamDescription := "Evening of poems"
 	isPublic := true
 
 	slamRepo.Create(api.Slam{
-		Id:          &slamId,
-		Title:       &slamTitle,
+		Title:       slamTitle,
 		Description: &slamDescription,
-		Public:      &isPublic,
+		Public:      isPublic,
 	})
-	slamRepo.Create(api.Slam{
-		Id:          &slamId,
-		Title:       &slamTitle,
-		Description: &slamDescription,
-		Public:      &isPublic,
-	})
+	// slamRepo.Create(api.Slam{
+	// 	Title:       slamTitle,
+	// 	Description: &slamDescription,
+	// 	Public:      isPublic,
+	// })
 
 	slamPartRepo.Add(*u1.Id, 1)
-	slamPartRepo.Add(*u2.Id, 2)
+	// slamPartRepo.Add(*u2.Id, 2)
 
 	return r
 }
