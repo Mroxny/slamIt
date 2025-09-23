@@ -40,7 +40,7 @@ func (s *Server) PutUsersId(w http.ResponseWriter, r *http.Request, id string) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	WriteJSON(w, http.StatusCreated, updated)
+	WriteJSON(w, http.StatusOK, updated)
 }
 
 func (s *Server) DeleteUsersId(w http.ResponseWriter, r *http.Request, id string) {
