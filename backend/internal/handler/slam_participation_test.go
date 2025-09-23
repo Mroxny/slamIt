@@ -5,6 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/Mroxny/slamIt/internal/api"
 	"github.com/Mroxny/slamIt/internal/router"
 	"github.com/Mroxny/slamIt/internal/utils"
 )
@@ -12,6 +13,7 @@ import (
 func TestSlamParticipationHandler(t *testing.T) {
 	r := router.SetupTestRouter()
 	uId, token := utils.GetAuthToken(r, "bob@example.com", "P@ssw0rd", false)
+	slamId := "2"
 
 	tests := []struct {
 		name     string
@@ -23,21 +25,21 @@ func TestSlamParticipationHandler(t *testing.T) {
 		{
 			name:     "join valid user+slam",
 			method:   "POST",
-			url:      "/participation/users/" + uId + "/slams/1",
+			url:      "/participation/users/" + uId + "/slams/" + slamId,
 			auth:     true,
 			wantCode: http.StatusCreated,
 		},
 		{
 			name:     "join same slam twice (should fail)",
 			method:   "POST",
-			url:      "/participation/users/" + uId + "/slams/1",
+			url:      "/participation/users/" + uId + "/slams/" + slamId,
 			auth:     true,
 			wantCode: http.StatusBadRequest,
 		},
 		{
 			name:     "join invalid user",
 			method:   "POST",
-			url:      "/participation/users/xxx/slams/1",
+			url:      "/participation/users/xxx/slams/" + slamId,
 			auth:     true,
 			wantCode: http.StatusBadRequest,
 		},
@@ -58,21 +60,21 @@ func TestSlamParticipationHandler(t *testing.T) {
 		{
 			name:     "list users for slam",
 			method:   "GET",
-			url:      "/participation/slams/1/users",
+			url:      "/participation/slams/" + slamId + "/users",
 			auth:     true,
 			wantCode: http.StatusOK,
 		},
 		{
 			name:     "leave slam successfully",
 			method:   "DELETE",
-			url:      "/participation/users/" + uId + "/slams/1",
+			url:      "/participation/users/" + uId + "/slams/" + slamId,
 			auth:     true,
 			wantCode: http.StatusNoContent,
 		},
 		{
 			name:     "leave slam again (not found)",
 			method:   "DELETE",
-			url:      "/participation/users/" + uId + "/slams/1",
+			url:      "/participation/users/" + uId + "/slams/" + slamId,
 			auth:     true,
 			wantCode: http.StatusBadRequest,
 		},
@@ -80,7 +82,7 @@ func TestSlamParticipationHandler(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			req := httptest.NewRequest(tt.method, tt.url, nil)
+			req := httptest.NewRequest(tt.method, api.ServerUrlDev+tt.url, nil)
 			if tt.auth {
 				req.Header.Set("Authorization", "Bearer "+token)
 			}

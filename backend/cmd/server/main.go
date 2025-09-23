@@ -5,48 +5,38 @@ import (
 	"log"
 	"net/http"
 
-	_ "github.com/Mroxny/slamIt/docs"
+	"github.com/Mroxny/slamIt/internal/api"
+	"github.com/Mroxny/slamIt/internal/config"
 	"github.com/Mroxny/slamIt/internal/router"
 	"github.com/go-chi/chi/v5"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
-//	@title			SlamIt API
-//	@version		1.0
-//	@description	API for managing poetry slams and participation.
-//	@termsOfService	http://swagger.io/terms/
-
-//	@contact.name	API Support
-//	@contact.email	support@slamit.app
-
-//	@license.name	Apache 2.0
-//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
-
-//	@host		localhost:8080
-//	@BasePath	/api/v1
-//	@schemes	http
-
-// @securityDefinitions.apikey	BearerAuth
-// @in							header
-// @name						Authorization
-// @description				Type "Bearer" followed by a space and JWT token.
 func main() {
+	cfg := config.GetConfig()
 	testData := flag.Bool("test-data", false, "Start the server instance with some test data")
 	flag.Parse()
 
-	r := chi.NewRouter()
-	var routeHandler http.Handler
-
+	var r *chi.Mux
 	if *testData {
-		routeHandler = router.SetupTestRouter()
+		r = router.SetupTestRouter()
 	} else {
-		routeHandler = router.SetupV1Router()
+		r = router.SetupV1Router()
 	}
 
-	r.Mount("/api/v1", routeHandler)
+	r.Get(api.SpecUrl, func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, api.SpecPath)
+	})
 
-	r.Get("/swagger/*", httpSwagger.WrapHandler)
+	r.Get("/swagger/*", httpSwagger.Handler(
+		httpSwagger.URL(api.SpecUrl),
+	))
 
-	log.Println("Server starting on :8080")
-	log.Fatal(http.ListenAndServe(":8080", r))
+	s := &http.Server{
+		Handler: r,
+		Addr:    "0.0.0.0:" + cfg.Port,
+	}
+
+	log.Println("Server starting on :" + cfg.Port)
+	log.Fatal(s.ListenAndServe())
 }

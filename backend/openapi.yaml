@@ -1,0 +1,392 @@
+openapi: 3.0.3
+info:
+  title: SlamIt API
+  version: 1.0.0
+  description: API for managing poetry slams, user accounts, and participation.
+
+servers:
+  - url: /api/v1
+    description: "Dev"
+  - url: /api/v1
+    description: "Prod"
+
+tags:
+  - name: auth
+    description: User registration and login
+  - name: users
+    description: User management
+  - name: slams
+    description: Slam management
+  - name: participation
+    description: Slam participation (users joining slams)
+
+paths:
+  /auth/register:
+    post:
+      tags: [auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "400":
+          description: Invalid input
+
+  /auth/login:
+    post:
+      tags: [auth]
+      summary: Authenticate user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        "200":
+          description: JWT token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        "401":
+          description: Unauthorized
+
+  /users:
+    get:
+      tags: [users]
+      summary: Get all users
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /users/{id}:
+    get:
+      tags: [users]
+      summary: Get a user by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "404":
+          description: User not found
+    put:
+      tags: [users]
+      summary: Update a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      tags: [users]
+      summary: Delete a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: User not found
+
+  /slams:
+    get:
+      tags: [slams]
+      summary: Get all slams
+      responses:
+        "200":
+          description: List of slams
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Slam'
+    post:
+      tags: [slams]
+      summary: Create a slam
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Slam'
+      responses:
+        "201":
+          description: Slam created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Slam'
+
+  /slams/{id}:
+    get:
+      tags: [slams]
+      summary: Get slam by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: A slam
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Slam'
+        "404":
+          description: Slam not found
+    put:
+      tags: [slams]
+      summary: Update a slam
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Slam'
+      responses:
+        "200":
+          description: Updated slam
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Slam'
+    delete:
+      tags: [slams]
+      summary: Delete a slam
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Slam not found
+
+  /participation/users/{userID}/slams/{slamID}:
+    post:
+      tags: [participation]
+      summary: Join a slam
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: slamID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "201":
+          description: Joined slam
+    delete:
+      tags: [participation]
+      summary: Leave a slam
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: slamID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Left slam
+
+  /participation/users/{userID}/slams:
+    get:
+      tags: [participation]
+      summary: Get slams for a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of slams
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Slam'
+
+  /participation/slams/{slamID}/users:
+    get:
+      tags: [participation]
+      summary: Get users for a slam
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: slamID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          x-order: 1
+        email:
+          type: string
+          x-order: 2
+        name:
+          type: string
+
+    Slam:
+      type: object
+      required: [title, public]
+      properties:
+        id:
+          type: integer
+          x-order: 1
+        title:
+          type: string
+          x-order: 2
+        description:
+          type: string
+        location:
+          type: string
+        public:
+          type: boolean
+
+    RegisterRequest:
+      type: object
+      required: [name, email, password]
+      properties:
+        email:
+          type: string
+          x-order: 1
+        name:
+          type: string
+          x-order: 2
+        password:
+          type: string
+      example:
+        email: bob@example.com
+        name: Bob
+        password: P@ssw0rd
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      example:
+        email: bob@example.com
+        password: P@ssw0rd
+
+    LoginResponse:
+      type: object
+      properties:
+        userId:
+          type: string
+          x-order: 1
+        token:
+          type: string
+          x-order: 2

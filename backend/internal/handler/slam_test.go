@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/Mroxny/slamIt/internal/api"
 	"github.com/Mroxny/slamIt/internal/router"
 	"github.com/Mroxny/slamIt/internal/utils"
 )
@@ -13,6 +14,7 @@ import (
 func TestSlamHandler(t *testing.T) {
 	r := router.SetupTestRouter()
 	_, token := utils.GetAuthToken(r, "bob@example.com", "P@ssw0rd", false)
+	slamId := "3"
 
 	tests := []struct {
 		name     string
@@ -25,23 +27,29 @@ func TestSlamHandler(t *testing.T) {
 		{
 			name:     "create valid slam",
 			method:   "POST",
-			url:      "/slams/",
-			body:     `{"title":"Test Slam","description":"Testing slam endpoint"}`,
+			url:      "/slams",
+			body:     `{"title":"Test Slam","description":"Testing slam endpoint", "public":true}`,
 			auth:     true,
 			wantCode: http.StatusCreated,
 		},
 		{
 			name:     "create invalid slam (missing title)",
 			method:   "POST",
-			url:      "/slams/",
+			url:      "/slams",
 			body:     `{"description":"Charlie"}`,
 			auth:     true,
 			wantCode: http.StatusBadRequest,
 		},
 		{
+			name:     "get all public slams",
+			method:   "GET",
+			url:      "/slams",
+			wantCode: http.StatusOK,
+		},
+		{
 			name:     "get existing slam",
 			method:   "GET",
-			url:      "/slams/1",
+			url:      "/slams/" + slamId,
 			auth:     true,
 			wantCode: http.StatusOK,
 		},
@@ -55,15 +63,15 @@ func TestSlamHandler(t *testing.T) {
 		{
 			name:     "update slam valid",
 			method:   "PUT",
-			url:      "/slams/1",
-			body:     `{"title":"Slam Updated","description":"Updated description"}`,
+			url:      "/slams/" + slamId,
+			body:     `{"title":"Slam Updated","description":"Updated description", "public":false}`,
 			auth:     true,
 			wantCode: http.StatusOK,
 		},
 		{
 			name:     "delete slam valid",
 			method:   "DELETE",
-			url:      "/slams/1",
+			url:      "/slams/" + slamId,
 			auth:     true,
 			wantCode: http.StatusNoContent,
 		},
@@ -71,7 +79,7 @@ func TestSlamHandler(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			req := httptest.NewRequest(tt.method, tt.url, strings.NewReader(tt.body))
+			req := httptest.NewRequest(tt.method, api.ServerUrlDev+tt.url, strings.NewReader(tt.body))
 			req.Header.Set("Content-Type", "application/json")
 			if tt.auth {
 				req.Header.Set("Authorization", "Bearer "+token)
@@ -80,7 +88,7 @@ func TestSlamHandler(t *testing.T) {
 			r.ServeHTTP(w, req)
 
 			if w.Code != tt.wantCode {
-				t.Errorf("%s: got %d, want %d", tt.name, w.Code, tt.wantCode)
+				t.Errorf("%s: got %d, want %d, msg: %s", tt.name, w.Code, tt.wantCode, w.Body)
 			}
 		})
 	}

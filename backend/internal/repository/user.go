@@ -24,7 +24,7 @@ func (r *UserRepository) GetAll() []model.User {
 
 func (r *UserRepository) GetByID(id string) (*model.User, error) {
 	for _, u := range r.users {
-		if u.ID == id {
+		if u.Id == id {
 			return &u, nil
 		}
 	}
@@ -38,7 +38,7 @@ func (r *UserRepository) Create(user *model.User) (*model.User, error) {
 
 func (r *UserRepository) Update(id string, updated model.User) (*model.User, error) {
 	for i, u := range r.users {
-		if u.ID == id {
+		if u.Id == id {
 			if updated.Name == "" || updated.Email == "" {
 				return nil, errors.New("invalid input")
 			}
@@ -52,7 +52,7 @@ func (r *UserRepository) Update(id string, updated model.User) (*model.User, err
 
 func (r *UserRepository) Delete(id string) error {
 	for i, u := range r.users {
-		if u.ID == id {
+		if u.Id == id {
 			r.users = append(r.users[:i], r.users[i+1:]...)
 			return nil
 		}

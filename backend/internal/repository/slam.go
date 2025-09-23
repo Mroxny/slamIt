@@ -3,47 +3,47 @@ package repository
 import (
 	"errors"
 
-	"github.com/Mroxny/slamIt/internal/model"
+	"github.com/Mroxny/slamIt/internal/api"
 )
 
 type SlamRepository struct {
-	slams  []model.Slam
+	slams  []api.Slam
 	nextID int
 }
 
 func NewSlamRepository() *SlamRepository {
 	return &SlamRepository{
-		slams:  []model.Slam{},
+		slams:  []api.Slam{},
 		nextID: 1,
 	}
 }
 
-func (r *SlamRepository) GetAll() []model.Slam {
+func (r *SlamRepository) GetAll() []api.Slam {
 	return r.slams
 }
 
-func (r *SlamRepository) GetByID(id int) (*model.Slam, error) {
+func (r *SlamRepository) GetByID(id int) (*api.Slam, error) {
 	for _, s := range r.slams {
-		if s.ID == id {
+		if *s.Id == id {
 			return &s, nil
 		}
 	}
 	return nil, errors.New("slam not found")
 }
 
-func (r *SlamRepository) Create(s model.Slam) (model.Slam, error) {
+func (r *SlamRepository) Create(s api.Slam) (api.Slam, error) {
 	if s.Title == "" {
-		return model.Slam{}, errors.New("title required")
+		return api.Slam{}, errors.New("title required")
 	}
-	s.ID = r.nextID
+	s.Id = &r.nextID
 	r.nextID++
 	r.slams = append(r.slams, s)
 	return s, nil
 }
 
-func (r *SlamRepository) Update(id int, updated model.Slam) (*model.Slam, error) {
+func (r *SlamRepository) Update(id int, updated api.Slam) (*api.Slam, error) {
 	for i, s := range r.slams {
-		if s.ID == id {
+		if *s.Id == id {
 			if updated.Title == "" {
 				return nil, errors.New("title required")
 			}
@@ -57,7 +57,7 @@ func (r *SlamRepository) Update(id int, updated model.Slam) (*model.Slam, error)
 
 func (r *SlamRepository) Delete(id int) error {
 	for i, s := range r.slams {
-		if s.ID == id {
+		if *s.Id == id {
 			r.slams = append(r.slams[:i], r.slams[i+1:]...)
 			return nil
 		}

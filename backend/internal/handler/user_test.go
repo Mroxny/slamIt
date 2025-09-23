@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/Mroxny/slamIt/internal/api"
 	"github.com/Mroxny/slamIt/internal/router"
 	"github.com/Mroxny/slamIt/internal/utils"
 )
@@ -25,7 +26,7 @@ func TestUserHandler(t *testing.T) {
 		{
 			name:     "get all users",
 			method:   "GET",
-			url:      "/users/",
+			url:      "/users",
 			auth:     true,
 			wantCode: http.StatusOK,
 		},
@@ -62,7 +63,7 @@ func TestUserHandler(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			req := httptest.NewRequest(tt.method, tt.url, strings.NewReader(tt.body))
+			req := httptest.NewRequest(tt.method, api.ServerUrlDev+tt.url, strings.NewReader(tt.body))
 			req.Header.Set("Content-Type", "application/json")
 			if tt.auth {
 				req.Header.Set("Authorization", "Bearer "+token)
@@ -71,7 +72,7 @@ func TestUserHandler(t *testing.T) {
 			r.ServeHTTP(w, req)
 
 			if w.Code != tt.wantCode {
-				t.Errorf("%s: got %d, want %d", tt.name, w.Code, tt.wantCode)
+				t.Errorf("%s: got %d, want %d, msg: %s", tt.name, w.Code, tt.wantCode, w.Body)
 			}
 		})
 	}

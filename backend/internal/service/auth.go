@@ -2,11 +2,11 @@ package service
 
 import (
 	"errors"
-	"time"
 
+	"github.com/Mroxny/slamIt/internal/api"
 	"github.com/Mroxny/slamIt/internal/model"
 	"github.com/Mroxny/slamIt/internal/repository"
-	"github.com/golang-jwt/jwt/v5"
+	"github.com/Mroxny/slamIt/internal/utils"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -19,7 +19,7 @@ func NewAuthService(userRepo *repository.UserRepository) *AuthService {
 	return &AuthService{userRepo: userRepo}
 }
 
-func (s *AuthService) Register(name, email, password string) (*model.User, error) {
+func (s *AuthService) Register(name, email, password string) (*api.User, error) {
 	if u, _ := s.userRepo.GetByEmail(email); u != nil {
 		return nil, errors.New("user with email already exists")
 	}
@@ -29,22 +29,28 @@ func (s *AuthService) Register(name, email, password string) (*model.User, error
 		return nil, err
 	}
 
-	user := model.User{
-		ID:           uuid.New().String(),
+	newId := uuid.New().String()
+	modelUser := model.User{
+		Id:           newId,
 		Name:         name,
 		Email:        email,
-		PasswordHash: string(hash),
+		PasswordHash: hash,
+	}
+	apiUser := &api.User{
+		Id:    &newId,
+		Name:  &name,
+		Email: &email,
 	}
 
-	u, err := s.userRepo.Create(&user)
+	_, err = s.userRepo.Create(&modelUser)
 	if err != nil {
 		return nil, err
 	}
 
-	return u, nil
+	return apiUser, nil
 }
 
-func (s *AuthService) Login(email, password string) (*model.LoginResponse, error) {
+func (s *AuthService) Login(email, password string) (*api.LoginResponse, error) {
 	user, err := s.userRepo.GetByEmail(email)
 	if err != nil {
 		return nil, errors.New("invalid credentials (no email)")
@@ -54,14 +60,14 @@ func (s *AuthService) Login(email, password string) (*model.LoginResponse, error
 		return nil, errors.New("invalid credentials (wrong password)")
 	}
 
-	token, err := GenerateJWT(user.ID)
+	token, err := utils.GenerateJWT(user.Id)
 	if err != nil {
 		return nil, errors.New("error when creating the auth token")
 	}
 
-	res := &model.LoginResponse{
-		ID:    user.ID,
-		Token: token,
+	res := &api.LoginResponse{
+		UserId: &user.Id,
+		Token:  &token,
 	}
 
 	return res, nil
@@ -74,28 +80,4 @@ func HashPassword(password string) (string, error) {
 
 func PasswordHashMatch(hash, password string) bool {
 	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)) == nil
-}
-
-var jwtKey = []byte("supersecretkey") // move to env
-
-func GenerateJWT(userID string) (string, error) {
-	claims := &jwt.RegisteredClaims{
-		Subject:   userID,
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtKey)
-}
-
-func ValidateJWT(tokenStr string) (string, error) {
-	token, err := jwt.ParseWithClaims(tokenStr, &jwt.RegisteredClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return jwtKey, nil
-	})
-	if err != nil || !token.Valid {
-		return "", err
-	}
-
-	claims := token.Claims.(*jwt.RegisteredClaims)
-	return claims.Subject, nil
 }
