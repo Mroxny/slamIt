@@ -38,7 +38,14 @@ func SetupV1Router() *chi.Mux {
 
 }
 
+func UseNewDb() {
+	userRepo = repository.NewUserRepository()
+	slamRepo = repository.NewSlamRepository()
+	slamPartRepo = repository.NewSlamParticipationRepository()
+}
+
 func SetupTestRouter() *chi.Mux {
+	UseNewDb()
 	r := SetupV1Router()
 	authService := service.NewAuthService(userRepo)
 
