@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://json-schema.org/draft/2020-12/schema
 openapi: 3.0.3
 info:
   title: SlamIt API
@@ -17,7 +18,11 @@ tags:
     description: User management
   - name: slams
     description: Slam management
-  - name: participation
+  - name: stages
+    description: Stage management
+  - name: performances
+    description: performances management
+  - name: participations
     description: Slam participation (users joining slams)
 
 paths:
@@ -232,10 +237,174 @@ paths:
           description: Deleted
         "404":
           description: Slam not found
+          
+  /slams/{slamID}/stages:
+    get:
+      tags: [slams]
+      summary: List stages for a slam
+      parameters:
+        - name: slamID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of stages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Stage'
 
-  /participation/users/{userID}/slams/{slamID}:
     post:
-      tags: [participation]
+      tags: [slams]
+      summary: Create a new stage for a slam
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: slamID
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StageRequest'
+      responses:
+        "201":
+          description: Stage created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stage'
+
+  /stages/{stageID}:
+    put:
+      tags: [stages]
+      summary: Update stage
+      parameters:
+        - name: stageID
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StageRequest'
+      responses:
+        "200":
+          description: Updated slam
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stage'
+
+  /stages/{stageID}/performances:
+    get:
+      tags: [stages]
+      summary: List performances for a stage
+      parameters:
+        - name: stageID
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of performances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Performance'
+
+    post:
+      tags: [stages]
+      summary: Add a performance to a stage
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: stageID
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PerformanceRequest'
+      responses:
+        "201":
+          description: Performance created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Performance'
+
+  /performances/{performanceID}:
+    put:
+      tags: [performances]
+      summary: Update a performance
+      parameters:
+        - name: performanceID
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VoteRequest'
+      responses:
+        "201":
+          description: Vote recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vote'
+
+  /performances/{performanceID}/votes:
+    post:
+      tags: [performances]
+      summary: Cast a vote for a performance
+      parameters:
+        - name: performanceID
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VoteRequest'
+      responses:
+        "201":
+          description: Vote recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vote'
+
+  /participations/users/{userID}/slams/{slamID}:
+    post:
+      tags: [participations]
       summary: Join a slam
       security:
         - bearerAuth: []
@@ -254,7 +423,7 @@ paths:
         "201":
           description: Joined slam
     delete:
-      tags: [participation]
+      tags: [participations]
       summary: Leave a slam
       security:
         - bearerAuth: []
@@ -273,9 +442,9 @@ paths:
         "204":
           description: Left slam
 
-  /participation/users/{userID}/slams:
+  /participations/users/{userID}/slams:
     get:
-      tags: [participation]
+      tags: [participations]
       summary: Get slams for a user
       security:
         - bearerAuth: []
@@ -295,9 +464,9 @@ paths:
                 items:
                   $ref: '#/components/schemas/Slam'
 
-  /participation/slams/{slamID}/users:
+  /participations/slams/{slamID}/users:
     get:
-      tags: [participation]
+      tags: [participations]
       summary: Get users for a slam
       security:
         - bearerAuth: []
@@ -392,3 +561,80 @@ components:
         token:
           type: string
           x-order: 2
+    
+    Stage:
+      type: object
+      properties:
+        id:
+          type: string
+        slamId:
+          type: integer
+        stageType:
+          $ref: '#/components/schemas/StageTypeEnum'
+        round:
+          type: integer
+        details:
+          type: string
+
+    StageRequest:
+      type: object
+      required: [stageType]
+      properties:
+        stageType:
+          $ref: '#/components/schemas/StageTypeEnum'
+        round:
+          type: integer
+        details:
+          type: string
+
+    Performance:
+      type: object
+      properties:
+        id:
+          type: string
+        stageId:
+          type: integer
+        slamPartId:
+          type: integer
+        opponentPerformanceId:
+          type: integer
+          nullable: true
+        details:
+          type: string
+
+    PerformanceRequest:
+      type: object
+      required: [slamPartId, details]
+      properties:
+        slamPartId:
+          type: integer
+        opponentPerformanceId:
+          type: string
+          nullable: true
+        details:
+          type: string
+
+    Vote:
+      type: object
+      properties:
+        id:
+          type: string
+        performanceId:
+          type: string
+        userIp:
+          type: string
+        deviceFingerprint:
+          type: string
+
+    VoteRequest:
+      type: object
+      required: [deviceFingerprint]
+      properties:
+        deviceFingerprint:
+          type: string
+    
+    StageTypeEnum:
+      type: string
+      enum: 
+        - simple
+        - battle

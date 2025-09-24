@@ -7,6 +7,12 @@ const (
 	BearerAuthScopes = "bearerAuth.Scopes"
 )
 
+// Defines values for StageTypeEnum.
+const (
+	Battle StageTypeEnum = "battle"
+	Simple StageTypeEnum = "simple"
+)
+
 // LoginRequest defines model for LoginRequest.
 type LoginRequest struct {
 	Email    string `json:"email"`
@@ -17,6 +23,22 @@ type LoginRequest struct {
 type LoginResponse struct {
 	UserId *string `json:"userId,omitempty"`
 	Token  *string `json:"token,omitempty"`
+}
+
+// Performance defines model for Performance.
+type Performance struct {
+	Details               *string `json:"details,omitempty"`
+	Id                    *string `json:"id,omitempty"`
+	OpponentPerformanceId *int    `json:"opponentPerformanceId"`
+	SlamPartId            *int    `json:"slamPartId,omitempty"`
+	StageId               *int    `json:"stageId,omitempty"`
+}
+
+// PerformanceRequest defines model for PerformanceRequest.
+type PerformanceRequest struct {
+	Details               string  `json:"details"`
+	OpponentPerformanceId *string `json:"opponentPerformanceId"`
+	SlamPartId            int     `json:"slamPartId"`
 }
 
 // RegisterRequest defines model for RegisterRequest.
@@ -35,11 +57,43 @@ type Slam struct {
 	Public      bool    `json:"public"`
 }
 
+// Stage defines model for Stage.
+type Stage struct {
+	Details   *string        `json:"details,omitempty"`
+	Id        *string        `json:"id,omitempty"`
+	Round     *int           `json:"round,omitempty"`
+	SlamId    *int           `json:"slamId,omitempty"`
+	StageType *StageTypeEnum `json:"stageType,omitempty"`
+}
+
+// StageRequest defines model for StageRequest.
+type StageRequest struct {
+	Details   *string       `json:"details,omitempty"`
+	Round     *int          `json:"round,omitempty"`
+	StageType StageTypeEnum `json:"stageType"`
+}
+
+// StageTypeEnum defines model for StageTypeEnum.
+type StageTypeEnum string
+
 // User defines model for User.
 type User struct {
 	Id    *string `json:"id,omitempty"`
 	Email *string `json:"email,omitempty"`
 	Name  *string `json:"name,omitempty"`
+}
+
+// Vote defines model for Vote.
+type Vote struct {
+	DeviceFingerprint *string `json:"deviceFingerprint,omitempty"`
+	Id                *string `json:"id,omitempty"`
+	PerformanceId     *string `json:"performanceId,omitempty"`
+	UserIp            *string `json:"userIp,omitempty"`
+}
+
+// VoteRequest defines model for VoteRequest.
+type VoteRequest struct {
+	DeviceFingerprint string `json:"deviceFingerprint"`
 }
 
 // PostAuthLoginJSONRequestBody defines body for PostAuthLogin for application/json ContentType.
@@ -48,11 +102,26 @@ type PostAuthLoginJSONRequestBody = LoginRequest
 // PostAuthRegisterJSONRequestBody defines body for PostAuthRegister for application/json ContentType.
 type PostAuthRegisterJSONRequestBody = RegisterRequest
 
+// PutPerformancesPerformanceIDJSONRequestBody defines body for PutPerformancesPerformanceID for application/json ContentType.
+type PutPerformancesPerformanceIDJSONRequestBody = VoteRequest
+
+// PostPerformancesPerformanceIDVotesJSONRequestBody defines body for PostPerformancesPerformanceIDVotes for application/json ContentType.
+type PostPerformancesPerformanceIDVotesJSONRequestBody = VoteRequest
+
 // PostSlamsJSONRequestBody defines body for PostSlams for application/json ContentType.
 type PostSlamsJSONRequestBody = Slam
 
 // PutSlamsIdJSONRequestBody defines body for PutSlamsId for application/json ContentType.
 type PutSlamsIdJSONRequestBody = Slam
+
+// PostSlamsSlamIDStagesJSONRequestBody defines body for PostSlamsSlamIDStages for application/json ContentType.
+type PostSlamsSlamIDStagesJSONRequestBody = StageRequest
+
+// PutStagesStageIDJSONRequestBody defines body for PutStagesStageID for application/json ContentType.
+type PutStagesStageIDJSONRequestBody = StageRequest
+
+// PostStagesStageIDPerformancesJSONRequestBody defines body for PostStagesStageIDPerformances for application/json ContentType.
+type PostStagesStageIDPerformancesJSONRequestBody = PerformanceRequest
 
 // PutUsersIdJSONRequestBody defines body for PutUsersId for application/json ContentType.
 type PutUsersIdJSONRequestBody = User
