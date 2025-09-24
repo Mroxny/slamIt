@@ -9,7 +9,11 @@ import (
 )
 
 func (s *Server) GetUsers(w http.ResponseWriter, r *http.Request) {
-	users := s.userService.GetAll()
+	users, err := s.userService.GetAll()
+	if err != nil {
+		http.Error(w, "error parsing users", http.StatusInternalServerError)
+		return
+	}
 	WriteJSON(w, http.StatusOK, users)
 
 }

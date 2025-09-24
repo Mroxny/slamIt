@@ -15,12 +15,14 @@ func NewUserService(repo *repository.UserRepository) *UserService {
 	return &UserService{repo: repo}
 }
 
-func (s *UserService) GetAll() []api.User {
+func (s *UserService) GetAll() ([]api.User, error) {
 	modelUsers := s.repo.GetAll()
 	apiUsers := []api.User{}
-	copier.Copy(&apiUsers, &modelUsers)
+	if err := copier.Copy(&apiUsers, &modelUsers); err != nil {
+		return nil, err
+	}
 
-	return apiUsers
+	return apiUsers, nil
 }
 
 func (s *UserService) GetByID(id string) (*api.User, error) {
