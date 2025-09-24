@@ -13,7 +13,7 @@ import (
 func TestSlamParticipation(t *testing.T) {
 	r := router.SetupTestRouter()
 	uId, token := utils.GetAuthToken(r, "bob@example.com", "P@ssw0rd", false)
-	slamId := "2"
+	slamId := "3"
 
 	tests := []struct {
 		name     string
