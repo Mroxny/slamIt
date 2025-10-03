@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-func (s *Server) PostParticipationUsersUserIDSlamsSlamID(w http.ResponseWriter, r *http.Request, userID string, slamID int) {
+func (s *Server) PostParticipationsUsersUserIDSlamsSlamID(w http.ResponseWriter, r *http.Request, userID string, slamID int) {
 
 	if err := s.partService.Join(userID, slamID); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -13,7 +13,7 @@ func (s *Server) PostParticipationUsersUserIDSlamsSlamID(w http.ResponseWriter, 
 	w.WriteHeader(http.StatusCreated)
 }
 
-func (s *Server) DeleteParticipationUsersUserIDSlamsSlamID(w http.ResponseWriter, r *http.Request, userID string, slamID int) {
+func (s *Server) DeleteParticipationsUsersUserIDSlamsSlamID(w http.ResponseWriter, r *http.Request, userID string, slamID int) {
 	if err := s.partService.Leave(userID, slamID); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -21,7 +21,7 @@ func (s *Server) DeleteParticipationUsersUserIDSlamsSlamID(w http.ResponseWriter
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func (s *Server) GetParticipationUsersUserIDSlams(w http.ResponseWriter, r *http.Request, userID string) {
+func (s *Server) GetParticipationsUsersUserIDSlams(w http.ResponseWriter, r *http.Request, userID string) {
 	slams, err := s.partService.GetSlamsForUser(userID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -30,7 +30,7 @@ func (s *Server) GetParticipationUsersUserIDSlams(w http.ResponseWriter, r *http
 	WriteJSON(w, http.StatusOK, slams)
 }
 
-func (s *Server) GetParticipationSlamsSlamIDUsers(w http.ResponseWriter, r *http.Request, slamID int) {
+func (s *Server) GetParticipationsSlamsSlamIDUsers(w http.ResponseWriter, r *http.Request, slamID int) {
 	users, err := s.partService.GetUsersForSlam(slamID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
