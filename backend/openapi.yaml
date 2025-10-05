@@ -84,14 +84,14 @@ paths:
                 items:
                   $ref: '#/components/schemas/User'
 
-  /users/{id}:
+  /users/{userID}:
     get:
       tags: [users]
       summary: Get a user by ID
       security:
         - bearerAuth: []
       parameters:
-        - name: id
+        - name: userID
           in: path
           required: true
           schema:
@@ -111,7 +111,7 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: id
+        - name: userID
           in: path
           required: true
           schema:
@@ -135,7 +135,7 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: id
+        - name: userID
           in: path
           required: true
           schema:
@@ -169,7 +169,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Slam'
+              $ref: '#/components/schemas/SlamRequest'
       responses:
         "201":
           description: Slam created
@@ -178,16 +178,16 @@ paths:
               schema:
                 $ref: '#/components/schemas/Slam'
 
-  /slams/{id}:
+  /slams/{slamID}:
     get:
       tags: [slams]
       summary: Get slam by ID
       parameters:
-        - name: id
+        - name: slamID
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       responses:
         "200":
           description: A slam
@@ -203,17 +203,17 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: id
+        - name: slamID
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Slam'
+              $ref: '#/components/schemas/SlamRequest'
       responses:
         "200":
           description: Updated slam
@@ -227,11 +227,11 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: id
+        - name: slamID
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       responses:
         "204":
           description: Deleted
@@ -247,7 +247,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       responses:
         "200":
           description: List of stages
@@ -268,7 +268,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       requestBody:
         required: true
         content:
@@ -308,6 +308,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Stage'
+    delete:
+      tags: [stages]
+      summary: Delete a stage
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: stageID
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Stage not found
 
   /stages/{stageID}/performances:
     get:
@@ -377,6 +393,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Vote'
+    delete:
+      tags: [performances]
+      summary: Delete a performance
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: performanceID
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Performance not found
 
   /performances/{performanceID}/votes:
     post:
@@ -402,42 +434,36 @@ paths:
               schema:
                 $ref: '#/components/schemas/Vote'
 
-  /participations/users/{userID}/slams/{slamID}:
+  /participations/slams/{slamID}:
     post:
       tags: [participations]
       summary: Join a slam
       security:
         - bearerAuth: []
       parameters:
-        - name: userID
-          in: path
-          required: true
-          schema:
-            type: string
         - name: slamID
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       responses:
         "201":
           description: Joined slam
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Participation'
     delete:
       tags: [participations]
       summary: Leave a slam
       security:
         - bearerAuth: []
       parameters:
-        - name: userID
-          in: path
-          required: true
-          schema:
-            type: string
         - name: slamID
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       responses:
         "204":
           description: Left slam
@@ -475,7 +501,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       responses:
         "200":
           description: List of users
@@ -485,6 +511,72 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
+    
+    post:
+      tags: [participations]
+      summary: Add user to a slam
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: slamID
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "201":
+          description: User added to a slam
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Participation'
+          
+  /participations/slams/{slamID}/users/{userID}:
+    put:
+      tags: [participations]
+      summary: Join a slam
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: slamID
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userID
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParticipationRequest'
+      responses:
+        "201":
+          description: Joined slam
+    
+    delete:
+      tags: [participations]
+      summary: Leave a slam
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: slamID
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userID
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Left slam
 
 components:
   securitySchemes:
@@ -511,15 +603,33 @@ components:
       required: [title, public]
       properties:
         id:
-          type: integer
+          type: string
           x-order: 1
         title:
           type: string
           x-order: 2
         description:
           type: string
+          x-order: 3
         location:
           type: string
+          x-order: 4
+        public:
+          type: boolean
+    
+    SlamRequest:
+      type: object
+      required: [title, public]
+      properties:
+        title:
+          type: string
+          x-order: 1
+        description:
+          type: string
+          x-order: 2
+        location:
+          type: string
+          x-order: 3
         public:
           type: boolean
 
@@ -546,8 +656,10 @@ components:
       properties:
         email:
           type: string
+          x-order: 1
         password:
           type: string
+          x-order: 2
       example:
         email: bob@example.com
         password: P@ssw0rd
@@ -567,8 +679,10 @@ components:
       properties:
         id:
           type: string
+          x-order: 1
         slamId:
-          type: integer
+          type: string
+          x-order: 2
         stageType:
           $ref: '#/components/schemas/StageTypeEnum'
         round:
@@ -592,12 +706,16 @@ components:
       properties:
         id:
           type: string
+          x-order: 1
         stageId:
-          type: integer
+          type: string
+          x-order: 2
         slamPartId:
-          type: integer
+          type: string
+          x-order: 3
         opponentPerformanceId:
-          type: integer
+          type: string
+          x-order: 4
           nullable: true
         details:
           type: string
@@ -607,22 +725,41 @@ components:
       required: [slamPartId, details]
       properties:
         slamPartId:
-          type: integer
+          type: string
+          x-order: 1
         opponentPerformanceId:
           type: string
           nullable: true
+          x-order: 2
         details:
           type: string
+
+    Participation:
+      type: object
+      properties:
+        id:
+          type: string
+        role:
+          $ref: '#/components/schemas/ParticipationRoleEnum'
+    
+    ParticipationRequest:
+      type: object
+      properties:
+        role:
+          $ref: '#/components/schemas/ParticipationRoleEnum'
 
     Vote:
       type: object
       properties:
         id:
           type: string
+          x-order: 1
         performanceId:
           type: string
+          x-order: 2
         userIp:
           type: string
+          x-order: 2
         deviceFingerprint:
           type: string
 
@@ -638,3 +775,9 @@ components:
       enum: 
         - simple
         - battle
+        
+    ParticipationRoleEnum:
+      type: string
+      enum: 
+        - performer
+        - creator
