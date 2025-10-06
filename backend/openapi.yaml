@@ -523,6 +523,12 @@ paths:
           required: true
           schema:
             type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParticipationRequest'
       responses:
         "201":
           description: User added to a slam
@@ -553,7 +559,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ParticipationRequest'
+              $ref: '#/components/schemas/ParticipationUpdateRequest'
       responses:
         "201":
           description: Joined slam
@@ -743,6 +749,15 @@ components:
           $ref: '#/components/schemas/ParticipationRoleEnum'
     
     ParticipationRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+          x-order: 1
+        role:
+          $ref: '#/components/schemas/ParticipationRoleEnum'
+          
+    ParticipationUpdateRequest:
       type: object
       properties:
         role:
