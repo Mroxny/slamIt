@@ -1,11 +1,14 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/Mroxny/slamIt/internal/api"
 	"github.com/Mroxny/slamIt/internal/service"
+	"github.com/Mroxny/slamIt/internal/utils"
 )
 
 var _ api.ServerInterface = (*Server)(nil)
@@ -27,4 +30,18 @@ func WriteJSON(w http.ResponseWriter, status int, v interface{}) {
 	if v != nil {
 		json.NewEncoder(w).Encode(v)
 	}
+}
+
+func GetUserFromContext(ctx context.Context) (string, error) {
+	val := ctx.Value(utils.JWTClaimsContextKey)
+	if val == nil {
+		return "", errors.New("no user ID in context")
+	}
+
+	userID, ok := val.(string)
+	if !ok {
+		return "", errors.New("invalid user ID type in context")
+	}
+
+	return userID, nil
 }
