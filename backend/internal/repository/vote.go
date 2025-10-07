@@ -6,34 +6,30 @@ import (
 	"github.com/Mroxny/slamIt/internal/api"
 )
 
-type VodeRepository struct {
-	performances []api.Vote
-	nextID       int
+type VoteRepository struct {
+	votes []api.Vote
 }
 
-func NewVoteRepository() *VodeRepository {
-	return &VodeRepository{
-		performances: []api.Vote{},
-		nextID:       1,
-	}
+func NewVoteRepository() *VoteRepository {
+	return &VoteRepository{votes: []api.Vote{}}
 }
 
-func (r *VodeRepository) GetByPerformanceID(performanceId int) ([]api.Vote, error) {
+func (r *VoteRepository) GetByPerformanceID(performanceId string) ([]api.Vote, error) {
 
-	return nil, errors.New("stage not found")
+	return nil, errors.New("vote not found")
 }
 
-func (r *VodeRepository) Create(performanceId int, p api.Vote) (*api.Vote, error) {
+func (r *VoteRepository) Create(performanceId string, v api.VoteRequest) (*api.Vote, error) {
 
-	return nil, errors.New("stage not found")
+	return nil, errors.New("vote not found")
 }
 
-func (r *VodeRepository) Update(performanceId int, updated api.Vote) (*api.Vote, error) {
+func (r *VoteRepository) Update(voteId string, updated api.VoteRequest) (*api.Vote, error) {
 
-	return nil, errors.New("stage not found")
+	return nil, errors.New("vote not found")
 }
 
-func (r *VodeRepository) Delete(voteId int) error {
+func (r *VoteRepository) Delete(voteId string) error {
 
-	return errors.New("stage not found")
+	return errors.New("vote not found")
 }
