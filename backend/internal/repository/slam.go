@@ -7,14 +7,12 @@ import (
 )
 
 type SlamRepository struct {
-	slams  []api.Slam
-	nextID int
+	slams []api.Slam
 }
 
 func NewSlamRepository() *SlamRepository {
 	return &SlamRepository{
-		slams:  []api.Slam{},
-		nextID: 1,
+		slams: []api.Slam{},
 	}
 }
 
@@ -22,7 +20,7 @@ func (r *SlamRepository) GetAll() []api.Slam {
 	return r.slams
 }
 
-func (r *SlamRepository) GetByID(id int) (*api.Slam, error) {
+func (r *SlamRepository) GetByID(id string) (*api.Slam, error) {
 	for _, s := range r.slams {
 		if *s.Id == id {
 			return &s, nil
@@ -35,13 +33,11 @@ func (r *SlamRepository) Create(s api.Slam) (api.Slam, error) {
 	if s.Title == "" {
 		return api.Slam{}, errors.New("title required")
 	}
-	s.Id = &r.nextID
-	r.nextID++
 	r.slams = append(r.slams, s)
 	return s, nil
 }
 
-func (r *SlamRepository) Update(id int, updated api.Slam) (*api.Slam, error) {
+func (r *SlamRepository) Update(id string, updated api.Slam) (*api.Slam, error) {
 	for i, s := range r.slams {
 		if *s.Id == id {
 			if updated.Title == "" {
@@ -55,7 +51,7 @@ func (r *SlamRepository) Update(id int, updated api.Slam) (*api.Slam, error) {
 	return nil, errors.New("slam not found")
 }
 
-func (r *SlamRepository) Delete(id int) error {
+func (r *SlamRepository) Delete(id string) error {
 	for i, s := range r.slams {
 		if *s.Id == id {
 			r.slams = append(r.slams[:i], r.slams[i+1:]...)

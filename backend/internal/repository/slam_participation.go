@@ -16,7 +16,7 @@ func NewSlamParticipationRepository() *SlamParticipationRepository {
 	}
 }
 
-func (r *SlamParticipationRepository) Add(userId string, slamId int) error {
+func (r *SlamParticipationRepository) Add(userId string, slamId string) error {
 	for _, rel := range r.relations {
 		if rel.UserId == userId && rel.SlamId == slamId {
 			return errors.New("user already joined this slam")
@@ -28,8 +28,8 @@ func (r *SlamParticipationRepository) Add(userId string, slamId int) error {
 	return nil
 }
 
-func (r *SlamParticipationRepository) GetSlamsForUser(userId string) []int {
-	ids := []int{}
+func (r *SlamParticipationRepository) GetSlamsForUser(userId string) []string {
+	ids := []string{}
 	for _, rel := range r.relations {
 		if rel.UserId == userId {
 			ids = append(ids, rel.SlamId)
@@ -38,7 +38,7 @@ func (r *SlamParticipationRepository) GetSlamsForUser(userId string) []int {
 	return ids
 }
 
-func (r *SlamParticipationRepository) GetUsersForSlam(slamId int) []string {
+func (r *SlamParticipationRepository) GetUsersForSlam(slamId string) []string {
 	ids := []string{}
 	for _, rel := range r.relations {
 		if rel.SlamId == slamId {
@@ -48,7 +48,7 @@ func (r *SlamParticipationRepository) GetUsersForSlam(slamId int) []string {
 	return ids
 }
 
-func (r *SlamParticipationRepository) Remove(userId string, slamId int) error {
+func (r *SlamParticipationRepository) Remove(userId string, slamId string) error {
 	for i, rel := range r.relations {
 		if rel.UserId == userId && rel.SlamId == slamId {
 			r.relations = append(r.relations[:i], r.relations[i+1:]...)
