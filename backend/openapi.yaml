@@ -558,7 +558,7 @@ paths:
   /participations/slams/{slamID}/users/{userID}:
     put:
       tags: [participations]
-      summary: Join a slam
+      summary: Edit participant
       security:
         - bearerAuth: []
       parameters:
@@ -584,7 +584,7 @@ paths:
     
     delete:
       tags: [participations]
-      summary: Leave a slam
+      summary: Remove participant
       security:
         - bearerAuth: []
       parameters:
