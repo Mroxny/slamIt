@@ -17,7 +17,7 @@ func NewSlamParticipationService(users *repository.UserRepository, slams *reposi
 	return &SlamParticipationService{usersRepo: users, slamsRepo: slams, repo: repo}
 }
 
-func (s *SlamParticipationService) Join(userID string, slamID int) error {
+func (s *SlamParticipationService) Join(userID string, slamID string) error {
 	if _, err := s.usersRepo.GetByID(userID); err != nil {
 		return errors.New("user not found")
 	}
@@ -27,7 +27,7 @@ func (s *SlamParticipationService) Join(userID string, slamID int) error {
 	return s.repo.Add(userID, slamID)
 }
 
-func (s *SlamParticipationService) Leave(userID string, slamID int) error {
+func (s *SlamParticipationService) Leave(userID string, slamID string) error {
 	return s.repo.Remove(userID, slamID)
 }
 
@@ -42,7 +42,7 @@ func (s *SlamParticipationService) GetSlamsForUser(userID string) ([]api.Slam, e
 	return slams, nil
 }
 
-func (s *SlamParticipationService) GetUsersForSlam(slamID int) ([]api.User, error) {
+func (s *SlamParticipationService) GetUsersForSlam(slamID string) ([]api.User, error) {
 	ids := s.repo.GetUsersForSlam(slamID)
 	users := []api.User{}
 	for _, id := range ids {

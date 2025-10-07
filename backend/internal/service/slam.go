@@ -6,29 +6,29 @@ import (
 )
 
 type SlamService struct {
-	repo *repository.SlamRepository
+	slamRepo *repository.SlamRepository
 }
 
-func NewSlamService(repo *repository.SlamRepository) *SlamService {
-	return &SlamService{repo: repo}
+func NewSlamService(slams *repository.SlamRepository) *SlamService {
+	return &SlamService{slamRepo: slams}
 }
 
 func (s *SlamService) GetAll() []api.Slam {
-	return s.repo.GetAll()
+	return s.slamRepo.GetAll()
 }
 
-func (s *SlamService) GetByID(id int) (*api.Slam, error) {
-	return s.repo.GetByID(id)
+func (s *SlamService) GetByID(id string) (*api.Slam, error) {
+	return s.slamRepo.GetByID(id)
 }
 
 func (s *SlamService) Create(slam api.Slam) (api.Slam, error) {
-	return s.repo.Create(slam)
+	return s.slamRepo.Create(slam)
 }
 
-func (s *SlamService) Update(id int, slam api.Slam) (*api.Slam, error) {
-	return s.repo.Update(id, slam)
+func (s *SlamService) Update(id string, slam api.Slam) (*api.Slam, error) {
+	return s.slamRepo.Update(id, slam)
 }
 
-func (s *SlamService) Delete(id int) error {
-	return s.repo.Delete(id)
+func (s *SlamService) Delete(id string) error {
+	return s.slamRepo.Delete(id)
 }
