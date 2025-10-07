@@ -7,6 +7,12 @@ const (
 	BearerAuthScopes = "bearerAuth.Scopes"
 )
 
+// Defines values for ParticipationRoleEnum.
+const (
+	Creator   ParticipationRoleEnum = "creator"
+	Performer ParticipationRoleEnum = "performer"
+)
+
 // Defines values for StageTypeEnum.
 const (
 	Battle StageTypeEnum = "battle"
@@ -25,20 +31,40 @@ type LoginResponse struct {
 	Token  *string `json:"token,omitempty"`
 }
 
+// Participation defines model for Participation.
+type Participation struct {
+	Id   *string                `json:"id,omitempty"`
+	Role *ParticipationRoleEnum `json:"role,omitempty"`
+}
+
+// ParticipationRequest defines model for ParticipationRequest.
+type ParticipationRequest struct {
+	UserId *string                `json:"userId,omitempty"`
+	Role   *ParticipationRoleEnum `json:"role,omitempty"`
+}
+
+// ParticipationRoleEnum defines model for ParticipationRoleEnum.
+type ParticipationRoleEnum string
+
+// ParticipationUpdateRequest defines model for ParticipationUpdateRequest.
+type ParticipationUpdateRequest struct {
+	Role *ParticipationRoleEnum `json:"role,omitempty"`
+}
+
 // Performance defines model for Performance.
 type Performance struct {
-	Details               *string `json:"details,omitempty"`
 	Id                    *string `json:"id,omitempty"`
-	OpponentPerformanceId *int    `json:"opponentPerformanceId"`
-	SlamPartId            *int    `json:"slamPartId,omitempty"`
-	StageId               *int    `json:"stageId,omitempty"`
+	SlamPartId            *string `json:"slamPartId,omitempty"`
+	StageId               *string `json:"stageId,omitempty"`
+	OpponentPerformanceId *string `json:"opponentPerformanceId"`
+	Details               *string `json:"details,omitempty"`
 }
 
 // PerformanceRequest defines model for PerformanceRequest.
 type PerformanceRequest struct {
-	Details               string  `json:"details"`
+	SlamPartId            string  `json:"slamPartId"`
 	OpponentPerformanceId *string `json:"opponentPerformanceId"`
-	SlamPartId            int     `json:"slamPartId"`
+	Details               string  `json:"details"`
 }
 
 // RegisterRequest defines model for RegisterRequest.
@@ -50,7 +76,15 @@ type RegisterRequest struct {
 
 // Slam defines model for Slam.
 type Slam struct {
-	Id          *int    `json:"id,omitempty"`
+	Id          *string `json:"id,omitempty"`
+	Title       string  `json:"title"`
+	Description *string `json:"description,omitempty"`
+	Location    *string `json:"location,omitempty"`
+	Public      bool    `json:"public"`
+}
+
+// SlamRequest defines model for SlamRequest.
+type SlamRequest struct {
 	Title       string  `json:"title"`
 	Description *string `json:"description,omitempty"`
 	Location    *string `json:"location,omitempty"`
@@ -59,10 +93,10 @@ type Slam struct {
 
 // Stage defines model for Stage.
 type Stage struct {
-	Details   *string        `json:"details,omitempty"`
 	Id        *string        `json:"id,omitempty"`
+	SlamId    *string        `json:"slamId,omitempty"`
+	Details   *string        `json:"details,omitempty"`
 	Round     *int           `json:"round,omitempty"`
-	SlamId    *int           `json:"slamId,omitempty"`
 	StageType *StageTypeEnum `json:"stageType,omitempty"`
 }
 
@@ -85,10 +119,10 @@ type User struct {
 
 // Vote defines model for Vote.
 type Vote struct {
-	DeviceFingerprint *string `json:"deviceFingerprint,omitempty"`
 	Id                *string `json:"id,omitempty"`
 	PerformanceId     *string `json:"performanceId,omitempty"`
 	UserIp            *string `json:"userIp,omitempty"`
+	DeviceFingerprint *string `json:"deviceFingerprint,omitempty"`
 }
 
 // VoteRequest defines model for VoteRequest.
@@ -102,6 +136,12 @@ type PostAuthLoginJSONRequestBody = LoginRequest
 // PostAuthRegisterJSONRequestBody defines body for PostAuthRegister for application/json ContentType.
 type PostAuthRegisterJSONRequestBody = RegisterRequest
 
+// PostParticipationsSlamsSlamIDUsersJSONRequestBody defines body for PostParticipationsSlamsSlamIDUsers for application/json ContentType.
+type PostParticipationsSlamsSlamIDUsersJSONRequestBody = ParticipationRequest
+
+// PutParticipationsSlamsSlamIDUsersUserIDJSONRequestBody defines body for PutParticipationsSlamsSlamIDUsersUserID for application/json ContentType.
+type PutParticipationsSlamsSlamIDUsersUserIDJSONRequestBody = ParticipationUpdateRequest
+
 // PutPerformancesPerformanceIDJSONRequestBody defines body for PutPerformancesPerformanceID for application/json ContentType.
 type PutPerformancesPerformanceIDJSONRequestBody = VoteRequest
 
@@ -109,10 +149,10 @@ type PutPerformancesPerformanceIDJSONRequestBody = VoteRequest
 type PostPerformancesPerformanceIDVotesJSONRequestBody = VoteRequest
 
 // PostSlamsJSONRequestBody defines body for PostSlams for application/json ContentType.
-type PostSlamsJSONRequestBody = Slam
+type PostSlamsJSONRequestBody = SlamRequest
 
-// PutSlamsIdJSONRequestBody defines body for PutSlamsId for application/json ContentType.
-type PutSlamsIdJSONRequestBody = Slam
+// PutSlamsSlamIDJSONRequestBody defines body for PutSlamsSlamID for application/json ContentType.
+type PutSlamsSlamIDJSONRequestBody = SlamRequest
 
 // PostSlamsSlamIDStagesJSONRequestBody defines body for PostSlamsSlamIDStages for application/json ContentType.
 type PostSlamsSlamIDStagesJSONRequestBody = StageRequest
@@ -123,5 +163,5 @@ type PutStagesStageIDJSONRequestBody = StageRequest
 // PostStagesStageIDPerformancesJSONRequestBody defines body for PostStagesStageIDPerformances for application/json ContentType.
 type PostStagesStageIDPerformancesJSONRequestBody = PerformanceRequest
 
-// PutUsersIdJSONRequestBody defines body for PutUsersId for application/json ContentType.
-type PutUsersIdJSONRequestBody = User
+// PutUsersUserIDJSONRequestBody defines body for PutUsersUserID for application/json ContentType.
+type PutUsersUserIDJSONRequestBody = User
