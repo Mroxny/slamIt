@@ -14,14 +14,25 @@ import (
 var _ api.ServerInterface = (*Server)(nil)
 
 type Server struct {
-	userService *service.UserService
-	slamService *service.SlamService
-	authService *service.AuthService
-	partService *service.SlamParticipationService
+	userService  *service.UserService
+	slamService  *service.SlamService
+	authService  *service.AuthService
+	partService  *service.SlamParticipationService
+	stageService *service.StageService
+	perfService  *service.PerformanceService
+	voteService  *service.VoteService
 }
 
-func NewServer(u *service.UserService, s *service.SlamService, a *service.AuthService, p *service.SlamParticipationService) *Server {
-	return &Server{u, s, a, p}
+func NewServer(
+	u *service.UserService,
+	s *service.SlamService,
+	a *service.AuthService,
+	p *service.SlamParticipationService,
+	st *service.StageService,
+	pe *service.PerformanceService,
+	v *service.VoteService,
+) *Server {
+	return &Server{u, s, a, p, st, pe, v}
 }
 
 func WriteJSON(w http.ResponseWriter, status int, v interface{}) {
