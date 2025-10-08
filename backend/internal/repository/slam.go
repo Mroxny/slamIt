@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/Mroxny/slamIt/internal/api"
+	"github.com/jinzhu/copier"
 )
 
 type SlamRepository struct {
@@ -16,8 +17,8 @@ func NewSlamRepository() *SlamRepository {
 	}
 }
 
-func (r *SlamRepository) GetAll() []api.Slam {
-	return r.slams
+func (r *SlamRepository) GetAll() ([]api.Slam, error) {
+	return r.slams, nil
 }
 
 func (r *SlamRepository) GetByID(id string) (*api.Slam, error) {
@@ -29,15 +30,18 @@ func (r *SlamRepository) GetByID(id string) (*api.Slam, error) {
 	return nil, errors.New("slam not found")
 }
 
-func (r *SlamRepository) Create(s api.Slam) (api.Slam, error) {
+func (r *SlamRepository) Create(s api.SlamRequest) (api.Slam, error) {
 	if s.Title == "" {
 		return api.Slam{}, errors.New("title required")
 	}
-	r.slams = append(r.slams, s)
-	return s, nil
+	modelSlam := api.Slam{}
+	copier.Copy(&modelSlam, &s)
+
+	r.slams = append(r.slams, modelSlam)
+	return modelSlam, nil
 }
 
-func (r *SlamRepository) Update(id string, updated api.Slam) (*api.Slam, error) {
+func (r *SlamRepository) Update(id string, updated api.SlamRequest) (*api.Slam, error) {
 	for i, s := range r.slams {
 		if *s.Id == id {
 			if updated.Title == "" {

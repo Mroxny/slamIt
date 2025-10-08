@@ -18,8 +18,8 @@ func NewUserRepository() *UserRepository {
 	}
 }
 
-func (r *UserRepository) GetAll() []model.User {
-	return r.users
+func (r *UserRepository) GetAll() ([]model.User, error) {
+	return r.users, nil
 }
 
 func (r *UserRepository) GetByID(id string) (*model.User, error) {

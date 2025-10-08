@@ -16,7 +16,11 @@ func NewUserService(repo *repository.UserRepository) *UserService {
 }
 
 func (s *UserService) GetAll() ([]api.User, error) {
-	modelUsers := s.repo.GetAll()
+	modelUsers, err := s.repo.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
 	apiUsers := []api.User{}
 	if err := copier.Copy(&apiUsers, &modelUsers); err != nil {
 		return nil, err

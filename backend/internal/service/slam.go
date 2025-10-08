@@ -13,7 +13,7 @@ func NewSlamService(slams *repository.SlamRepository) *SlamService {
 	return &SlamService{slamRepo: slams}
 }
 
-func (s *SlamService) GetAll() []api.Slam {
+func (s *SlamService) GetAll() ([]api.Slam, error) {
 	return s.slamRepo.GetAll()
 }
 
@@ -21,11 +21,11 @@ func (s *SlamService) GetByID(id string) (*api.Slam, error) {
 	return s.slamRepo.GetByID(id)
 }
 
-func (s *SlamService) Create(slam api.Slam) (api.Slam, error) {
+func (s *SlamService) Create(slam api.SlamRequest) (api.Slam, error) {
 	return s.slamRepo.Create(slam)
 }
 
-func (s *SlamService) Update(id string, slam api.Slam) (*api.Slam, error) {
+func (s *SlamService) Update(id string, slam api.SlamRequest) (*api.Slam, error) {
 	return s.slamRepo.Update(id, slam)
 }
 
