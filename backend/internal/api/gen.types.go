@@ -117,6 +117,12 @@ type User struct {
 	Name  *string `json:"name,omitempty"`
 }
 
+// UserRequest defines model for UserRequest.
+type UserRequest struct {
+	Email *string `json:"email,omitempty"`
+	Name  *string `json:"name,omitempty"`
+}
+
 // Vote defines model for Vote.
 type Vote struct {
 	Id                *string `json:"id,omitempty"`
@@ -164,4 +170,4 @@ type PutStagesStageIDJSONRequestBody = StageRequest
 type PostStagesStageIDPerformancesJSONRequestBody = PerformanceRequest
 
 // PutUsersUserIDJSONRequestBody defines body for PutUsersUserID for application/json ContentType.
-type PutUsersUserIDJSONRequestBody = User
+type PutUsersUserIDJSONRequestBody = UserRequest

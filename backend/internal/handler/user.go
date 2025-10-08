@@ -33,7 +33,7 @@ func (s *Server) GetUsersUserID(w http.ResponseWriter, r *http.Request, userID s
 }
 
 func (s *Server) PutUsersUserID(w http.ResponseWriter, r *http.Request, userID string) {
-	var u api.User
+	var u api.UserRequest
 	if err := ValidateJSON(r.Body, &u); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

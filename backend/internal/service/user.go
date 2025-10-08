@@ -40,11 +40,13 @@ func (s *UserService) GetByID(id string) (*api.User, error) {
 	return &apiUser, nil
 }
 
-func (s *UserService) Update(id string, u api.User) (*api.User, error) {
+func (s *UserService) Update(id string, u api.UserRequest) (*api.User, error) {
 	modelUser := model.User{}
 	copier.Copy(&modelUser, &u)
-	_, err := s.repo.Update(id, modelUser)
-	return &u, err
+	updatedUser, err := s.repo.Update(id, modelUser)
+	apiUser := api.User{}
+	copier.Copy(&apiUser, &updatedUser)
+	return &apiUser, err
 }
 
 func (s *UserService) Delete(id string) error {
