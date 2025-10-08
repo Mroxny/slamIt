@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 
+	"github.com/Mroxny/slamIt/internal/api"
 	"github.com/Mroxny/slamIt/internal/model"
 )
 
@@ -46,6 +47,10 @@ func (r *SlamParticipationRepository) GetUsersForSlam(slamId string) []string {
 		}
 	}
 	return ids
+}
+
+func (r *SlamParticipationRepository) UpdateParticipation(slamId string, userId string, p api.ParticipationUpdateRequest) (*api.Participation, error) {
+	return nil, errors.New("error updating participation")
 }
 
 func (r *SlamParticipationRepository) Remove(userId string, slamId string) error {

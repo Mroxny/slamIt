@@ -16,7 +16,7 @@ func (s *Server) DeletePerformancesPerformanceID(w http.ResponseWriter, r *http.
 
 func (s *Server) PutPerformancesPerformanceID(w http.ResponseWriter, r *http.Request, performanceID string) {
 	var performance api.PerformanceRequest
-	if err := ValidateJSON(r.Body, performance); err != nil {
+	if err := ValidateJSON(r.Body, &performance); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -40,7 +40,7 @@ func (s *Server) GetPerformancesPerformanceIDVotes(w http.ResponseWriter, r *htt
 
 func (s *Server) PostPerformancesPerformanceIDVotes(w http.ResponseWriter, r *http.Request, performanceID string) {
 	var vote api.VoteRequest
-	if err := ValidateJSON(r.Body, vote); err != nil {
+	if err := ValidateJSON(r.Body, &vote); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}

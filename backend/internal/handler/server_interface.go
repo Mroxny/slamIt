@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 
 	"github.com/Mroxny/slamIt/internal/api"
@@ -41,6 +42,18 @@ func WriteJSON(w http.ResponseWriter, status int, v interface{}) {
 	if v != nil {
 		json.NewEncoder(w).Encode(v)
 	}
+}
+
+func ValidateJSON(decoder io.ReadCloser, object interface{}) error {
+	if err := json.NewDecoder(decoder).Decode(object); err != nil {
+		return errors.New("invalid input (decode)")
+	}
+
+	if err := utils.Validate.Struct(object); err != nil {
+		return errors.New("invalid input (validation)")
+	}
+
+	return nil
 }
 
 func GetUserFromContext(ctx context.Context) (string, error) {

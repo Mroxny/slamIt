@@ -16,7 +16,7 @@ func (s *Server) DeleteStagesStageID(w http.ResponseWriter, r *http.Request, sta
 
 func (s *Server) PutStagesStageID(w http.ResponseWriter, r *http.Request, stageID string) {
 	var stage api.StageRequest
-	if err := ValidateJSON(r.Body, stage); err != nil {
+	if err := ValidateJSON(r.Body, &stage); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -40,7 +40,7 @@ func (s *Server) GetStagesStageIDPerformances(w http.ResponseWriter, r *http.Req
 
 func (s *Server) PostStagesStageIDPerformances(w http.ResponseWriter, r *http.Request, stageID string) {
 	var performance api.PerformanceRequest
-	if err := ValidateJSON(r.Body, performance); err != nil {
+	if err := ValidateJSON(r.Body, &performance); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}

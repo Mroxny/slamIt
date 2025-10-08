@@ -12,6 +12,9 @@ import (
 var userRepo = repository.NewUserRepository()
 var slamRepo = repository.NewSlamRepository()
 var slamPartRepo = repository.NewSlamParticipationRepository()
+var stageRepo = repository.NewStageRepository()
+var perfRepo = repository.NewPerformanceRepository()
+var voteRepo = repository.NewVoteRepository()
 
 func SetupV1Router() *chi.Mux {
 
@@ -19,9 +22,20 @@ func SetupV1Router() *chi.Mux {
 	slamService := service.NewSlamService(slamRepo)
 	authService := service.NewAuthService(userRepo)
 	partService := service.NewSlamParticipationService(userRepo, slamRepo, slamPartRepo)
+	stageService := service.NewStageService(stageRepo)
+	perfService := service.NewPerformanceService(perfRepo)
+	voteService := service.NewVoteService(voteRepo)
 
 	r := chi.NewRouter()
-	server := handler.NewServer(userService, slamService, authService, partService)
+	server := handler.NewServer(
+		userService,
+		slamService,
+		authService,
+		partService,
+		stageService,
+		perfService,
+		voteService,
+	)
 	// server := api.Unimplemented{}
 
 	spec, err := api.LoadSpec()
@@ -42,6 +56,9 @@ func UseNewDb() {
 	userRepo = repository.NewUserRepository()
 	slamRepo = repository.NewSlamRepository()
 	slamPartRepo = repository.NewSlamParticipationRepository()
+	stageRepo = repository.NewStageRepository()
+	perfRepo = repository.NewPerformanceRepository()
+	voteRepo = repository.NewVoteRepository()
 }
 
 func SetupTestRouter() *chi.Mux {
@@ -61,19 +78,25 @@ func SetupTestRouter() *chi.Mux {
 	slamTitle := "Poetry Night"
 	slamDescription := "Evening of poems"
 
-	slamRepo.Create(api.Slam{
+	slam1, err := slamRepo.Create(api.SlamRequest{
 		Title:       slamTitle,
 		Description: &slamDescription,
 		Public:      true,
 	})
-	slamRepo.Create(api.Slam{
+	if err != nil {
+		panic("Error when creating test slam 1")
+	}
+	slam2, err := slamRepo.Create(api.SlamRequest{
 		Title:       slamTitle + " 2",
 		Description: &slamDescription,
 		Public:      false,
 	})
+	if err != nil {
+		panic("Error when creating test slam 2")
+	}
 
-	slamPartRepo.Add(*u1.Id, 1)
-	slamPartRepo.Add(*u2.Id, 2)
+	slamPartRepo.Add(*u1.Id, *slam1.Id)
+	slamPartRepo.Add(*u2.Id, *slam2.Id)
 
 	return r
 }

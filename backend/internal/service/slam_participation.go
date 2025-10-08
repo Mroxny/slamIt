@@ -10,11 +10,11 @@ import (
 type SlamParticipationService struct {
 	usersRepo *repository.UserRepository
 	slamsRepo *repository.SlamRepository
-	repo      *repository.SlamParticipationRepository
+	partRepo  *repository.SlamParticipationRepository
 }
 
-func NewSlamParticipationService(users *repository.UserRepository, slams *repository.SlamRepository, repo *repository.SlamParticipationRepository) *SlamParticipationService {
-	return &SlamParticipationService{usersRepo: users, slamsRepo: slams, repo: repo}
+func NewSlamParticipationService(users *repository.UserRepository, slams *repository.SlamRepository, participations *repository.SlamParticipationRepository) *SlamParticipationService {
+	return &SlamParticipationService{usersRepo: users, slamsRepo: slams, partRepo: participations}
 }
 
 func (s *SlamParticipationService) Join(userID string, slamID string) error {
@@ -24,15 +24,15 @@ func (s *SlamParticipationService) Join(userID string, slamID string) error {
 	if _, err := s.slamsRepo.GetByID(slamID); err != nil {
 		return errors.New("slam not found")
 	}
-	return s.repo.Add(userID, slamID)
+	return s.partRepo.Add(userID, slamID)
 }
 
 func (s *SlamParticipationService) Leave(userID string, slamID string) error {
-	return s.repo.Remove(userID, slamID)
+	return s.partRepo.Remove(userID, slamID)
 }
 
 func (s *SlamParticipationService) GetSlamsForUser(userID string) ([]api.Slam, error) {
-	ids := s.repo.GetSlamsForUser(userID)
+	ids := s.partRepo.GetSlamsForUser(userID)
 	slams := []api.Slam{}
 	for _, id := range ids {
 		if slam, err := s.slamsRepo.GetByID(id); err == nil {
@@ -42,8 +42,12 @@ func (s *SlamParticipationService) GetSlamsForUser(userID string) ([]api.Slam, e
 	return slams, nil
 }
 
+func (s *SlamParticipationService) UpdateParticipation(slamID string, userID string, p api.ParticipationUpdateRequest) (*api.Participation, error) {
+	return s.partRepo.UpdateParticipation(slamID, userID, p)
+}
+
 func (s *SlamParticipationService) GetUsersForSlam(slamID string) ([]api.User, error) {
-	ids := s.repo.GetUsersForSlam(slamID)
+	ids := s.partRepo.GetUsersForSlam(slamID)
 	users := []api.User{}
 	for _, id := range ids {
 		if user, err := s.usersRepo.GetByID(id); err == nil {
