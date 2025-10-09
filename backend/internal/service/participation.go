@@ -7,17 +7,17 @@ import (
 	"github.com/Mroxny/slamIt/internal/repository"
 )
 
-type SlamParticipationService struct {
+type ParticipationService struct {
 	usersRepo *repository.UserRepository
 	slamsRepo *repository.SlamRepository
-	partRepo  *repository.SlamParticipationRepository
+	partRepo  *repository.ParticipationRepository
 }
 
-func NewSlamParticipationService(users *repository.UserRepository, slams *repository.SlamRepository, participations *repository.SlamParticipationRepository) *SlamParticipationService {
-	return &SlamParticipationService{usersRepo: users, slamsRepo: slams, partRepo: participations}
+func NewParticipationService(users *repository.UserRepository, slams *repository.SlamRepository, participations *repository.ParticipationRepository) *ParticipationService {
+	return &ParticipationService{usersRepo: users, slamsRepo: slams, partRepo: participations}
 }
 
-func (s *SlamParticipationService) Join(userID string, slamID string) error {
+func (s *ParticipationService) Join(userID string, slamID string) error {
 	if _, err := s.usersRepo.GetByID(userID); err != nil {
 		return errors.New("user not found")
 	}
@@ -27,11 +27,11 @@ func (s *SlamParticipationService) Join(userID string, slamID string) error {
 	return s.partRepo.Add(userID, slamID)
 }
 
-func (s *SlamParticipationService) Leave(userID string, slamID string) error {
+func (s *ParticipationService) Leave(userID string, slamID string) error {
 	return s.partRepo.Remove(userID, slamID)
 }
 
-func (s *SlamParticipationService) GetSlamsForUser(userID string) ([]api.Slam, error) {
+func (s *ParticipationService) GetSlamsForUser(userID string) ([]api.Slam, error) {
 	ids := s.partRepo.GetSlamsForUser(userID)
 	slams := []api.Slam{}
 	for _, id := range ids {
@@ -42,11 +42,11 @@ func (s *SlamParticipationService) GetSlamsForUser(userID string) ([]api.Slam, e
 	return slams, nil
 }
 
-func (s *SlamParticipationService) UpdateParticipation(slamID string, userID string, p api.ParticipationUpdateRequest) (*api.Participation, error) {
+func (s *ParticipationService) UpdateParticipation(slamID string, userID string, p api.ParticipationUpdateRequest) (*api.Participation, error) {
 	return s.partRepo.UpdateParticipation(slamID, userID, p)
 }
 
-func (s *SlamParticipationService) GetUsersForSlam(slamID string) ([]api.User, error) {
+func (s *ParticipationService) GetUsersForSlam(slamID string) ([]api.User, error) {
 	ids := s.partRepo.GetUsersForSlam(slamID)
 	users := []api.User{}
 	for _, id := range ids {

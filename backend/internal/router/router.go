@@ -11,7 +11,7 @@ import (
 
 var userRepo = repository.NewUserRepository()
 var slamRepo = repository.NewSlamRepository()
-var slamPartRepo = repository.NewSlamParticipationRepository()
+var slamPartRepo = repository.NewParticipationRepository()
 var stageRepo = repository.NewStageRepository()
 var perfRepo = repository.NewPerformanceRepository()
 var voteRepo = repository.NewVoteRepository()
@@ -21,7 +21,7 @@ func SetupV1Router() *chi.Mux {
 	userService := service.NewUserService(userRepo)
 	slamService := service.NewSlamService(slamRepo)
 	authService := service.NewAuthService(userRepo)
-	partService := service.NewSlamParticipationService(userRepo, slamRepo, slamPartRepo)
+	partService := service.NewParticipationService(userRepo, slamRepo, slamPartRepo)
 	stageService := service.NewStageService(stageRepo)
 	perfService := service.NewPerformanceService(perfRepo)
 	voteService := service.NewVoteService(voteRepo)
@@ -55,7 +55,7 @@ func SetupV1Router() *chi.Mux {
 func UseNewDb() {
 	userRepo = repository.NewUserRepository()
 	slamRepo = repository.NewSlamRepository()
-	slamPartRepo = repository.NewSlamParticipationRepository()
+	slamPartRepo = repository.NewParticipationRepository()
 	stageRepo = repository.NewStageRepository()
 	perfRepo = repository.NewPerformanceRepository()
 	voteRepo = repository.NewVoteRepository()
