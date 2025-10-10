@@ -2,8 +2,7 @@ package model
 
 import "github.com/Mroxny/slamIt/internal/api"
 
-type User struct {
+type Performance struct {
 	Model
-	api.User
-	PasswdHash string `gorm:"not null"`
+	api.Performance
 }

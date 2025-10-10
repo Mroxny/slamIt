@@ -1,8 +1,8 @@
 package model
 
+import "github.com/Mroxny/slamIt/internal/api"
+
 type Slam struct {
-	Id          int    `json:"id"`
-	Title       string `json:"title" validate:"required"`
-	Description string `json:"description"`
-	Public      bool   `json:"public"`
+	Model
+	api.Slam
 }
