@@ -612,10 +612,13 @@ components:
   schemas:
     User:
       type: object
+      required: [id, email, name]
       properties:
         id:
           type: string
           x-order: 1
+          x-oapi-codegen-extra-tags:
+            gorm: "primaryKey"
         email:
           type: string
           x-order: 2
@@ -633,11 +636,13 @@ components:
 
     Slam:
       type: object
-      required: [title, public]
+      required: [id, title, public]
       properties:
         id:
           type: string
           x-order: 1
+          x-oapi-codegen-extra-tags:
+            gorm: "primaryKey"
         title:
           type: string
           x-order: 2
@@ -649,6 +654,13 @@ components:
           x-order: 4
         public:
           type: boolean
+          x-order: 5
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+          x-oapi-codegen-extra-tags:
+            gorm: "many2many:participations"
     
     SlamRequest:
       type: object
@@ -709,10 +721,13 @@ components:
     
     Stage:
       type: object
+      required: [id, slamId, stageType]
       properties:
         id:
           type: string
           x-order: 1
+          x-oapi-codegen-extra-tags:
+            gorm: "primaryKey"
         slamId:
           type: string
           x-order: 2
@@ -736,10 +751,13 @@ components:
 
     Performance:
       type: object
+      required: [id, slamPartId, stageId]
       properties:
         id:
           type: string
           x-order: 1
+          x-oapi-codegen-extra-tags:
+            gorm: "primaryKey"
         slamPartId:
           type: string
           x-order: 2
@@ -769,9 +787,12 @@ components:
 
     Participation:
       type: object
+      required: [id, role]
       properties:
         id:
           type: string
+          x-oapi-codegen-extra-tags:
+            gorm: "primaryKey"
         role:
           $ref: '#/components/schemas/ParticipationRoleEnum'
     
@@ -792,10 +813,13 @@ components:
 
     Vote:
       type: object
+      required: [id, performanceId]
       properties:
         id:
           type: string
           x-order: 1
+          x-oapi-codegen-extra-tags:
+            gorm: "primaryKey"
         performanceId:
           type: string
           x-order: 2

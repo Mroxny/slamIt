@@ -33,8 +33,8 @@ type LoginResponse struct {
 
 // Participation defines model for Participation.
 type Participation struct {
-	Id   *string                `json:"id,omitempty"`
-	Role *ParticipationRoleEnum `json:"role,omitempty"`
+	Id   string                `gorm:"primaryKey" json:"id"`
+	Role ParticipationRoleEnum `json:"role"`
 }
 
 // ParticipationRequest defines model for ParticipationRequest.
@@ -53,9 +53,9 @@ type ParticipationUpdateRequest struct {
 
 // Performance defines model for Performance.
 type Performance struct {
-	Id                    *string `json:"id,omitempty"`
-	SlamPartId            *string `json:"slamPartId,omitempty"`
-	StageId               *string `json:"stageId,omitempty"`
+	Id                    string  `gorm:"primaryKey" json:"id"`
+	SlamPartId            string  `json:"slamPartId"`
+	StageId               string  `json:"stageId"`
 	OpponentPerformanceId *string `json:"opponentPerformanceId"`
 	Details               *string `json:"details,omitempty"`
 }
@@ -76,11 +76,12 @@ type RegisterRequest struct {
 
 // Slam defines model for Slam.
 type Slam struct {
-	Id          *string `json:"id,omitempty"`
+	Id          string  `gorm:"primaryKey" json:"id"`
 	Title       string  `json:"title"`
 	Description *string `json:"description,omitempty"`
 	Location    *string `json:"location,omitempty"`
 	Public      bool    `json:"public"`
+	Users       *[]User `gorm:"many2many:participations" json:"users,omitempty"`
 }
 
 // SlamRequest defines model for SlamRequest.
@@ -93,11 +94,11 @@ type SlamRequest struct {
 
 // Stage defines model for Stage.
 type Stage struct {
-	Id        *string        `json:"id,omitempty"`
-	SlamId    *string        `json:"slamId,omitempty"`
-	Details   *string        `json:"details,omitempty"`
-	Round     *int           `json:"round,omitempty"`
-	StageType *StageTypeEnum `json:"stageType,omitempty"`
+	Id        string        `gorm:"primaryKey" json:"id"`
+	SlamId    string        `json:"slamId"`
+	Details   *string       `json:"details,omitempty"`
+	Round     *int          `json:"round,omitempty"`
+	StageType StageTypeEnum `json:"stageType"`
 }
 
 // StageRequest defines model for StageRequest.
@@ -112,9 +113,9 @@ type StageTypeEnum string
 
 // User defines model for User.
 type User struct {
-	Id    *string `json:"id,omitempty"`
-	Email *string `json:"email,omitempty"`
-	Name  *string `json:"name,omitempty"`
+	Id    string `gorm:"primaryKey" json:"id"`
+	Email string `json:"email"`
+	Name  string `json:"name"`
 }
 
 // UserRequest defines model for UserRequest.
@@ -125,8 +126,8 @@ type UserRequest struct {
 
 // Vote defines model for Vote.
 type Vote struct {
-	Id                *string `json:"id,omitempty"`
-	PerformanceId     *string `json:"performanceId,omitempty"`
+	Id                string  `gorm:"primaryKey" json:"id"`
+	PerformanceId     string  `json:"performanceId"`
 	UserIp            *string `json:"userIp,omitempty"`
 	DeviceFingerprint *string `json:"deviceFingerprint,omitempty"`
 }
