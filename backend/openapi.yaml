@@ -522,13 +522,13 @@ paths:
             type: string
       responses:
         "200":
-          description: List of users
+          description: List of participations
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/Participation'
     
     post:
       tags: [participations]
@@ -732,11 +732,21 @@ components:
           type: string
           x-order: 2
         stageType:
-          $ref: '#/components/schemas/StageTypeEnum'
+          allOf:
+          - $ref: '#/components/schemas/StageTypeEnum'
+          x-order: 3
         round:
           type: integer
+          x-order: 4
         details:
           type: string
+          x-order: 5
+        performances:
+          type: array
+          items:
+            $ref: '#/components/schemas/Performance'
+          x-oapi-codegen-extra-tags:
+            gorm: "foreignKey:StageId"
 
     StageRequest:
       type: object
@@ -787,14 +797,34 @@ components:
 
     Participation:
       type: object
-      required: [id, role]
+      required: [id, role, performances]
       properties:
         id:
           type: string
+          x-order: 1
           x-oapi-codegen-extra-tags:
             gorm: "primaryKey"
         role:
-          $ref: '#/components/schemas/ParticipationRoleEnum'
+          allOf:
+          - $ref: '#/components/schemas/ParticipationRoleEnum'
+          x-order: 2
+        performances:
+          type: array
+          items:
+            $ref: '#/components/schemas/Performance'
+          x-order: 3
+          x-oapi-codegen-extra-tags:
+            gorm: "foreignKey:SlamPartId"
+        user:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          x-oapi-codegen-extra-tags:
+            gorm: "foreignKey:UserId;references:Id"
+        slam:
+          allOf:
+          - $ref: '#/components/schemas/Slam'
+          x-oapi-codegen-extra-tags:
+            gorm: "foreignKey:SlamId;references:Id"
     
     ParticipationRequest:
       type: object

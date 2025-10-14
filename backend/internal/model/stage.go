@@ -4,5 +4,5 @@ import "github.com/Mroxny/slamIt/internal/api"
 
 type Stage struct {
 	Model
-	api.Stage
+	api.Stage `gorm:"embedded"`
 }

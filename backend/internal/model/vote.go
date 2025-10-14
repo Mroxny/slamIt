@@ -4,5 +4,5 @@ import "github.com/Mroxny/slamIt/internal/api"
 
 type Vote struct {
 	Model
-	api.Vote
+	api.Vote `gorm:"embedded"`
 }

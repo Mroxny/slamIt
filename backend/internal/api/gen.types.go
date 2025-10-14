@@ -33,8 +33,11 @@ type LoginResponse struct {
 
 // Participation defines model for Participation.
 type Participation struct {
-	Id   string                `gorm:"primaryKey" json:"id"`
-	Role ParticipationRoleEnum `json:"role"`
+	Id           string                `gorm:"primaryKey" json:"id"`
+	Role         ParticipationRoleEnum `json:"role"`
+	Performances []Performance         `gorm:"foreignKey:SlamPartId" json:"performances"`
+	Slam         *Slam                 `gorm:"foreignKey:SlamId;references:Id" json:"slam,omitempty"`
+	User         *User                 `gorm:"foreignKey:UserId;references:Id" json:"user,omitempty"`
 }
 
 // ParticipationRequest defines model for ParticipationRequest.
@@ -94,11 +97,12 @@ type SlamRequest struct {
 
 // Stage defines model for Stage.
 type Stage struct {
-	Id        string        `gorm:"primaryKey" json:"id"`
-	SlamId    string        `json:"slamId"`
-	Details   *string       `json:"details,omitempty"`
-	Round     *int          `json:"round,omitempty"`
-	StageType StageTypeEnum `json:"stageType"`
+	Id           string         `gorm:"primaryKey" json:"id"`
+	SlamId       string         `json:"slamId"`
+	StageType    StageTypeEnum  `json:"stageType"`
+	Round        *int           `json:"round,omitempty"`
+	Details      *string        `json:"details,omitempty"`
+	Performances *[]Performance `gorm:"foreignKey:StageId" json:"performances,omitempty"`
 }
 
 // StageRequest defines model for StageRequest.
