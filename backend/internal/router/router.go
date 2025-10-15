@@ -1,30 +1,44 @@
 package router
 
 import (
+	"context"
+
 	"github.com/Mroxny/slamIt/internal/api"
 	"github.com/Mroxny/slamIt/internal/handler"
+	"github.com/Mroxny/slamIt/internal/model"
 	"github.com/Mroxny/slamIt/internal/repository"
 	"github.com/Mroxny/slamIt/internal/service"
 	"github.com/Mroxny/slamIt/internal/utils"
 	"github.com/go-chi/chi/v5"
 )
 
-var userRepo = repository.NewUserRepository()
-var slamRepo = repository.NewSlamRepository()
-var slamPartRepo = repository.NewParticipationRepository()
-var stageRepo = repository.NewStageRepository()
-var perfRepo = repository.NewPerformanceRepository()
-var voteRepo = repository.NewVoteRepository()
+type Repositories struct {
+	userRepo  *repository.UserRepository
+	slamRepo  *repository.SlamRepository
+	partRepo  *repository.ParticipationRepository
+	stageRepo *repository.StageRepository
+	perfRepo  *repository.PerformanceRepository
+	voteRepo  *repository.VoteRepository
+}
 
-func SetupV1Router() *chi.Mux {
+func SetupV1Router(localOnly bool) (*chi.Mux, *Repositories) {
+	db := repository.InitDB(localOnly)
+	repos := Repositories{
+		userRepo:  repository.NewUserRepository(db),
+		slamRepo:  repository.NewSlamRepository(db),
+		partRepo:  repository.NewParticipationRepository(db),
+		stageRepo: repository.NewStageRepository(db),
+		perfRepo:  repository.NewPerformanceRepository(db),
+		voteRepo:  repository.NewVoteRepository(db),
+	}
 
-	userService := service.NewUserService(userRepo)
-	slamService := service.NewSlamService(slamRepo)
-	authService := service.NewAuthService(userRepo)
-	partService := service.NewParticipationService(userRepo, slamRepo, slamPartRepo)
-	stageService := service.NewStageService(stageRepo)
-	perfService := service.NewPerformanceService(perfRepo)
-	voteService := service.NewVoteService(voteRepo)
+	userService := service.NewUserService(repos.userRepo)
+	slamService := service.NewSlamService(repos.slamRepo)
+	authService := service.NewAuthService(repos.userRepo)
+	partService := service.NewParticipationService(repos.partRepo)
+	stageService := service.NewStageService(repos.stageRepo)
+	perfService := service.NewPerformanceService(repos.perfRepo)
+	voteService := service.NewVoteService(repos.voteRepo)
 
 	r := chi.NewRouter()
 	server := handler.NewServer(
@@ -48,29 +62,21 @@ func SetupV1Router() *chi.Mux {
 		api.HandlerFromMux(server, apiV1)
 	})
 
-	return r
+	return r, &repos
 
-}
-
-func UseNewDb() {
-	userRepo = repository.NewUserRepository()
-	slamRepo = repository.NewSlamRepository()
-	slamPartRepo = repository.NewParticipationRepository()
-	stageRepo = repository.NewStageRepository()
-	perfRepo = repository.NewPerformanceRepository()
-	voteRepo = repository.NewVoteRepository()
 }
 
 func SetupTestRouter() *chi.Mux {
-	UseNewDb()
-	r := SetupV1Router()
-	authService := service.NewAuthService(userRepo)
+	repository.ClearLocalDB()
+	r, repos := SetupV1Router(true)
+	ctx := context.Background()
+	authService := service.NewAuthService(repos.userRepo)
 
-	u1, err := authService.Register("Bob", "bob@example.com", "P@ssw0rd")
+	u1, err := authService.Register(ctx, "Bob", "bob@example.com", "P@ssw0rd")
 	if err != nil {
 		panic("Error when creating test user 1")
 	}
-	u2, err := authService.Register("Alice", "alice@example.com", "P@ssw0rd")
+	u2, err := authService.Register(ctx, "Alice", "alice@example.com", "P@ssw0rd")
 	if err != nil {
 		panic("Error when creating test user 2")
 	}
@@ -78,25 +84,32 @@ func SetupTestRouter() *chi.Mux {
 	slamTitle := "Poetry Night"
 	slamDescription := "Evening of poems"
 
-	slam1, err := slamRepo.Create(api.SlamRequest{
-		Title:       slamTitle,
-		Description: &slamDescription,
-		Public:      true,
-	})
+	slam1 := model.Slam{
+		Slam: api.Slam{
+			Id:          "1b338aa8-74a1-43e9-8034-94f144e77c3a",
+			Title:       slamTitle,
+			Description: &slamDescription,
+			Public:      true,
+		},
+	}
+
+	slam2 := model.Slam{
+		Slam: api.Slam{
+			Id:          "85bf4f72-3cd2-46df-8d37-016442f150f7",
+			Title:       slamTitle + " 2",
+			Description: &slamDescription,
+			Public:      false,
+		},
+	}
+
+	err = repos.slamRepo.CreateWithCreatorTx(ctx, &slam1, u1.Id)
 	if err != nil {
 		panic("Error when creating test slam 1")
 	}
-	slam2, err := slamRepo.Create(api.SlamRequest{
-		Title:       slamTitle + " 2",
-		Description: &slamDescription,
-		Public:      false,
-	})
+	err = repos.slamRepo.CreateWithCreatorTx(ctx, &slam2, u2.Id)
 	if err != nil {
 		panic("Error when creating test slam 2")
 	}
-
-	slamPartRepo.Add(*u1.Id, *slam1.Id)
-	slamPartRepo.Add(*u2.Id, *slam2.Id)
 
 	return r
 }
