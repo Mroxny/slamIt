@@ -1,63 +1,105 @@
 package service
 
 import (
+	"context"
 	"errors"
 
 	"github.com/Mroxny/slamIt/internal/api"
+	"github.com/Mroxny/slamIt/internal/model"
 	"github.com/Mroxny/slamIt/internal/repository"
+	"github.com/google/uuid"
+	"github.com/jinzhu/copier"
+	"gorm.io/gorm"
 )
 
 type ParticipationService struct {
-	usersRepo *repository.UserRepository
-	slamsRepo *repository.SlamRepository
-	partRepo  *repository.ParticipationRepository
+	partRepo *repository.ParticipationRepository
 }
 
-func NewParticipationService(users *repository.UserRepository, slams *repository.SlamRepository, participations *repository.ParticipationRepository) *ParticipationService {
-	return &ParticipationService{usersRepo: users, slamsRepo: slams, partRepo: participations}
-}
-
-func (s *ParticipationService) Join(userID string, slamID string) error {
-	if _, err := s.usersRepo.GetByID(userID); err != nil {
-		return errors.New("user not found")
+func NewParticipationService(partRepo *repository.ParticipationRepository) *ParticipationService {
+	return &ParticipationService{
+		partRepo: partRepo,
 	}
-	if _, err := s.slamsRepo.GetByID(slamID); err != nil {
-		return errors.New("slam not found")
+}
+
+func (s *ParticipationService) AddUserToSlam(ctx context.Context, userID, slamID string, role api.ParticipationRoleEnum) (*api.Participation, error) {
+	_, err := s.partRepo.FindBySlamAndUser(ctx, slamID, userID)
+	if err == nil {
+		return nil, errors.New("user is already participating in this slam")
 	}
-	return s.partRepo.Add(userID, slamID)
-}
-
-func (s *ParticipationService) Leave(userID string, slamID string) error {
-	return s.partRepo.Remove(userID, slamID)
-}
-
-func (s *ParticipationService) GetSlamsForUser(userID string) ([]api.Slam, error) {
-	ids := s.partRepo.GetSlamsForUser(userID)
-	slams := []api.Slam{}
-	for _, id := range ids {
-		if slam, err := s.slamsRepo.GetByID(id); err == nil {
-			slams = append(slams, *slam)
-		}
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, err
 	}
-	return slams, nil
-}
 
-func (s *ParticipationService) UpdateParticipation(slamID string, userID string, p api.ParticipationUpdateRequest) (*api.Participation, error) {
-	return s.partRepo.UpdateParticipation(slamID, userID, p)
-}
-
-func (s *ParticipationService) GetUsersForSlam(slamID string) ([]api.User, error) {
-	ids := s.partRepo.GetUsersForSlam(slamID)
-	users := []api.User{}
-	for _, id := range ids {
-		if user, err := s.usersRepo.GetByID(id); err == nil {
-			u := api.User{
-				Id:    &user.Id,
-				Email: &user.Email,
-				Name:  &user.Name,
-			}
-			users = append(users, u)
-		}
+	participation := model.Participation{
+		UserId: userID,
+		SlamId: slamID,
+		Participation: api.Participation{
+			Id:   uuid.New().String(),
+			Role: role,
+		},
 	}
-	return users, nil
+
+	if err := s.partRepo.Create(ctx, &participation); err != nil {
+		return nil, errors.New("failed to add user to slam, check if user and slam exist")
+	}
+
+	apiPart := api.Participation{}
+	copier.Copy(&apiPart, &participation.Participation)
+	return &apiPart, nil
+}
+
+func (s *ParticipationService) RemoveUserFromSlam(ctx context.Context, userID, slamID string) error {
+	err := s.partRepo.DeleteBySlamAndUser(ctx, slamID, userID)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return errors.New("user is not participating in this slam")
+	}
+	return err
+}
+
+func (s *ParticipationService) GetUsersForSlam(ctx context.Context, slamID string) ([]api.Participation, error) {
+	modelUsers, err := s.partRepo.FindParticipatingUsersBySlamID(ctx, slamID)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, errors.New("slam not found")
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	var apiUsers []api.Participation
+	copier.Copy(&apiUsers, &modelUsers)
+	return apiUsers, nil
+}
+
+func (s *ParticipationService) GetSlamsForUser(ctx context.Context, userID string) ([]api.Participation, error) {
+	modelSlams, err := s.partRepo.FindParticipatedSlamsByUserID(ctx, userID)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, errors.New("user not found")
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	var apiSlams []api.Participation
+	copier.Copy(&apiSlams, &modelSlams)
+	return apiSlams, nil
+}
+
+func (s *ParticipationService) UpdateParticipation(ctx context.Context, slamID, userID string, req api.ParticipationUpdateRequest) (*api.Participation, error) {
+	p, err := s.partRepo.FindBySlamAndUser(ctx, slamID, userID)
+	if err != nil {
+		return nil, errors.New("participation record not found")
+	}
+
+	if err := copier.Copy(&p, &req); err != nil {
+		return nil, err
+	}
+
+	if err := s.partRepo.Update(ctx, &p); err != nil {
+		return nil, err
+	}
+
+	apiPart := api.Participation{}
+	copier.Copy(&apiPart, &p.Participation)
+	return &apiPart, nil
 }
