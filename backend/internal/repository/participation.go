@@ -1,64 +1,55 @@
 package repository
 
 import (
-	"errors"
+	"context"
 
-	"github.com/Mroxny/slamIt/internal/api"
 	"github.com/Mroxny/slamIt/internal/model"
+	"gorm.io/gorm"
 )
 
 type ParticipationRepository struct {
-	relations []model.Participation
+	*Repository[model.Participation]
 }
 
-func NewParticipationRepository() *ParticipationRepository {
+func NewParticipationRepository(db *gorm.DB) *ParticipationRepository {
 	return &ParticipationRepository{
-		relations: []model.Participation{},
+		Repository: NewRepository[model.Participation](db),
 	}
 }
 
-func (r *ParticipationRepository) Add(userId string, slamId string) error {
-	for _, rel := range r.relations {
-		if rel.UserId == userId && rel.SlamId == slamId {
-			return errors.New("user already joined this slam")
-		}
+func (r *ParticipationRepository) FindBySlamAndUser(ctx context.Context, slamID, userID string) (model.Participation, error) {
+	var p model.Participation
+	err := r.db.WithContext(ctx).Where("slam_id = ? AND user_id = ?", slamID, userID).First(&p).Error
+	return p, err
+}
+
+func (r *ParticipationRepository) DeleteBySlamAndUser(ctx context.Context, slamID, userID string) error {
+	result := r.db.WithContext(ctx).Where("slam_id = ? AND user_id = ?", slamID, userID).Delete(&model.Participation{})
+	if result.Error != nil {
+		return result.Error
 	}
-	r.relations = append(r.relations, model.Participation{
-		UserId: userId,
-		SlamId: slamId})
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
 	return nil
 }
 
-func (r *ParticipationRepository) GetSlamsForUser(userId string) []string {
-	ids := []string{}
-	for _, rel := range r.relations {
-		if rel.UserId == userId {
-			ids = append(ids, rel.SlamId)
-		}
-	}
-	return ids
+func (r *ParticipationRepository) FindParticipatingUsersBySlamID(ctx context.Context, slamID string) ([]model.Participation, error) {
+	var participations []model.Participation
+	err := r.db.WithContext(ctx).
+		Preload("User").
+		Preload("Performances").
+		Where("slam_id = ?", slamID).
+		Find(&participations).Error
+	return participations, err
 }
 
-func (r *ParticipationRepository) GetUsersForSlam(slamId string) []string {
-	ids := []string{}
-	for _, rel := range r.relations {
-		if rel.SlamId == slamId {
-			ids = append(ids, rel.UserId)
-		}
-	}
-	return ids
-}
-
-func (r *ParticipationRepository) UpdateParticipation(slamId string, userId string, p api.ParticipationUpdateRequest) (*api.Participation, error) {
-	return nil, errors.New("error updating participation")
-}
-
-func (r *ParticipationRepository) Remove(userId string, slamId string) error {
-	for i, rel := range r.relations {
-		if rel.UserId == userId && rel.SlamId == slamId {
-			r.relations = append(r.relations[:i], r.relations[i+1:]...)
-			return nil
-		}
-	}
-	return errors.New("relation not found")
+func (r *ParticipationRepository) FindParticipatedSlamsByUserID(ctx context.Context, userID string) ([]model.Participation, error) {
+	var participations []model.Participation
+	err := r.db.WithContext(ctx).
+		Preload("Slam").
+		Preload("Performances").
+		Where("user_id = ?", userID).
+		Find(&participations).Error
+	return participations, err
 }

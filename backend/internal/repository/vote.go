@@ -1,35 +1,24 @@
 package repository
 
 import (
-	"errors"
+	"context"
 
-	"github.com/Mroxny/slamIt/internal/api"
+	"github.com/Mroxny/slamIt/internal/model"
+	"gorm.io/gorm"
 )
 
 type VoteRepository struct {
-	votes []api.Vote
+	*Repository[model.Vote]
 }
 
-func NewVoteRepository() *VoteRepository {
-	return &VoteRepository{votes: []api.Vote{}}
+func NewVoteRepository(db *gorm.DB) *VoteRepository {
+	return &VoteRepository{
+		Repository: NewRepository[model.Vote](db),
+	}
 }
 
-func (r *VoteRepository) GetByPerformanceID(performanceId string) ([]api.Vote, error) {
-
-	return nil, errors.New("vote not found")
-}
-
-func (r *VoteRepository) Create(performanceId string, v api.VoteRequest) (*api.Vote, error) {
-
-	return nil, errors.New("vote not found")
-}
-
-func (r *VoteRepository) Update(voteId string, updated api.VoteRequest) (*api.Vote, error) {
-
-	return nil, errors.New("vote not found")
-}
-
-func (r *VoteRepository) Delete(voteId string) error {
-
-	return errors.New("vote not found")
+func (r *VoteRepository) FindAllByPerformanceID(ctx context.Context, performanceID string) ([]model.Vote, error) {
+	var votes []model.Vote
+	err := r.db.WithContext(ctx).Where("performance_id = ?", performanceID).Find(&votes).Error
+	return votes, err
 }

@@ -1,35 +1,24 @@
 package repository
 
 import (
-	"errors"
+	"context"
 
-	"github.com/Mroxny/slamIt/internal/api"
+	"github.com/Mroxny/slamIt/internal/model"
+	"gorm.io/gorm"
 )
 
 type StageRepository struct {
-	stages []api.Stage
+	*Repository[model.Stage]
 }
 
-func NewStageRepository() *StageRepository {
-	return &StageRepository{stages: []api.Stage{}}
+func NewStageRepository(db *gorm.DB) *StageRepository {
+	return &StageRepository{
+		Repository: NewRepository[model.Stage](db),
+	}
 }
 
-func (r *StageRepository) GetBySlamID(slamId string) ([]api.Stage, error) {
-
-	return nil, errors.New("stage not found")
-}
-
-func (r *StageRepository) Create(slamId string, s api.StageRequest) (*api.Stage, error) {
-
-	return nil, errors.New("stage not found")
-}
-
-func (r *StageRepository) Update(stageId string, updated api.StageRequest) (*api.Stage, error) {
-
-	return nil, errors.New("stage not found")
-}
-
-func (r *StageRepository) Delete(stageId string) error {
-
-	return errors.New("stage not found")
+func (r *StageRepository) FindBySlamId(ctx context.Context, slmaId string) ([]model.Stage, error) {
+	var stages []model.Stage
+	err := r.db.WithContext(ctx).Preload("Performances").Find(&stages, "slam_id = ?", slmaId).Error
+	return stages, err
 }

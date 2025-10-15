@@ -1,35 +1,24 @@
 package repository
 
 import (
-	"errors"
+	"context"
 
-	"github.com/Mroxny/slamIt/internal/api"
+	"github.com/Mroxny/slamIt/internal/model"
+	"gorm.io/gorm"
 )
 
 type PerformanceRepository struct {
-	performances []api.Performance
+	*Repository[model.Performance]
 }
 
-func NewPerformanceRepository() *PerformanceRepository {
-	return &PerformanceRepository{performances: []api.Performance{}}
+func NewPerformanceRepository(db *gorm.DB) *PerformanceRepository {
+	return &PerformanceRepository{
+		Repository: NewRepository[model.Performance](db),
+	}
 }
 
-func (r *PerformanceRepository) GetByStageID(stageId string) ([]api.Performance, error) {
-
-	return nil, errors.New("performance not found")
-}
-
-func (r *PerformanceRepository) Create(stageId string, p api.PerformanceRequest) (*api.Performance, error) {
-
-	return nil, errors.New("performance not found")
-}
-
-func (r *PerformanceRepository) Update(performanceId string, updated api.PerformanceRequest) (*api.Performance, error) {
-
-	return nil, errors.New("performance not found")
-}
-
-func (r *PerformanceRepository) Delete(performanceId string) error {
-
-	return errors.New("performance not found")
+func (r *PerformanceRepository) FindByStageId(ctx context.Context, stageId string) ([]model.Performance, error) {
+	var performances []model.Performance
+	err := r.db.WithContext(ctx).Preload("Particiaptions").Find(&performances, "stage_id = ?", stageId).Error
+	return performances, err
 }
