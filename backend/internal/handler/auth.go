@@ -13,7 +13,7 @@ func (s *Server) PostAuthRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := s.authService.Register(req.Name, req.Email, req.Password)
+	user, err := s.authService.Register(r.Context(), req.Name, req.Email, req.Password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -29,7 +29,7 @@ func (s *Server) PostAuthLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response, err := s.authService.Login(req.Email, req.Password)
+	response, err := s.authService.Login(r.Context(), req.Email, req.Password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return

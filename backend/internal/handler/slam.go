@@ -7,7 +7,7 @@ import (
 )
 
 func (s *Server) GetSlams(w http.ResponseWriter, r *http.Request) {
-	slams, err := s.slamService.GetAll()
+	slams, err := s.slamService.GetAll(r.Context())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -16,13 +16,19 @@ func (s *Server) GetSlams(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) PostSlams(w http.ResponseWriter, r *http.Request) {
+	userID, err := GetUserFromContext(r.Context())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	var slam api.SlamRequest
 	if err := ValidateJSON(r.Body, &slam); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	created, err := s.slamService.Create(slam)
+	created, err := s.slamService.Create(r.Context(), slam, userID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -31,7 +37,7 @@ func (s *Server) PostSlams(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) DeleteSlamsSlamID(w http.ResponseWriter, r *http.Request, slamID string) {
-	if err := s.slamService.Delete(slamID); err != nil {
+	if err := s.slamService.Delete(r.Context(), slamID); err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
@@ -39,7 +45,7 @@ func (s *Server) DeleteSlamsSlamID(w http.ResponseWriter, r *http.Request, slamI
 }
 
 func (s *Server) GetSlamsSlamID(w http.ResponseWriter, r *http.Request, slamID string) {
-	slam, err := s.slamService.GetByID(slamID)
+	slam, err := s.slamService.GetByID(r.Context(), slamID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
@@ -54,7 +60,7 @@ func (s *Server) PutSlamsSlamID(w http.ResponseWriter, r *http.Request, slamID s
 		return
 	}
 
-	updated, err := s.slamService.Update(slamID, slam)
+	updated, err := s.slamService.Update(r.Context(), slamID, slam)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -63,7 +69,7 @@ func (s *Server) PutSlamsSlamID(w http.ResponseWriter, r *http.Request, slamID s
 }
 
 func (s *Server) GetSlamsSlamIDStages(w http.ResponseWriter, r *http.Request, slamID string) {
-	stages, err := s.stageService.GetStages(slamID)
+	stages, err := s.stageService.GetStages(r.Context(), slamID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
@@ -78,7 +84,7 @@ func (s *Server) PostSlamsSlamIDStages(w http.ResponseWriter, r *http.Request, s
 		return
 	}
 
-	created, err := s.stageService.CreateStage(slamID, stage)
+	created, err := s.stageService.CreateStage(r.Context(), slamID, stage)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

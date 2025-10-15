@@ -7,7 +7,7 @@ import (
 )
 
 func (s *Server) GetUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := s.userService.GetAll()
+	users, err := s.userService.GetAll(r.Context())
 	if err != nil {
 		http.Error(w, "error parsing users", http.StatusInternalServerError)
 		return
@@ -16,7 +16,7 @@ func (s *Server) GetUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) DeleteUsersUserID(w http.ResponseWriter, r *http.Request, userID string) {
-	if err := s.userService.Delete(userID); err != nil {
+	if err := s.userService.Delete(r.Context(), userID); err != nil {
 		http.Error(w, "user not found", http.StatusNotFound)
 		return
 	}
@@ -24,7 +24,7 @@ func (s *Server) DeleteUsersUserID(w http.ResponseWriter, r *http.Request, userI
 }
 
 func (s *Server) GetUsersUserID(w http.ResponseWriter, r *http.Request, userID string) {
-	user, err := s.userService.GetByID(userID)
+	user, err := s.userService.GetUser(r.Context(), userID)
 	if err != nil {
 		http.Error(w, "user not found", http.StatusNotFound)
 		return
@@ -39,7 +39,7 @@ func (s *Server) PutUsersUserID(w http.ResponseWriter, r *http.Request, userID s
 		return
 	}
 
-	updated, err := s.userService.Update(userID, u)
+	updated, err := s.userService.Update(r.Context(), userID, u)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

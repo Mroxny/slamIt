@@ -7,11 +7,20 @@ import (
 )
 
 func (s *Server) DeletePerformancesPerformanceID(w http.ResponseWriter, r *http.Request, performanceID string) {
-	if err := s.perfService.DeletePerformance(performanceID); err != nil {
+	if err := s.perfService.DeletePerformance(r.Context(), performanceID); err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func (s *Server) GetPerformancesPerformanceID(w http.ResponseWriter, r *http.Request, performanceID string) {
+	perf, err := s.perfService.GetPerformance(r.Context(), performanceID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+	WriteJSON(w, http.StatusOK, perf)
 }
 
 func (s *Server) PutPerformancesPerformanceID(w http.ResponseWriter, r *http.Request, performanceID string) {
@@ -21,7 +30,7 @@ func (s *Server) PutPerformancesPerformanceID(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	updated, err := s.perfService.UpdatePerformance(performanceID, performance)
+	updated, err := s.perfService.UpdatePerformance(r.Context(), performanceID, performance)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -30,7 +39,7 @@ func (s *Server) PutPerformancesPerformanceID(w http.ResponseWriter, r *http.Req
 }
 
 func (s *Server) GetPerformancesPerformanceIDVotes(w http.ResponseWriter, r *http.Request, performanceID string) {
-	votes, err := s.voteService.GetVotes(performanceID)
+	votes, err := s.voteService.GetVotes(r.Context(), performanceID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
@@ -45,7 +54,7 @@ func (s *Server) PostPerformancesPerformanceIDVotes(w http.ResponseWriter, r *ht
 		return
 	}
 
-	created, err := s.voteService.CreateVote(performanceID, vote)
+	created, err := s.voteService.CreateVote(r.Context(), performanceID, vote)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

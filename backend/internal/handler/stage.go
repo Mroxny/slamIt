@@ -7,11 +7,20 @@ import (
 )
 
 func (s *Server) DeleteStagesStageID(w http.ResponseWriter, r *http.Request, stageID string) {
-	if err := s.stageService.DeleteStage(stageID); err != nil {
+	if err := s.stageService.DeleteStage(r.Context(), stageID); err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func (s *Server) GetStagesStageID(w http.ResponseWriter, r *http.Request, stageID string) {
+	stage, err := s.stageService.GetStage(r.Context(), stageID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+	WriteJSON(w, http.StatusOK, stage)
 }
 
 func (s *Server) PutStagesStageID(w http.ResponseWriter, r *http.Request, stageID string) {
@@ -21,7 +30,7 @@ func (s *Server) PutStagesStageID(w http.ResponseWriter, r *http.Request, stageI
 		return
 	}
 
-	updated, err := s.stageService.UpdateStage(stageID, stage)
+	updated, err := s.stageService.UpdateStage(r.Context(), stageID, stage)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -30,7 +39,7 @@ func (s *Server) PutStagesStageID(w http.ResponseWriter, r *http.Request, stageI
 }
 
 func (s *Server) GetStagesStageIDPerformances(w http.ResponseWriter, r *http.Request, stageID string) {
-	performances, err := s.perfService.GetPerformances(stageID)
+	performances, err := s.perfService.GetPerformances(r.Context(), stageID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
@@ -45,7 +54,7 @@ func (s *Server) PostStagesStageIDPerformances(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	created, err := s.perfService.CreatePerformance(stageID, performance)
+	created, err := s.perfService.CreatePerformance(r.Context(), stageID, performance)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
