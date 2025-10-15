@@ -284,6 +284,27 @@ paths:
                 $ref: '#/components/schemas/Stage'
 
   /stages/{stageID}:
+    get:
+      tags: [stages]
+      summary: Get a stage
+      parameters:
+        - name: stageID
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: A stage
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stage'
+        "404":
+          description: Stage not found
+              
     put:
       tags: [stages]
       summary: Update stage
@@ -371,6 +392,24 @@ paths:
                 $ref: '#/components/schemas/Performance'
 
   /performances/{performanceID}:
+    get:
+      tags: [performances]
+      summary: Get a performance
+      parameters:
+        - name: performanceID
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A performance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Performance'
+        "404":
+          description: Performance not found
     put:
       tags: [performances]
       summary: Update a performance

@@ -50,6 +50,9 @@ type ServerInterface interface {
 	// Delete a performance
 	// (DELETE /performances/{performanceID})
 	DeletePerformancesPerformanceID(w http.ResponseWriter, r *http.Request, performanceID string)
+	// Get a performance
+	// (GET /performances/{performanceID})
+	GetPerformancesPerformanceID(w http.ResponseWriter, r *http.Request, performanceID string)
 	// Update a performance
 	// (PUT /performances/{performanceID})
 	PutPerformancesPerformanceID(w http.ResponseWriter, r *http.Request, performanceID string)
@@ -83,6 +86,9 @@ type ServerInterface interface {
 	// Delete a stage
 	// (DELETE /stages/{stageID})
 	DeleteStagesStageID(w http.ResponseWriter, r *http.Request, stageID string)
+	// Get a stage
+	// (GET /stages/{stageID})
+	GetStagesStageID(w http.ResponseWriter, r *http.Request, stageID string)
 	// Update stage
 	// (PUT /stages/{stageID})
 	PutStagesStageID(w http.ResponseWriter, r *http.Request, stageID string)
@@ -170,6 +176,12 @@ func (_ Unimplemented) DeletePerformancesPerformanceID(w http.ResponseWriter, r 
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
+// Get a performance
+// (GET /performances/{performanceID})
+func (_ Unimplemented) GetPerformancesPerformanceID(w http.ResponseWriter, r *http.Request, performanceID string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
 // Update a performance
 // (PUT /performances/{performanceID})
 func (_ Unimplemented) PutPerformancesPerformanceID(w http.ResponseWriter, r *http.Request, performanceID string) {
@@ -233,6 +245,12 @@ func (_ Unimplemented) PostSlamsSlamIDStages(w http.ResponseWriter, r *http.Requ
 // Delete a stage
 // (DELETE /stages/{stageID})
 func (_ Unimplemented) DeleteStagesStageID(w http.ResponseWriter, r *http.Request, stageID string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Get a stage
+// (GET /stages/{stageID})
+func (_ Unimplemented) GetStagesStageID(w http.ResponseWriter, r *http.Request, stageID string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -581,6 +599,31 @@ func (siw *ServerInterfaceWrapper) DeletePerformancesPerformanceID(w http.Respon
 	handler.ServeHTTP(w, r)
 }
 
+// GetPerformancesPerformanceID operation middleware
+func (siw *ServerInterfaceWrapper) GetPerformancesPerformanceID(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "performanceID" -------------
+	var performanceID string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "performanceID", chi.URLParam(r, "performanceID"), &performanceID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "performanceID", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetPerformancesPerformanceID(w, r, performanceID)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // PutPerformancesPerformanceID operation middleware
 func (siw *ServerInterfaceWrapper) PutPerformancesPerformanceID(w http.ResponseWriter, r *http.Request) {
 
@@ -855,6 +898,37 @@ func (siw *ServerInterfaceWrapper) DeleteStagesStageID(w http.ResponseWriter, r 
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.DeleteStagesStageID(w, r, stageID)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetStagesStageID operation middleware
+func (siw *ServerInterfaceWrapper) GetStagesStageID(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "stageID" -------------
+	var stageID string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "stageID", chi.URLParam(r, "stageID"), &stageID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "stageID", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetStagesStageID(w, r, stageID)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -1208,6 +1282,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Delete(options.BaseURL+"/performances/{performanceID}", wrapper.DeletePerformancesPerformanceID)
 	})
 	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/performances/{performanceID}", wrapper.GetPerformancesPerformanceID)
+	})
+	r.Group(func(r chi.Router) {
 		r.Put(options.BaseURL+"/performances/{performanceID}", wrapper.PutPerformancesPerformanceID)
 	})
 	r.Group(func(r chi.Router) {
@@ -1239,6 +1316,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Delete(options.BaseURL+"/stages/{stageID}", wrapper.DeleteStagesStageID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/stages/{stageID}", wrapper.GetStagesStageID)
 	})
 	r.Group(func(r chi.Router) {
 		r.Put(options.BaseURL+"/stages/{stageID}", wrapper.PutStagesStageID)
