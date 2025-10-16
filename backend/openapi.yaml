@@ -390,6 +390,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Performance'
+    put:
+      tags: [stages]
+      summary: Update opponents
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: stageID
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                type: array
+                items:
+                  type: string
+      responses:
+        "201":
+          description: Vote recorded
+
 
   /performances/{performanceID}:
     get:
@@ -413,6 +436,8 @@ paths:
     put:
       tags: [performances]
       summary: Update a performance
+      security:
+        - bearerAuth: []
       parameters:
         - name: performanceID
           in: path

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/Mroxny/slamIt/internal/api"
@@ -60,4 +61,18 @@ func (s *Server) PostStagesStageIDPerformances(w http.ResponseWriter, r *http.Re
 		return
 	}
 	WriteJSON(w, http.StatusCreated, created)
+}
+
+func (s *Server) PutStagesStageIDPerformances(w http.ResponseWriter, r *http.Request, stageID string) {
+	var orderedIDs []string
+	if err := json.NewDecoder(r.Body).Decode(&orderedIDs); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err := s.perfService.UpdatePerformanceOrder(r.Context(), stageID, orderedIDs); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
 }

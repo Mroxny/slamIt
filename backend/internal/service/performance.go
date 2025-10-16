@@ -19,7 +19,7 @@ func NewPerformanceService(performances *repository.PerformanceRepository) *Perf
 }
 
 func (s *PerformanceService) GetPerformances(ctx context.Context, stageId string) ([]api.Performance, error) {
-	perfs, err := s.perfRepo.FindByStageId(ctx, stageId)
+	perfs, err := s.perfRepo.FindSortedByStageId(ctx, stageId)
 	if err != nil {
 		return nil, err
 	}
@@ -71,6 +71,10 @@ func (s *PerformanceService) UpdatePerformance(ctx context.Context, performanceI
 	apiPerf := api.Performance{}
 	copier.Copy(&apiPerf, &modelPerf)
 	return &apiPerf, nil
+}
+
+func (s *PerformanceService) UpdatePerformanceOrder(ctx context.Context, stageId string, orderedIDs []string) error {
+	return s.perfRepo.UpdateOrderTx(ctx, stageId, orderedIDs)
 }
 
 func (s *PerformanceService) DeletePerformance(ctx context.Context, performanceId string) error {

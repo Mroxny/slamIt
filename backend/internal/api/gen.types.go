@@ -146,6 +146,9 @@ type VoteRequest struct {
 	DeviceFingerprint string `json:"deviceFingerprint"`
 }
 
+// PutStagesStageIDPerformancesJSONBody defines parameters for PutStagesStageIDPerformances.
+type PutStagesStageIDPerformancesJSONBody = []string
+
 // PostAuthLoginJSONRequestBody defines body for PostAuthLogin for application/json ContentType.
 type PostAuthLoginJSONRequestBody = LoginRequest
 
@@ -178,6 +181,9 @@ type PutStagesStageIDJSONRequestBody = StageRequest
 
 // PostStagesStageIDPerformancesJSONRequestBody defines body for PostStagesStageIDPerformances for application/json ContentType.
 type PostStagesStageIDPerformancesJSONRequestBody = PerformanceRequest
+
+// PutStagesStageIDPerformancesJSONRequestBody defines body for PutStagesStageIDPerformances for application/json ContentType.
+type PutStagesStageIDPerformancesJSONRequestBody = PutStagesStageIDPerformancesJSONBody
 
 // PutUsersUserIDJSONRequestBody defines body for PutUsersUserID for application/json ContentType.
 type PutUsersUserIDJSONRequestBody = UserRequest

@@ -98,6 +98,9 @@ type ServerInterface interface {
 	// Add a performance to a stage
 	// (POST /stages/{stageID}/performances)
 	PostStagesStageIDPerformances(w http.ResponseWriter, r *http.Request, stageID string)
+	// Update opponents
+	// (PUT /stages/{stageID}/performances)
+	PutStagesStageIDPerformances(w http.ResponseWriter, r *http.Request, stageID string)
 	// Get all users
 	// (GET /users)
 	GetUsers(w http.ResponseWriter, r *http.Request)
@@ -269,6 +272,12 @@ func (_ Unimplemented) GetStagesStageIDPerformances(w http.ResponseWriter, r *ht
 // Add a performance to a stage
 // (POST /stages/{stageID}/performances)
 func (_ Unimplemented) PostStagesStageIDPerformances(w http.ResponseWriter, r *http.Request, stageID string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Update opponents
+// (PUT /stages/{stageID}/performances)
+func (_ Unimplemented) PutStagesStageIDPerformances(w http.ResponseWriter, r *http.Request, stageID string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -637,6 +646,12 @@ func (siw *ServerInterfaceWrapper) PutPerformancesPerformanceID(w http.ResponseW
 		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "performanceID", Err: err})
 		return
 	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.PutPerformancesPerformanceID(w, r, performanceID)
@@ -1025,6 +1040,37 @@ func (siw *ServerInterfaceWrapper) PostStagesStageIDPerformances(w http.Response
 	handler.ServeHTTP(w, r)
 }
 
+// PutStagesStageIDPerformances operation middleware
+func (siw *ServerInterfaceWrapper) PutStagesStageIDPerformances(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "stageID" -------------
+	var stageID string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "stageID", chi.URLParam(r, "stageID"), &stageID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "stageID", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PutStagesStageIDPerformances(w, r, stageID)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // GetUsers operation middleware
 func (siw *ServerInterfaceWrapper) GetUsers(w http.ResponseWriter, r *http.Request) {
 
@@ -1328,6 +1374,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/stages/{stageID}/performances", wrapper.PostStagesStageIDPerformances)
+	})
+	r.Group(func(r chi.Router) {
+		r.Put(options.BaseURL+"/stages/{stageID}/performances", wrapper.PutStagesStageIDPerformances)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/users", wrapper.GetUsers)
