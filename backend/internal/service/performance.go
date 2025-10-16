@@ -32,7 +32,7 @@ func (s *PerformanceService) GetPerformances(ctx context.Context, stageId string
 }
 
 func (s *PerformanceService) GetPerformance(ctx context.Context, performanceId string) (*api.Performance, error) {
-	perf, err := s.perfRepo.FindByStageId(ctx, performanceId)
+	perf, err := s.perfRepo.FindByID(ctx, performanceId)
 	if err != nil {
 		return nil, err
 	}

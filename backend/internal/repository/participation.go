@@ -38,7 +38,7 @@ func (r *ParticipationRepository) FindParticipatingUsersBySlamID(ctx context.Con
 	var participations []model.Participation
 	err := r.db.WithContext(ctx).
 		Preload("User").
-		Preload("Performances").
+		Preload("Stages").
 		Where("slam_id = ?", slamID).
 		Find(&participations).Error
 	return participations, err
@@ -48,7 +48,7 @@ func (r *ParticipationRepository) FindParticipatedSlamsByUserID(ctx context.Cont
 	var participations []model.Participation
 	err := r.db.WithContext(ctx).
 		Preload("Slam").
-		Preload("Performances").
+		Preload("Stages").
 		Where("user_id = ?", userID).
 		Find(&participations).Error
 	return participations, err

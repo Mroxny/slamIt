@@ -33,11 +33,13 @@ type LoginResponse struct {
 
 // Participation defines model for Participation.
 type Participation struct {
-	Id           string                `gorm:"primaryKey" json:"id"`
-	Role         ParticipationRoleEnum `json:"role"`
-	Performances []Performance         `gorm:"foreignKey:SlamPartId" json:"performances"`
-	Slam         *Slam                 `gorm:"foreignKey:SlamId;references:Id" json:"slam,omitempty"`
-	User         *User                 `gorm:"foreignKey:UserId;references:Id" json:"user,omitempty"`
+	Id     string                `gorm:"primaryKey" json:"id"`
+	Role   ParticipationRoleEnum `json:"role"`
+	Slam   *Slam                 `gorm:"foreignKey:SlamId;references:Id" json:"slam,omitempty"`
+	SlamId *string               `json:"slamId,omitempty"`
+	Stages *[]Stage              `gorm:"many2many:performances" json:"stages,omitempty"`
+	User   *User                 `gorm:"foreignKey:UserId;references:Id" json:"user,omitempty"`
+	UserId *string               `json:"userId,omitempty"`
 }
 
 // ParticipationRequest defines model for ParticipationRequest.
@@ -56,16 +58,18 @@ type ParticipationUpdateRequest struct {
 
 // Performance defines model for Performance.
 type Performance struct {
-	Id                    string  `gorm:"primaryKey" json:"id"`
-	SlamPartId            string  `json:"slamPartId"`
-	StageId               string  `json:"stageId"`
-	OpponentPerformanceId *string `json:"opponentPerformanceId"`
-	Details               *string `json:"details,omitempty"`
+	Id                    string         `gorm:"primaryKey" json:"id"`
+	Participation         *Participation `gorm:"foreignKey:ParticipationId;references:Id" json:"participation,omitempty"`
+	ParticipationId       string         `json:"participationId"`
+	Stage                 *Stage         `gorm:"foreignKey:StageId;references:Id" json:"stage,omitempty"`
+	StageId               string         `json:"stageId"`
+	OpponentPerformanceId *string        `json:"opponentPerformanceId"`
+	Details               *string        `json:"details,omitempty"`
 }
 
 // PerformanceRequest defines model for PerformanceRequest.
 type PerformanceRequest struct {
-	SlamPartId            string  `json:"slamPartId"`
+	ParticipationId       string  `json:"participationId"`
 	OpponentPerformanceId *string `json:"opponentPerformanceId"`
 	Details               string  `json:"details"`
 }
@@ -79,12 +83,13 @@ type RegisterRequest struct {
 
 // Slam defines model for Slam.
 type Slam struct {
-	Id          string  `gorm:"primaryKey" json:"id"`
-	Title       string  `json:"title"`
-	Description *string `json:"description,omitempty"`
-	Location    *string `json:"location,omitempty"`
-	Public      bool    `json:"public"`
-	Users       *[]User `gorm:"many2many:participations" json:"users,omitempty"`
+	Id          string   `gorm:"primaryKey" json:"id"`
+	Title       string   `json:"title"`
+	Description *string  `json:"description,omitempty"`
+	Location    *string  `json:"location,omitempty"`
+	Public      bool     `json:"public"`
+	Stages      *[]Stage `gorm:"foreignKey:SlamId" json:"stages,omitempty"`
+	Users       *[]User  `gorm:"many2many:participations" json:"users,omitempty"`
 }
 
 // SlamRequest defines model for SlamRequest.
@@ -97,12 +102,12 @@ type SlamRequest struct {
 
 // Stage defines model for Stage.
 type Stage struct {
-	Id           string         `gorm:"primaryKey" json:"id"`
-	SlamId       string         `json:"slamId"`
-	StageType    StageTypeEnum  `json:"stageType"`
-	Round        *int           `json:"round,omitempty"`
-	Details      *string        `json:"details,omitempty"`
-	Performances *[]Performance `gorm:"foreignKey:StageId" json:"performances,omitempty"`
+	Id             string           `gorm:"primaryKey" json:"id"`
+	SlamId         string           `json:"slamId"`
+	StageType      StageTypeEnum    `json:"stageType"`
+	Round          *int             `json:"round,omitempty"`
+	Details        *string          `json:"details,omitempty"`
+	Participations *[]Participation `gorm:"many2many:performances" json:"participations,omitempty"`
 }
 
 // StageRequest defines model for StageRequest.

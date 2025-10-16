@@ -700,6 +700,12 @@ components:
             $ref: '#/components/schemas/User'
           x-oapi-codegen-extra-tags:
             gorm: "many2many:participations"
+        stages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Stage'
+          x-oapi-codegen-extra-tags:
+            gorm: "foreignKey:SlamId"
     
     SlamRequest:
       type: object
@@ -780,12 +786,12 @@ components:
         details:
           type: string
           x-order: 5
-        performances:
+        participations:
           type: array
           items:
-            $ref: '#/components/schemas/Performance'
+            $ref: '#/components/schemas/Participation'
           x-oapi-codegen-extra-tags:
-            gorm: "foreignKey:StageId"
+            gorm: "many2many:performances"
 
     StageRequest:
       type: object
@@ -800,19 +806,31 @@ components:
 
     Performance:
       type: object
-      required: [id, slamPartId, stageId]
+      required: [id, participationId, stageId]
       properties:
         id:
           type: string
           x-order: 1
           x-oapi-codegen-extra-tags:
             gorm: "primaryKey"
-        slamPartId:
+        participationId:
           type: string
           x-order: 2
         stageId:
           type: string
           x-order: 3
+        participation:
+          allOf:
+          - $ref: '#/components/schemas/Participation'
+          x-order: 2
+          x-oapi-codegen-extra-tags:
+            gorm: "foreignKey:ParticipationId;references:Id"
+        stage:
+          allOf:
+          - $ref: '#/components/schemas/Stage'
+          x-order: 3
+          x-oapi-codegen-extra-tags:
+            gorm: "foreignKey:StageId;references:Id"
         opponentPerformanceId:
           type: string
           x-order: 4
@@ -822,9 +840,9 @@ components:
 
     PerformanceRequest:
       type: object
-      required: [slamPartId, details]
+      required: [participationId, details]
       properties:
-        slamPartId:
+        participationId:
           type: string
           x-order: 1
         opponentPerformanceId:
@@ -847,13 +865,10 @@ components:
           allOf:
           - $ref: '#/components/schemas/ParticipationRoleEnum'
           x-order: 2
-        performances:
-          type: array
-          items:
-            $ref: '#/components/schemas/Performance'
-          x-order: 3
-          x-oapi-codegen-extra-tags:
-            gorm: "foreignKey:SlamPartId"
+        userId:
+          type: string
+        slamId:
+          type: string
         user:
           allOf:
           - $ref: '#/components/schemas/User'
@@ -864,6 +879,12 @@ components:
           - $ref: '#/components/schemas/Slam'
           x-oapi-codegen-extra-tags:
             gorm: "foreignKey:SlamId;references:Id"
+        stages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Stage'
+          x-oapi-codegen-extra-tags:
+            gorm: "many2many:performances"
     
     ParticipationRequest:
       type: object

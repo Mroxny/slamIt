@@ -32,11 +32,12 @@ func (s *ParticipationService) AddUserToSlam(ctx context.Context, userID, slamID
 	}
 
 	participation := model.Participation{
-		UserId: userID,
-		SlamId: slamID,
+
 		Participation: api.Participation{
-			Id:   uuid.New().String(),
-			Role: role,
+			Id:     uuid.New().String(),
+			Role:   role,
+			UserId: &userID,
+			SlamId: &slamID,
 		},
 	}
 

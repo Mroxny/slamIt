@@ -19,6 +19,6 @@ func NewStageRepository(db *gorm.DB) *StageRepository {
 
 func (r *StageRepository) FindBySlamId(ctx context.Context, slmaId string) ([]model.Stage, error) {
 	var stages []model.Stage
-	err := r.db.WithContext(ctx).Preload("Performances").Find(&stages, "slam_id = ?", slmaId).Error
+	err := r.db.WithContext(ctx).Preload("Participations").Find(&stages, "slam_id = ?", slmaId).Error
 	return stages, err
 }

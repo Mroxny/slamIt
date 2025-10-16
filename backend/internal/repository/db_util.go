@@ -33,9 +33,9 @@ func InitDB(localOnly bool) *gorm.DB {
 		&model.User{},
 		&model.Slam{},
 		&model.Stage{},
+		&model.Participation{},
 		&model.Performance{},
 		&model.Vote{},
-		&model.Participation{},
 	); err != nil {
 		log.Fatal("failed to migrate:", err)
 	}

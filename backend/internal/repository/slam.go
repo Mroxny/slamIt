@@ -30,6 +30,7 @@ func (r *SlamRepository) FindByID(ctx context.Context, id string) (*model.Slam, 
 	var slam model.Slam
 	err := r.db.WithContext(ctx).
 		Preload("Users").
+		Preload("Stages").
 		First(&slam, "id = ?", id).Error
 	return &slam, err
 }
@@ -39,6 +40,7 @@ func (r *SlamRepository) FindPublicByID(ctx context.Context, id string) (*model.
 	err := r.db.WithContext(ctx).
 		Where("public = true").
 		Preload("Users").
+		Preload("Stages").
 		First(&slam, "id = ?", id).Error
 	return &slam, err
 }
@@ -52,10 +54,11 @@ func (r *SlamRepository) CreateWithCreatorTx(ctx context.Context, slam *model.Sl
 
 		participation := model.Participation{
 			Participation: api.Participation{
-				Id:   uuid.New().String(),
-				Role: api.Creator},
-			UserId: userId,
-			SlamId: slam.Id,
+				Id:     uuid.New().String(),
+				Role:   api.Creator,
+				UserId: &userId,
+				SlamId: &slam.Id,
+			},
 		}
 
 		if err := tx.Create(&participation).Error; err != nil {
