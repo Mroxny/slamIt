@@ -15,6 +15,21 @@ func (s *Server) GetUsers(w http.ResponseWriter, r *http.Request) {
 	WriteJSON(w, http.StatusOK, users)
 }
 
+func (s *Server) PostUsers(w http.ResponseWriter, r *http.Request) {
+	var user api.UserRequest
+	if err := ValidateJSON(r.Body, &user); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	created, err := s.userService.CreateTmpUser(r.Context(), user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	WriteJSON(w, http.StatusCreated, created)
+}
+
 func (s *Server) DeleteUsersUserID(w http.ResponseWriter, r *http.Request, userID string) {
 	if err := s.userService.Delete(r.Context(), userID); err != nil {
 		http.Error(w, "user not found", http.StatusNotFound)

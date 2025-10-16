@@ -122,9 +122,10 @@ type StageTypeEnum string
 
 // User defines model for User.
 type User struct {
-	Id    string `gorm:"primaryKey" json:"id"`
-	Email string `json:"email"`
-	Name  string `json:"name"`
+	Id      string `gorm:"primaryKey" json:"id"`
+	Email   string `json:"email"`
+	Name    string `json:"name"`
+	TmpUser *bool  `gorm:"default:false" json:"tmpUser,omitempty"`
 }
 
 // UserRequest defines model for UserRequest.
@@ -184,6 +185,9 @@ type PostStagesStageIDPerformancesJSONRequestBody = PerformanceRequest
 
 // PutStagesStageIDPerformancesJSONRequestBody defines body for PutStagesStageIDPerformances for application/json ContentType.
 type PutStagesStageIDPerformancesJSONRequestBody = PutStagesStageIDPerformancesJSONBody
+
+// PostUsersJSONRequestBody defines body for PostUsers for application/json ContentType.
+type PostUsersJSONRequestBody = UserRequest
 
 // PutUsersUserIDJSONRequestBody defines body for PutUsersUserID for application/json ContentType.
 type PutUsersUserIDJSONRequestBody = UserRequest

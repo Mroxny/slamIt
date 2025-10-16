@@ -83,6 +83,24 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
+    post:
+      tags: [users]
+      summary: Add a new temporary user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        "201":
+          description: Temporary user created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "400":
+          description: Invalid input
 
   /users/{userID}:
     get:
@@ -688,6 +706,10 @@ components:
           x-order: 2
         name:
           type: string
+        tmpUser:
+          type: boolean
+          x-oapi-codegen-extra-tags:
+            gorm: "default:false"
   
     UserRequest:
       type: object

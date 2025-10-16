@@ -6,6 +6,7 @@ import (
 	"github.com/Mroxny/slamIt/internal/api"
 	"github.com/Mroxny/slamIt/internal/model"
 	"github.com/Mroxny/slamIt/internal/repository"
+	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 )
 
@@ -40,6 +41,22 @@ func (s *UserService) GetUser(ctx context.Context, id string) (*api.User, error)
 	if err = copier.Copy(&apiUser, &user); err != nil {
 		return nil, err
 	}
+	return &apiUser, nil
+}
+
+func (s *UserService) CreateTmpUser(ctx context.Context, u api.UserRequest) (*api.User, error) {
+	modelUser := model.User{}
+	copier.Copy(&modelUser, &u)
+	modelUser.Id = uuid.New().String()
+	val := true
+	modelUser.TmpUser = &val
+
+	if err := s.userRepo.Create(ctx, &modelUser); err != nil {
+		return nil, err
+	}
+
+	apiUser := api.User{}
+	copier.Copy(&apiUser, &modelUser)
 	return &apiUser, nil
 }
 

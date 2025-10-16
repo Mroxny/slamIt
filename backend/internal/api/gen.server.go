@@ -104,6 +104,9 @@ type ServerInterface interface {
 	// Get all users
 	// (GET /users)
 	GetUsers(w http.ResponseWriter, r *http.Request)
+	// Add a new temporary user
+	// (POST /users)
+	PostUsers(w http.ResponseWriter, r *http.Request)
 	// Delete a user
 	// (DELETE /users/{userID})
 	DeleteUsersUserID(w http.ResponseWriter, r *http.Request, userID string)
@@ -284,6 +287,12 @@ func (_ Unimplemented) PutStagesStageIDPerformances(w http.ResponseWriter, r *ht
 // Get all users
 // (GET /users)
 func (_ Unimplemented) GetUsers(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Add a new temporary user
+// (POST /users)
+func (_ Unimplemented) PostUsers(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -1091,6 +1100,20 @@ func (siw *ServerInterfaceWrapper) GetUsers(w http.ResponseWriter, r *http.Reque
 	handler.ServeHTTP(w, r)
 }
 
+// PostUsers operation middleware
+func (siw *ServerInterfaceWrapper) PostUsers(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostUsers(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // DeleteUsersUserID operation middleware
 func (siw *ServerInterfaceWrapper) DeleteUsersUserID(w http.ResponseWriter, r *http.Request) {
 
@@ -1380,6 +1403,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/users", wrapper.GetUsers)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/users", wrapper.PostUsers)
 	})
 	r.Group(func(r chi.Router) {
 		r.Delete(options.BaseURL+"/users/{userID}", wrapper.DeleteUsersUserID)
