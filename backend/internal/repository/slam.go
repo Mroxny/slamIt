@@ -56,8 +56,8 @@ func (r *SlamRepository) CreateWithCreatorTx(ctx context.Context, slam *model.Sl
 			Participation: api.Participation{
 				Id:     uuid.New().String(),
 				Role:   api.Creator,
-				UserId: &userId,
-				SlamId: &slam.Id,
+				UserId: userId,
+				SlamId: slam.Id,
 			},
 		}
 

@@ -427,6 +427,7 @@ paths:
                 type: array
                 items:
                   type: string
+                  format: uuid
       responses:
         "201":
           description: Vote recorded
@@ -698,7 +699,9 @@ components:
       properties:
         id:
           type: string
+          format: uuid
           x-order: 1
+          x-go-type: string
           x-oapi-codegen-extra-tags:
             gorm: "primaryKey"
         email:
@@ -726,7 +729,9 @@ components:
       properties:
         id:
           type: string
+          format: uuid
           x-order: 1
+          x-go-type: string
           x-oapi-codegen-extra-tags:
             gorm: "primaryKey"
         title:
@@ -806,7 +811,9 @@ components:
       properties:
         userId:
           type: string
+          format: uuid
           x-order: 1
+          x-go-type: string
         token:
           type: string
           x-order: 2
@@ -817,12 +824,16 @@ components:
       properties:
         id:
           type: string
+          format: uuid
           x-order: 1
+          x-go-type: string
           x-oapi-codegen-extra-tags:
             gorm: "primaryKey"
         slamId:
           type: string
+          format: uuid
           x-order: 2
+          x-go-type: string
         stageType:
           allOf:
           - $ref: '#/components/schemas/StageTypeEnum'
@@ -846,8 +857,10 @@ components:
       properties:
         stageType:
           $ref: '#/components/schemas/StageTypeEnum'
+          x-order: 1
         round:
           type: integer
+          x-order: 2
         details:
           type: string
 
@@ -857,33 +870,41 @@ components:
       properties:
         id:
           type: string
+          format: uuid
           x-order: 1
+          x-go-type: string
           x-oapi-codegen-extra-tags:
             gorm: "primaryKey"
         participationId:
           type: string
+          format: uuid
           x-order: 2
+          x-go-type: string
         stageId:
           type: string
+          format: uuid
           x-order: 3
+          x-go-type: string
+        opponentPerformanceId:
+          type: string
+          format: uuid
+          x-order: 4
+          x-go-type: string
+          nullable: true
+        details:
+          type: string
+          x-order: 5
         participation:
           allOf:
           - $ref: '#/components/schemas/Participation'
-          x-order: 2
           x-oapi-codegen-extra-tags:
             gorm: "foreignKey:ParticipationId;references:Id"
         stage:
           allOf:
           - $ref: '#/components/schemas/Stage'
-          x-order: 3
           x-oapi-codegen-extra-tags:
             gorm: "foreignKey:StageId;references:Id"
-        opponentPerformanceId:
-          type: string
-          x-order: 4
-          nullable: true
-        details:
-          type: string
+        
 
     PerformanceRequest:
       type: object
@@ -891,9 +912,13 @@ components:
       properties:
         participationId:
           type: string
+          format: uuid
           x-order: 1
+          x-go-type: string
         opponentPerformanceId:
           type: string
+          format: uuid
+          x-go-type: string
           nullable: true
           x-order: 2
         details:
@@ -901,11 +926,13 @@ components:
 
     Participation:
       type: object
-      required: [id, role, performances]
+      required: [id, role, userId, slamId]
       properties:
         id:
           type: string
+          format: uuid
           x-order: 1
+          x-go-type: string
           x-oapi-codegen-extra-tags:
             gorm: "primaryKey"
         role:
@@ -914,8 +941,14 @@ components:
           x-order: 2
         userId:
           type: string
+          format: uuid
+          x-order: 3
+          x-go-type: string
         slamId:
           type: string
+          format: uuid
+          x-order: 4
+          x-go-type: string
         user:
           allOf:
           - $ref: '#/components/schemas/User'
@@ -938,7 +971,9 @@ components:
       properties:
         userId:
           type: string
+          format: uuid
           x-order: 1
+          x-go-type: string
         role:
           $ref: '#/components/schemas/ParticipationRoleEnum'
           
@@ -954,15 +989,19 @@ components:
       properties:
         id:
           type: string
+          format: uuid
           x-order: 1
+          x-go-type: string
           x-oapi-codegen-extra-tags:
             gorm: "primaryKey"
         performanceId:
           type: string
+          format: uuid
           x-order: 2
+          x-go-type: string
         userIp:
           type: string
-          x-order: 2
+          x-order: 3
         deviceFingerprint:
           type: string
 
