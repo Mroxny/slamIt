@@ -162,7 +162,7 @@ type PostParticipationsSlamsSlamIDUsersJSONRequestBody = ParticipationRequest
 type PutParticipationsSlamsSlamIDUsersUserIDJSONRequestBody = ParticipationUpdateRequest
 
 // PutPerformancesPerformanceIDJSONRequestBody defines body for PutPerformancesPerformanceID for application/json ContentType.
-type PutPerformancesPerformanceIDJSONRequestBody = VoteRequest
+type PutPerformancesPerformanceIDJSONRequestBody = PerformanceRequest
 
 // PostPerformancesPerformanceIDVotesJSONRequestBody defines body for PostPerformancesPerformanceIDVotes for application/json ContentType.
 type PostPerformancesPerformanceIDVotesJSONRequestBody = VoteRequest

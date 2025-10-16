@@ -449,14 +449,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/VoteRequest'
+              $ref: '#/components/schemas/PerformanceRequest'
       responses:
         "201":
           description: Vote recorded
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Vote'
+                $ref: '#/components/schemas/Performance'
     delete:
       tags: [performances]
       summary: Delete a performance
