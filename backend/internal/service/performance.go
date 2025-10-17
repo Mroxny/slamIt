@@ -2,12 +2,14 @@ package service
 
 import (
 	"context"
+	"errors"
 
 	"github.com/Mroxny/slamIt/internal/api"
 	"github.com/Mroxny/slamIt/internal/model"
 	"github.com/Mroxny/slamIt/internal/repository"
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
+	"gorm.io/gorm"
 )
 
 type PerformanceService struct {
@@ -45,6 +47,14 @@ func (s *PerformanceService) GetPerformance(ctx context.Context, performanceId s
 }
 
 func (s *PerformanceService) CreatePerformance(ctx context.Context, stageId string, p api.PerformanceRequest) (*api.Performance, error) {
+	_, err := s.perfRepo.FindByStageAndParticipation(ctx, stageId, p.ParticipationId)
+	if err == nil {
+		return nil, errors.New("user is already performing in this stage")
+	}
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, err
+	}
+
 	modelPerf := model.Performance{}
 	copier.Copy(&modelPerf, &p)
 	modelPerf.Id = uuid.New().String()

@@ -22,3 +22,12 @@ func (r *StageRepository) FindBySlamId(ctx context.Context, slmaId string) ([]mo
 	err := r.db.WithContext(ctx).Preload("Participations").Find(&stages, "slam_id = ?", slmaId).Error
 	return stages, err
 }
+
+func (r *StageRepository) FindByID(ctx context.Context, id string) (*model.Stage, error) {
+	var stage model.Stage
+	err := r.db.WithContext(ctx).
+		Preload("Participations").
+		Preload("Participations.User").
+		First(&stage, "id = ?", id).Error
+	return &stage, err
+}

@@ -96,7 +96,7 @@ func (s *ParticipationService) UpdateParticipation(ctx context.Context, slamID, 
 		return nil, err
 	}
 
-	if err := s.partRepo.Update(ctx, &p); err != nil {
+	if err := s.partRepo.Update(ctx, p); err != nil {
 		return nil, err
 	}
 

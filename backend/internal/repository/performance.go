@@ -23,6 +23,12 @@ func (r *PerformanceRepository) FindByStageId(ctx context.Context, stageId strin
 	return performances, err
 }
 
+func (r *PerformanceRepository) FindByStageAndParticipation(ctx context.Context, stageId, participationId string) (*model.Performance, error) {
+	var p model.Performance
+	err := r.db.WithContext(ctx).Where("stage_id = ? AND participation_id = ?", stageId, participationId).First(&p).Error
+	return &p, err
+}
+
 func (r *PerformanceRepository) FindByID(ctx context.Context, performanceId string) (*model.Performance, error) {
 	var perf model.Performance
 	err := r.db.WithContext(ctx).
@@ -35,7 +41,7 @@ func (r *PerformanceRepository) FindByID(ctx context.Context, performanceId stri
 // based on the linked-list order defined by OpponentPerformanceId.
 func (r *PerformanceRepository) FindSortedByStageId(ctx context.Context, stageID string) ([]model.Performance, error) {
 	var allPerformances []model.Performance
-	if err := r.db.WithContext(ctx).Where("stage_id = ?", stageID).Find(&allPerformances).Error; err != nil {
+	if err := r.db.WithContext(ctx).Preload("Participation").Preload("Participation.User").Where("stage_id = ?", stageID).Find(&allPerformances).Error; err != nil {
 		return nil, err
 	}
 

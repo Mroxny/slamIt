@@ -17,10 +17,10 @@ func NewParticipationRepository(db *gorm.DB) *ParticipationRepository {
 	}
 }
 
-func (r *ParticipationRepository) FindBySlamAndUser(ctx context.Context, slamID, userID string) (model.Participation, error) {
+func (r *ParticipationRepository) FindBySlamAndUser(ctx context.Context, slamID, userID string) (*model.Participation, error) {
 	var p model.Participation
 	err := r.db.WithContext(ctx).Where("slam_id = ? AND user_id = ?", slamID, userID).First(&p).Error
-	return p, err
+	return &p, err
 }
 
 func (r *ParticipationRepository) DeleteBySlamAndUser(ctx context.Context, slamID, userID string) error {
