@@ -58,11 +58,11 @@ func GetConfig() *Config {
 			// 	Level: os.Getenv("LOG_LEVEL"),
 			// },
 			DB: DbConfig{
-				Username:   envFile["SERVER_PORT"],
-				Password:   envFile["SERVER_PORT"],
-				URL:        envFile["SERVER_PORT"],
-				Port:       envFile["SERVER_PORT"],
-				SQLitePath: envFile["SQLITE_PATH"],
+				Username:   envFile["PG_USERNAME"],
+				Password:   envFile["PG_PASSWD"],
+				URL:        envFile["PG_URL"],
+				Port:       envFile["PG_PORT"],
+				SQLitePath: path.Join(RoothPath, envFile["SQLITE_PATH"]),
 			},
 			JWT: JwtConfig{
 				Key: envFile["JWT_KEY"],
