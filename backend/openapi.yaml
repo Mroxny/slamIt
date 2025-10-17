@@ -86,6 +86,8 @@ paths:
     post:
       tags: [users]
       summary: Add a new temporary user
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
