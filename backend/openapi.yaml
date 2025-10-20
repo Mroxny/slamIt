@@ -313,8 +313,6 @@ paths:
           required: true
           schema:
             type: string
-      security:
-        - bearerAuth: []
       responses:
         "200":
           description: A stage
@@ -858,7 +856,8 @@ components:
       required: [stageType]
       properties:
         stageType:
-          $ref: '#/components/schemas/StageTypeEnum'
+          allOf:
+          - $ref: '#/components/schemas/StageTypeEnum'
           x-order: 1
         round:
           type: integer

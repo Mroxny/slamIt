@@ -945,12 +945,6 @@ func (siw *ServerInterfaceWrapper) GetStagesStageID(w http.ResponseWriter, r *ht
 		return
 	}
 
-	ctx := r.Context()
-
-	ctx = context.WithValue(ctx, BearerAuthScopes, []string{})
-
-	r = r.WithContext(ctx)
-
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetStagesStageID(w, r, stageID)
 	}))
