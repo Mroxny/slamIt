@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/Mroxny/slamIt/internal/model"
 	"gorm.io/gorm"
@@ -18,6 +19,14 @@ func NewPerformanceRepository(db *gorm.DB) *PerformanceRepository {
 }
 
 func (r *PerformanceRepository) FindByStageId(ctx context.Context, stageId string) ([]model.Performance, error) {
+	var stageCheck model.Stage
+	if err := r.db.WithContext(ctx).Select("id").First(&stageCheck, "id = ?", stageId).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("stage not found")
+		}
+		return nil, err
+	}
+
 	var performances []model.Performance
 	err := r.db.WithContext(ctx).Find(&performances, "stage_id = ?", stageId).Error
 	return performances, err
@@ -39,9 +48,17 @@ func (r *PerformanceRepository) FindByID(ctx context.Context, performanceId stri
 
 // FindAndSortByStageID retrieves all performances for a stage and sorts them
 // based on the linked-list order defined by OpponentPerformanceId.
-func (r *PerformanceRepository) FindSortedByStageId(ctx context.Context, stageID string) ([]model.Performance, error) {
+func (r *PerformanceRepository) FindSortedByStageId(ctx context.Context, stageId string) ([]model.Performance, error) {
+	var stageCheck model.Stage
+	if err := r.db.WithContext(ctx).Select("id").First(&stageCheck, "id = ?", stageId).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("stage not found")
+		}
+		return nil, err
+	}
+
 	var allPerformances []model.Performance
-	if err := r.db.WithContext(ctx).Preload("Participation").Preload("Participation.User").Where("stage_id = ?", stageID).Find(&allPerformances).Error; err != nil {
+	if err := r.db.WithContext(ctx).Preload("Participation").Preload("Participation.User").Where("stage_id = ?", stageId).Find(&allPerformances).Error; err != nil {
 		return nil, err
 	}
 
@@ -105,11 +122,11 @@ func (r *PerformanceRepository) FindSortedByStageId(ctx context.Context, stageID
 
 // UpdateOrderInTransaction rearranges the opponent chain for a given stage within a single DB transaction.
 // orderedIDs should be a slice of performance IDs in the desired new order.
-func (r *PerformanceRepository) UpdateOrderTx(ctx context.Context, stageID string, orderedIDs []string) error {
+func (r *PerformanceRepository) UpdateOrderTx(ctx context.Context, stageId string, orderedIDs []string) error {
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		// Step 1: Detach all performances in the stage by setting their opponent ID to NULL.
 		// This prevents old chains from interfering and handles performers not in the new order.
-		if err := tx.Model(&model.Performance{}).Where("stage_id = ?", stageID).Update("opponent_performance_id", nil).Error; err != nil {
+		if err := tx.Model(&model.Performance{}).Where("stage_id = ?", stageId).Update("opponent_performance_id", nil).Error; err != nil {
 			return err
 		}
 
