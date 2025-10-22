@@ -75,7 +75,7 @@ type Performance struct {
 type PerformanceRequest struct {
 	ParticipationId       string  `json:"participationId"`
 	OpponentPerformanceId *string `json:"opponentPerformanceId"`
-	Details               string  `json:"details"`
+	Details               *string `json:"details,omitempty"`
 }
 
 // RegisterRequest defines model for RegisterRequest.

@@ -909,7 +909,7 @@ components:
 
     PerformanceRequest:
       type: object
-      required: [participationId, details]
+      required: [participationId]
       properties:
         participationId:
           type: string
