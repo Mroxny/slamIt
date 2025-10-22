@@ -78,6 +78,12 @@ type PerformanceRequest struct {
 	Details               *string `json:"details,omitempty"`
 }
 
+// PerformanceUpdateRequest defines model for PerformanceUpdateRequest.
+type PerformanceUpdateRequest struct {
+	OpponentPerformanceId *string `json:"opponentPerformanceId"`
+	Details               *string `json:"details,omitempty"`
+}
+
 // RegisterRequest defines model for RegisterRequest.
 type RegisterRequest struct {
 	Email    string `json:"email"`
@@ -167,7 +173,7 @@ type PostParticipationsSlamsSlamIDUsersJSONRequestBody = ParticipationRequest
 type PutParticipationsSlamsSlamIDUsersUserIDJSONRequestBody = ParticipationUpdateRequest
 
 // PutPerformancesPerformanceIDJSONRequestBody defines body for PutPerformancesPerformanceID for application/json ContentType.
-type PutPerformancesPerformanceIDJSONRequestBody = PerformanceRequest
+type PutPerformancesPerformanceIDJSONRequestBody = PerformanceUpdateRequest
 
 // PostPerformancesPerformanceIDVotesJSONRequestBody defines body for PostPerformancesPerformanceIDVotes for application/json ContentType.
 type PostPerformancesPerformanceIDVotesJSONRequestBody = VoteRequest

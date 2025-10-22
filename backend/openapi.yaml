@@ -468,7 +468,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PerformanceRequest'
+              $ref: '#/components/schemas/PerformanceUpdateRequest'
       responses:
         "201":
           description: Vote recorded
@@ -922,6 +922,18 @@ components:
           x-go-type: string
           nullable: true
           x-order: 2
+        details:
+          type: string
+    
+    PerformanceUpdateRequest:
+      type: object
+      properties:
+        opponentPerformanceId:
+          type: string
+          format: uuid
+          x-go-type: string
+          nullable: true
+          x-order: 1
         details:
           type: string
 

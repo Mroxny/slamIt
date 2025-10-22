@@ -69,7 +69,7 @@ func (s *PerformanceService) CreatePerformance(ctx context.Context, stageId stri
 	return &apiPerf, nil
 }
 
-func (s *PerformanceService) UpdatePerformance(ctx context.Context, performanceId string, p api.PerformanceRequest) (*api.Performance, error) {
+func (s *PerformanceService) UpdatePerformance(ctx context.Context, performanceId string, p api.PerformanceUpdateRequest) (*api.Performance, error) {
 	modelPerf := model.Performance{}
 	copier.Copy(&modelPerf, &p)
 	modelPerf.Id = performanceId

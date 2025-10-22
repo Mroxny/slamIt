@@ -24,7 +24,7 @@ func (s *Server) GetPerformancesPerformanceID(w http.ResponseWriter, r *http.Req
 }
 
 func (s *Server) PutPerformancesPerformanceID(w http.ResponseWriter, r *http.Request, performanceID string) {
-	var performance api.PerformanceRequest
+	var performance api.PerformanceUpdateRequest
 	if err := ValidateJSON(r.Body, &performance); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
