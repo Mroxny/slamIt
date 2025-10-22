@@ -44,8 +44,10 @@ func WriteJSON(w http.ResponseWriter, status int, v interface{}) {
 	}
 }
 
-func ValidateJSON(decoder io.ReadCloser, object interface{}) error {
-	if err := json.NewDecoder(decoder).Decode(object); err != nil {
+func ValidateJSON(reader io.ReadCloser, object interface{}) error {
+	decoder := json.NewDecoder(reader)
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(object); err != nil {
 		return errors.New("invalid input (decode)")
 	}
 
