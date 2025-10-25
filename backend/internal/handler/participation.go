@@ -84,7 +84,7 @@ func (s *Server) PutParticipationsSlamsSlamIDUsersUserID(w http.ResponseWriter, 
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	WriteJSON(w, http.StatusNoContent, updated)
+	WriteJSON(w, http.StatusOK, updated)
 }
 
 func (s *Server) GetParticipationsUsersUserIDSlams(w http.ResponseWriter, r *http.Request, userID string) {

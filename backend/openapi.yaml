@@ -429,8 +429,8 @@ paths:
                   type: string
                   format: uuid
       responses:
-        "201":
-          description: Vote recorded
+        "200":
+          description: Opponents order updated
 
 
   /performances/{performanceID}:
@@ -470,8 +470,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PerformanceUpdateRequest'
       responses:
-        "201":
-          description: Vote recorded
+        "200":
+          description: Performance updated
           content:
             application/json:
               schema:
@@ -662,8 +662,8 @@ paths:
             schema:
               $ref: '#/components/schemas/ParticipationUpdateRequest'
       responses:
-        "201":
-          description: Joined slam
+        "200":
+          description: Participation updated
     
     delete:
       tags: [participations]
