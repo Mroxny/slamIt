@@ -2,10 +2,10 @@ package router
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/Mroxny/slamIt/internal/api"
 	"github.com/Mroxny/slamIt/internal/handler"
-	"github.com/Mroxny/slamIt/internal/model"
 	"github.com/Mroxny/slamIt/internal/repository"
 	"github.com/Mroxny/slamIt/internal/service"
 	"github.com/Mroxny/slamIt/internal/utils"
@@ -70,45 +70,44 @@ func SetupTestRouter() *chi.Mux {
 	repository.ClearLocalDB()
 	r, repos := SetupV1Router(true)
 	ctx := context.Background()
-	authService := service.NewAuthService(repos.userRepo)
 
-	u1, err := authService.Register(ctx, "Bob", "bob@example.com", "P@ssw0rd")
-	if err != nil {
-		panic("Error when creating test user 1")
-	}
-	u2, err := authService.Register(ctx, "Alice", "alice@example.com", "P@ssw0rd")
-	if err != nil {
-		panic("Error when creating test user 2")
+	// USERS
+	for i := 0; i < len(utils.TestUsers); i++ {
+		if err := repos.userRepo.Create(ctx, &utils.TestUsers[i]); err != nil {
+			panic("Error when creating test user " + strconv.Itoa(i) + " (" + utils.TestUsers[i].Email + ")")
+		}
 	}
 
-	slamTitle := "Poetry Night"
-	slamDescription := "Evening of poems"
-
-	slam1 := model.Slam{
-		Slam: api.Slam{
-			Id:          "1b338aa8-74a1-43e9-8034-94f144e77c3a",
-			Title:       slamTitle,
-			Description: &slamDescription,
-			Public:      true,
-		},
-	}
-
-	slam2 := model.Slam{
-		Slam: api.Slam{
-			Id:          "85bf4f72-3cd2-46df-8d37-016442f150f7",
-			Title:       slamTitle + " 2",
-			Description: &slamDescription,
-			Public:      false,
-		},
-	}
-
-	err = repos.slamRepo.CreateWithCreatorTx(ctx, &slam1, u1.Id)
-	if err != nil {
+	// SLAMS
+	if err := repos.slamRepo.CreateWithCreatorTx(ctx, &utils.TestSlams[0], utils.TestUsers[0].Id); err != nil {
 		panic("Error when creating test slam 1")
 	}
-	err = repos.slamRepo.CreateWithCreatorTx(ctx, &slam2, u2.Id)
-	if err != nil {
+	if err := repos.slamRepo.CreateWithCreatorTx(ctx, &utils.TestSlams[1], utils.TestUsers[1].Id); err != nil {
 		panic("Error when creating test slam 2")
+	}
+	if err := repos.slamRepo.CreateWithCreatorTx(ctx, &utils.TestSlams[2], utils.TestUsers[1].Id); err != nil {
+		panic("Error when creating test slam 2")
+	}
+
+	// PARTICIPATIONS
+	for i := 0; i < len(utils.TestParticipations); i++ {
+		if err := repos.partRepo.Create(ctx, &utils.TestParticipations[i]); err != nil {
+			panic("Error when creating test participation " + strconv.Itoa(i))
+		}
+	}
+
+	// STAGES
+	for i := 0; i < len(utils.TestStages); i++ {
+		if err := repos.stageRepo.Create(ctx, &utils.TestStages[i]); err != nil {
+			panic("Error when creating test stage " + strconv.Itoa(i))
+		}
+	}
+
+	// PERFORMANCES
+	for i := 0; i < len(utils.TestPerformances); i++ {
+		if err := repos.perfRepo.Create(ctx, &utils.TestPerformances[i]); err != nil {
+			panic("Error when creating test performance " + strconv.Itoa(i))
+		}
 	}
 
 	return r
