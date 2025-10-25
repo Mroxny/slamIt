@@ -2,94 +2,76 @@ package api_test
 
 import (
 	"net/http"
-	"net/http/httptest"
-	"strings"
 	"testing"
 
-	"github.com/Mroxny/slamIt/internal/api"
 	"github.com/Mroxny/slamIt/internal/router"
 	"github.com/Mroxny/slamIt/internal/utils"
 )
 
 func TestSlam(t *testing.T) {
 	r := router.SetupTestRouter()
-	_, token := utils.GetAuthToken(r, "bob@example.com", "P@ssw0rd", false)
-	slamId := "4"
+	slamId := utils.TestSlams[0].Id
 
-	tests := []struct {
-		name     string
-		method   string
-		url      string
-		body     string
-		auth     bool
-		wantCode int
-	}{
+	tests := []utils.TestParams{
 		{
-			name:     "create valid slam",
-			method:   "POST",
-			url:      "/slams",
-			body:     `{"title":"Test Slam","description":"Testing slam endpoint", "public":true}`,
-			auth:     true,
-			wantCode: http.StatusCreated,
+			Name:     "create valid slam",
+			Method:   "POST",
+			Url:      "/slams",
+			Body:     `{"title":"Test Slam","description":"Testing slam endpoint", "public":true}`,
+			Auth:     true,
+			WantCode: http.StatusCreated,
 		},
 		{
-			name:     "create invalid slam (missing title)",
-			method:   "POST",
-			url:      "/slams",
-			body:     `{"description":"Charlie"}`,
-			auth:     true,
-			wantCode: http.StatusBadRequest,
+			Name:     "create invalid slam (missing title)",
+			Method:   "POST",
+			Url:      "/slams",
+			Body:     `{"description":"Charlie"}`,
+			Auth:     true,
+			WantCode: http.StatusBadRequest,
 		},
 		{
-			name:     "get all public slams",
-			method:   "GET",
-			url:      "/slams",
-			wantCode: http.StatusOK,
+			Name:     "get all public slams",
+			Method:   "GET",
+			Url:      "/slams",
+			WantCode: http.StatusOK,
 		},
 		{
-			name:     "get existing slam",
-			method:   "GET",
-			url:      "/slams/" + slamId,
-			auth:     true,
-			wantCode: http.StatusOK,
+			Name:     "get existing slam",
+			Method:   "GET",
+			Url:      "/slams/" + slamId,
+			Auth:     true,
+			WantCode: http.StatusOK,
 		},
 		{
-			name:     "get non-existing slam",
-			method:   "GET",
-			url:      "/slams/999999999",
-			auth:     true,
-			wantCode: http.StatusNotFound,
+			Name:     "get non-existing slam",
+			Method:   "GET",
+			Url:      "/slams/999999999",
+			Auth:     true,
+			WantCode: http.StatusNotFound,
 		},
 		{
-			name:     "update slam valid",
-			method:   "PUT",
-			url:      "/slams/" + slamId,
-			body:     `{"title":"Slam Updated","description":"Updated description", "public":false}`,
-			auth:     true,
-			wantCode: http.StatusOK,
+			Name:     "update slam valid",
+			Method:   "PUT",
+			Url:      "/slams/" + slamId,
+			Body:     `{"title":"Slam Updated","description":"Updated description", "public":false}`,
+			Auth:     true,
+			WantCode: http.StatusOK,
 		},
 		{
-			name:     "delete slam valid",
-			method:   "DELETE",
-			url:      "/slams/" + slamId,
-			auth:     true,
-			wantCode: http.StatusNoContent,
+			Name:     "delete slam valid",
+			Method:   "DELETE",
+			Url:      "/slams/" + slamId,
+			Auth:     true,
+			WantCode: http.StatusNoContent,
+		},
+		{
+			Name:     "delete slam invalid (deleted before)",
+			Method:   "DELETE",
+			Url:      "/slams/" + slamId,
+			Auth:     true,
+			WantCode: http.StatusNotFound,
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			req := httptest.NewRequest(tt.method, api.ServerUrlDev+tt.url, strings.NewReader(tt.body))
-			req.Header.Set("Content-Type", "application/json")
-			if tt.auth {
-				req.Header.Set("Authorization", "Bearer "+token)
-			}
-			w := httptest.NewRecorder()
-			r.ServeHTTP(w, req)
-
-			if w.Code != tt.wantCode {
-				t.Errorf("%s: got %d, want %d, msg: %s", tt.name, w.Code, tt.wantCode, w.Body)
-			}
-		})
-	}
+	utils.RunTests(t, tests, r, "bob@example.com", "P@ssw0rd")
 }
