@@ -981,6 +981,7 @@ components:
     
     ParticipationRequest:
       type: object
+      required: [userId]
       properties:
         userId:
           type: string

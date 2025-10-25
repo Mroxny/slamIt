@@ -32,7 +32,7 @@ func (s *Server) PostParticipationsSlamsSlamID(w http.ResponseWriter, r *http.Re
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	WriteJSON(w, http.StatusOK, part)
+	WriteJSON(w, http.StatusCreated, part)
 }
 
 func (s *Server) GetParticipationsSlamsSlamIDUsers(w http.ResponseWriter, r *http.Request, slamID string) {
@@ -51,12 +51,17 @@ func (s *Server) PostParticipationsSlamsSlamIDUsers(w http.ResponseWriter, r *ht
 		return
 	}
 
-	part, err := s.partService.AddUserToSlam(r.Context(), *req.UserId, slamID, *req.Role)
+	if req.Role == nil {
+		role := api.Performer
+		req.Role = &role
+	}
+
+	part, err := s.partService.AddUserToSlam(r.Context(), req.UserId, slamID, *req.Role)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	WriteJSON(w, http.StatusOK, part)
+	WriteJSON(w, http.StatusCreated, part)
 }
 
 func (s *Server) DeleteParticipationsSlamsSlamIDUsersUserID(w http.ResponseWriter, r *http.Request, slamID string, userID string) {
@@ -79,7 +84,7 @@ func (s *Server) PutParticipationsSlamsSlamIDUsersUserID(w http.ResponseWriter, 
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	WriteJSON(w, http.StatusOK, updated)
+	WriteJSON(w, http.StatusNoContent, updated)
 }
 
 func (s *Server) GetParticipationsUsersUserIDSlams(w http.ResponseWriter, r *http.Request, userID string) {

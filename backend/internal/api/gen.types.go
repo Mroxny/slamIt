@@ -48,7 +48,7 @@ type Participation struct {
 
 // ParticipationRequest defines model for ParticipationRequest.
 type ParticipationRequest struct {
-	UserId *string                `json:"userId,omitempty"`
+	UserId string                 `json:"userId"`
 	Role   *ParticipationRoleEnum `json:"role,omitempty"`
 }
 

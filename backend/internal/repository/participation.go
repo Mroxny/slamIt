@@ -24,13 +24,19 @@ func (r *ParticipationRepository) FindBySlamAndUser(ctx context.Context, slamID,
 }
 
 func (r *ParticipationRepository) DeleteBySlamAndUser(ctx context.Context, slamID, userID string) error {
-	result := r.db.WithContext(ctx).Where("slam_id = ? AND user_id = ?", slamID, userID).Delete(&model.Participation{})
-	if result.Error != nil {
-		return result.Error
+	var participation model.Participation
+	err := r.db.WithContext(ctx).
+		Where("slam_id = ? AND user_id = ?", slamID, userID).
+		First(&participation).Error
+
+	if err != nil {
+		return err
 	}
-	if result.RowsAffected == 0 {
-		return gorm.ErrRecordNotFound
+
+	if err := r.db.WithContext(ctx).Delete(&participation).Error; err != nil {
+		return err
 	}
+
 	return nil
 }
 
