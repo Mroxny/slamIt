@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/Mroxny/slamIt/internal/model"
 	"gorm.io/gorm"
@@ -18,6 +19,22 @@ func NewParticipationRepository(db *gorm.DB) *ParticipationRepository {
 }
 
 func (r *ParticipationRepository) FindBySlamAndUser(ctx context.Context, slamID, userID string) (*model.Participation, error) {
+	var slamCheck model.Slam
+	if err := r.db.WithContext(ctx).Select("id").First(&slamCheck, "id = ?", slamID).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("slam not found")
+		}
+		return nil, err
+	}
+
+	var userCheck model.User
+	if err := r.db.WithContext(ctx).Select("id").First(&userCheck, "id = ?", userID).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("user not found")
+		}
+		return nil, err
+	}
+
 	var p model.Participation
 	err := r.db.WithContext(ctx).Where("slam_id = ? AND user_id = ?", slamID, userID).First(&p).Error
 	return &p, err
