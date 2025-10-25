@@ -1,8 +1,9 @@
 package model
 
+import "github.com/Mroxny/slamIt/internal/api"
+
 type User struct {
-	Id           string `json:"id"`
-	Name         string `json:"name" validate:"required"`
-	Email        string `json:"email" validate:"required,email"`
-	PasswordHash string `json:"-"`
+	api.User   `gorm:"embedded"`
+	PasswdHash string `gorm:"not null"`
+	Model
 }

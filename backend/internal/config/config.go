@@ -19,6 +19,7 @@ type Config struct {
 	// Logs LogConfig
 	// DB   PostgresConfig
 	JWT  JwtConfig
+	DB   DbConfig
 	Port string
 }
 
@@ -28,12 +29,13 @@ type Config struct {
 // 	Level string
 // }
 
-// type PostgresConfig struct {
-// 	Username string
-// 	Password string
-// 	URL      string
-// 	Port     string
-// }
+type DbConfig struct {
+	Username   string
+	Password   string
+	URL        string
+	Port       string
+	SQLitePath string
+}
 
 type JwtConfig struct {
 	Key string
@@ -55,12 +57,13 @@ func GetConfig() *Config {
 			// 	Style: os.Getenv("LOG_STYLE"),
 			// 	Level: os.Getenv("LOG_LEVEL"),
 			// },
-			// DB: PostgresConfig{
-			// 	Username: os.Getenv("POSTGRES_USER"),
-			// 	Password: os.Getenv("POSTGRES_PWD"),
-			// 	URL:      os.Getenv("POSTGRES_URL"),
-			// 	Port:     os.Getenv("POSTGRES_PORT"),
-			// },
+			DB: DbConfig{
+				Username:   envFile["PG_USERNAME"],
+				Password:   envFile["PG_PASSWD"],
+				URL:        envFile["PG_URL"],
+				Port:       envFile["PG_PORT"],
+				SQLitePath: path.Join(RoothPath, envFile["SQLITE_PATH"]),
+			},
 			JWT: JwtConfig{
 				Key: envFile["JWT_KEY"],
 			},

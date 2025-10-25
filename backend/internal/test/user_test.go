@@ -2,78 +2,69 @@ package api_test
 
 import (
 	"net/http"
-	"net/http/httptest"
-	"strings"
 	"testing"
 
-	"github.com/Mroxny/slamIt/internal/api"
 	"github.com/Mroxny/slamIt/internal/router"
 	"github.com/Mroxny/slamIt/internal/utils"
 )
 
 func TestUser(t *testing.T) {
 	r := router.SetupTestRouter()
-	uId, token := utils.GetAuthToken(r, "bob@example.com", "P@ssw0rd", false)
+	uId := utils.TestUsers[0].Id
 
-	tests := []struct {
-		name     string
-		method   string
-		url      string
-		body     string
-		auth     bool
-		wantCode int
-	}{
+	tests := []utils.TestParams{
 		{
-			name:     "get all users",
-			method:   "GET",
-			url:      "/users",
-			auth:     true,
-			wantCode: http.StatusOK,
+			Name:     "get all users",
+			Method:   "GET",
+			Url:      "/users",
+			Auth:     true,
+			WantCode: http.StatusOK,
 		},
 		{
-			name:     "get existing user",
-			method:   "GET",
-			url:      "/users/" + uId,
-			auth:     true,
-			wantCode: http.StatusOK,
+			Name:     "create temporary user",
+			Method:   "POST",
+			Url:      "/users",
+			Body:     `{"name":"TemporaryBob"}`,
+			Auth:     true,
+			WantCode: http.StatusCreated,
 		},
 		{
-			name:     "get non-existing user",
-			method:   "GET",
-			url:      "/users/xxx",
-			auth:     true,
-			wantCode: http.StatusNotFound,
+			Name:     "get existing user",
+			Method:   "GET",
+			Url:      "/users/" + uId,
+			Auth:     true,
+			WantCode: http.StatusOK,
 		},
 		{
-			name:     "update user valid",
-			method:   "PUT",
-			url:      "/users/" + uId,
-			body:     `{"name":"Alice Updated","email":"alice@new.com"}`,
-			auth:     true,
-			wantCode: http.StatusOK,
+			Name:     "get non-existing user",
+			Method:   "GET",
+			Url:      "/users/xxx",
+			Auth:     true,
+			WantCode: http.StatusNotFound,
 		},
 		{
-			name:     "delete user valid",
-			method:   "DELETE",
-			url:      "/users/" + uId,
-			auth:     true,
-			wantCode: http.StatusNoContent,
+			Name:     "update user valid",
+			Method:   "PUT",
+			Url:      "/users/" + uId,
+			Body:     `{"name":"Alice Updated","email":"alice@new.com"}`,
+			Auth:     true,
+			WantCode: http.StatusOK,
+		},
+		{
+			Name:     "delete valid user",
+			Method:   "DELETE",
+			Url:      "/users/" + uId,
+			Auth:     true,
+			WantCode: http.StatusNoContent,
+		},
+		{
+			Name:     "delete invalid user (deleted before)",
+			Method:   "DELETE",
+			Url:      "/users/" + uId,
+			Auth:     true,
+			WantCode: http.StatusNotFound,
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			req := httptest.NewRequest(tt.method, api.ServerUrlDev+tt.url, strings.NewReader(tt.body))
-			req.Header.Set("Content-Type", "application/json")
-			if tt.auth {
-				req.Header.Set("Authorization", "Bearer "+token)
-			}
-			w := httptest.NewRecorder()
-			r.ServeHTTP(w, req)
-
-			if w.Code != tt.wantCode {
-				t.Errorf("%s: got %d, want %d, msg: %s", tt.name, w.Code, tt.wantCode, w.Body)
-			}
-		})
-	}
+	utils.RunTests(t, tests, r, "bob@example.com", "P@ssw0rd")
 }

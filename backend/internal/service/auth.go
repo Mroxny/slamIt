@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"errors"
 
 	"github.com/Mroxny/slamIt/internal/api"
@@ -19,8 +20,8 @@ func NewAuthService(userRepo *repository.UserRepository) *AuthService {
 	return &AuthService{userRepo: userRepo}
 }
 
-func (s *AuthService) Register(name, email, password string) (*api.User, error) {
-	if u, _ := s.userRepo.GetByEmail(email); u != nil {
+func (s *AuthService) Register(ctx context.Context, name, email, password string) (*api.User, error) {
+	if _, err := s.userRepo.FindByEmail(ctx, email); err == nil {
 		return nil, errors.New("user with email already exists")
 	}
 
@@ -30,19 +31,21 @@ func (s *AuthService) Register(name, email, password string) (*api.User, error) 
 	}
 
 	newId := uuid.New().String()
-	modelUser := model.User{
-		Id:           newId,
-		Name:         name,
-		Email:        email,
-		PasswordHash: hash,
-	}
 	apiUser := &api.User{
-		Id:    &newId,
-		Name:  &name,
-		Email: &email,
+		Id:    newId,
+		Name:  name,
+		Email: email,
+	}
+	modelUser := model.User{
+		User: api.User{
+			Id:    newId,
+			Name:  name,
+			Email: email,
+		},
+		PasswdHash: hash,
 	}
 
-	_, err = s.userRepo.Create(&modelUser)
+	err = s.userRepo.Create(ctx, &modelUser)
 	if err != nil {
 		return nil, err
 	}
@@ -50,13 +53,13 @@ func (s *AuthService) Register(name, email, password string) (*api.User, error) 
 	return apiUser, nil
 }
 
-func (s *AuthService) Login(email, password string) (*api.LoginResponse, error) {
-	user, err := s.userRepo.GetByEmail(email)
+func (s *AuthService) Login(ctx context.Context, email, password string) (*api.LoginResponse, error) {
+	user, err := s.userRepo.FindByEmail(ctx, email)
 	if err != nil {
 		return nil, errors.New("invalid credentials (no email)")
 	}
 
-	if !PasswordHashMatch(user.PasswordHash, password) {
+	if !PasswordHashMatch(user.PasswdHash, password) {
 		return nil, errors.New("invalid credentials (wrong password)")
 	}
 

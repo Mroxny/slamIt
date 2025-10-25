@@ -26,18 +26,42 @@ type ServerInterface interface {
 	// Register a new user
 	// (POST /auth/register)
 	PostAuthRegister(w http.ResponseWriter, r *http.Request)
-	// Get users for a slam
-	// (GET /participation/slams/{slamID}/users)
-	GetParticipationSlamsSlamIDUsers(w http.ResponseWriter, r *http.Request, slamID int)
-	// Get slams for a user
-	// (GET /participation/users/{userID}/slams)
-	GetParticipationUsersUserIDSlams(w http.ResponseWriter, r *http.Request, userID string)
 	// Leave a slam
-	// (DELETE /participation/users/{userID}/slams/{slamID})
-	DeleteParticipationUsersUserIDSlamsSlamID(w http.ResponseWriter, r *http.Request, userID string, slamID int)
+	// (DELETE /participations/slams/{slamID})
+	DeleteParticipationsSlamsSlamID(w http.ResponseWriter, r *http.Request, slamID string)
 	// Join a slam
-	// (POST /participation/users/{userID}/slams/{slamID})
-	PostParticipationUsersUserIDSlamsSlamID(w http.ResponseWriter, r *http.Request, userID string, slamID int)
+	// (POST /participations/slams/{slamID})
+	PostParticipationsSlamsSlamID(w http.ResponseWriter, r *http.Request, slamID string)
+	// Get users for a slam
+	// (GET /participations/slams/{slamID}/users)
+	GetParticipationsSlamsSlamIDUsers(w http.ResponseWriter, r *http.Request, slamID string)
+	// Add user to a slam
+	// (POST /participations/slams/{slamID}/users)
+	PostParticipationsSlamsSlamIDUsers(w http.ResponseWriter, r *http.Request, slamID string)
+	// Remove participant
+	// (DELETE /participations/slams/{slamID}/users/{userID})
+	DeleteParticipationsSlamsSlamIDUsersUserID(w http.ResponseWriter, r *http.Request, slamID string, userID string)
+	// Edit participant
+	// (PUT /participations/slams/{slamID}/users/{userID})
+	PutParticipationsSlamsSlamIDUsersUserID(w http.ResponseWriter, r *http.Request, slamID string, userID string)
+	// Get slams for a user
+	// (GET /participations/users/{userID}/slams)
+	GetParticipationsUsersUserIDSlams(w http.ResponseWriter, r *http.Request, userID string)
+	// Delete a performance
+	// (DELETE /performances/{performanceID})
+	DeletePerformancesPerformanceID(w http.ResponseWriter, r *http.Request, performanceID string)
+	// Get a performance
+	// (GET /performances/{performanceID})
+	GetPerformancesPerformanceID(w http.ResponseWriter, r *http.Request, performanceID string)
+	// Update a performance
+	// (PUT /performances/{performanceID})
+	PutPerformancesPerformanceID(w http.ResponseWriter, r *http.Request, performanceID string)
+	// Get votes for performance
+	// (GET /performances/{performanceID}/votes)
+	GetPerformancesPerformanceIDVotes(w http.ResponseWriter, r *http.Request, performanceID string)
+	// Cast a vote for a performance
+	// (POST /performances/{performanceID}/votes)
+	PostPerformancesPerformanceIDVotes(w http.ResponseWriter, r *http.Request, performanceID string)
 	// Get all slams
 	// (GET /slams)
 	GetSlams(w http.ResponseWriter, r *http.Request)
@@ -45,26 +69,53 @@ type ServerInterface interface {
 	// (POST /slams)
 	PostSlams(w http.ResponseWriter, r *http.Request)
 	// Delete a slam
-	// (DELETE /slams/{id})
-	DeleteSlamsId(w http.ResponseWriter, r *http.Request, id int)
+	// (DELETE /slams/{slamID})
+	DeleteSlamsSlamID(w http.ResponseWriter, r *http.Request, slamID string)
 	// Get slam by ID
-	// (GET /slams/{id})
-	GetSlamsId(w http.ResponseWriter, r *http.Request, id int)
+	// (GET /slams/{slamID})
+	GetSlamsSlamID(w http.ResponseWriter, r *http.Request, slamID string)
 	// Update a slam
-	// (PUT /slams/{id})
-	PutSlamsId(w http.ResponseWriter, r *http.Request, id int)
+	// (PUT /slams/{slamID})
+	PutSlamsSlamID(w http.ResponseWriter, r *http.Request, slamID string)
+	// List stages for a slam
+	// (GET /slams/{slamID}/stages)
+	GetSlamsSlamIDStages(w http.ResponseWriter, r *http.Request, slamID string)
+	// Create a new stage for a slam
+	// (POST /slams/{slamID}/stages)
+	PostSlamsSlamIDStages(w http.ResponseWriter, r *http.Request, slamID string)
+	// Delete a stage
+	// (DELETE /stages/{stageID})
+	DeleteStagesStageID(w http.ResponseWriter, r *http.Request, stageID string)
+	// Get a stage
+	// (GET /stages/{stageID})
+	GetStagesStageID(w http.ResponseWriter, r *http.Request, stageID string)
+	// Update stage
+	// (PUT /stages/{stageID})
+	PutStagesStageID(w http.ResponseWriter, r *http.Request, stageID string)
+	// List performances for a stage
+	// (GET /stages/{stageID}/performances)
+	GetStagesStageIDPerformances(w http.ResponseWriter, r *http.Request, stageID string)
+	// Add a performance to a stage
+	// (POST /stages/{stageID}/performances)
+	PostStagesStageIDPerformances(w http.ResponseWriter, r *http.Request, stageID string)
+	// Update opponents
+	// (PUT /stages/{stageID}/performances)
+	PutStagesStageIDPerformances(w http.ResponseWriter, r *http.Request, stageID string)
 	// Get all users
 	// (GET /users)
 	GetUsers(w http.ResponseWriter, r *http.Request)
+	// Add a new temporary user
+	// (POST /users)
+	PostUsers(w http.ResponseWriter, r *http.Request)
 	// Delete a user
-	// (DELETE /users/{id})
-	DeleteUsersId(w http.ResponseWriter, r *http.Request, id string)
+	// (DELETE /users/{userID})
+	DeleteUsersUserID(w http.ResponseWriter, r *http.Request, userID string)
 	// Get a user by ID
-	// (GET /users/{id})
-	GetUsersId(w http.ResponseWriter, r *http.Request, id string)
+	// (GET /users/{userID})
+	GetUsersUserID(w http.ResponseWriter, r *http.Request, userID string)
 	// Update a user
-	// (PUT /users/{id})
-	PutUsersId(w http.ResponseWriter, r *http.Request, id string)
+	// (PUT /users/{userID})
+	PutUsersUserID(w http.ResponseWriter, r *http.Request, userID string)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
@@ -83,27 +134,75 @@ func (_ Unimplemented) PostAuthRegister(w http.ResponseWriter, r *http.Request) 
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Get users for a slam
-// (GET /participation/slams/{slamID}/users)
-func (_ Unimplemented) GetParticipationSlamsSlamIDUsers(w http.ResponseWriter, r *http.Request, slamID int) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
-// Get slams for a user
-// (GET /participation/users/{userID}/slams)
-func (_ Unimplemented) GetParticipationUsersUserIDSlams(w http.ResponseWriter, r *http.Request, userID string) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
 // Leave a slam
-// (DELETE /participation/users/{userID}/slams/{slamID})
-func (_ Unimplemented) DeleteParticipationUsersUserIDSlamsSlamID(w http.ResponseWriter, r *http.Request, userID string, slamID int) {
+// (DELETE /participations/slams/{slamID})
+func (_ Unimplemented) DeleteParticipationsSlamsSlamID(w http.ResponseWriter, r *http.Request, slamID string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
 // Join a slam
-// (POST /participation/users/{userID}/slams/{slamID})
-func (_ Unimplemented) PostParticipationUsersUserIDSlamsSlamID(w http.ResponseWriter, r *http.Request, userID string, slamID int) {
+// (POST /participations/slams/{slamID})
+func (_ Unimplemented) PostParticipationsSlamsSlamID(w http.ResponseWriter, r *http.Request, slamID string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Get users for a slam
+// (GET /participations/slams/{slamID}/users)
+func (_ Unimplemented) GetParticipationsSlamsSlamIDUsers(w http.ResponseWriter, r *http.Request, slamID string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Add user to a slam
+// (POST /participations/slams/{slamID}/users)
+func (_ Unimplemented) PostParticipationsSlamsSlamIDUsers(w http.ResponseWriter, r *http.Request, slamID string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Remove participant
+// (DELETE /participations/slams/{slamID}/users/{userID})
+func (_ Unimplemented) DeleteParticipationsSlamsSlamIDUsersUserID(w http.ResponseWriter, r *http.Request, slamID string, userID string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Edit participant
+// (PUT /participations/slams/{slamID}/users/{userID})
+func (_ Unimplemented) PutParticipationsSlamsSlamIDUsersUserID(w http.ResponseWriter, r *http.Request, slamID string, userID string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Get slams for a user
+// (GET /participations/users/{userID}/slams)
+func (_ Unimplemented) GetParticipationsUsersUserIDSlams(w http.ResponseWriter, r *http.Request, userID string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Delete a performance
+// (DELETE /performances/{performanceID})
+func (_ Unimplemented) DeletePerformancesPerformanceID(w http.ResponseWriter, r *http.Request, performanceID string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Get a performance
+// (GET /performances/{performanceID})
+func (_ Unimplemented) GetPerformancesPerformanceID(w http.ResponseWriter, r *http.Request, performanceID string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Update a performance
+// (PUT /performances/{performanceID})
+func (_ Unimplemented) PutPerformancesPerformanceID(w http.ResponseWriter, r *http.Request, performanceID string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Get votes for performance
+// (GET /performances/{performanceID}/votes)
+func (_ Unimplemented) GetPerformancesPerformanceIDVotes(w http.ResponseWriter, r *http.Request, performanceID string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Cast a vote for a performance
+// (POST /performances/{performanceID}/votes)
+func (_ Unimplemented) PostPerformancesPerformanceIDVotes(w http.ResponseWriter, r *http.Request, performanceID string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -120,20 +219,68 @@ func (_ Unimplemented) PostSlams(w http.ResponseWriter, r *http.Request) {
 }
 
 // Delete a slam
-// (DELETE /slams/{id})
-func (_ Unimplemented) DeleteSlamsId(w http.ResponseWriter, r *http.Request, id int) {
+// (DELETE /slams/{slamID})
+func (_ Unimplemented) DeleteSlamsSlamID(w http.ResponseWriter, r *http.Request, slamID string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
 // Get slam by ID
-// (GET /slams/{id})
-func (_ Unimplemented) GetSlamsId(w http.ResponseWriter, r *http.Request, id int) {
+// (GET /slams/{slamID})
+func (_ Unimplemented) GetSlamsSlamID(w http.ResponseWriter, r *http.Request, slamID string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
 // Update a slam
-// (PUT /slams/{id})
-func (_ Unimplemented) PutSlamsId(w http.ResponseWriter, r *http.Request, id int) {
+// (PUT /slams/{slamID})
+func (_ Unimplemented) PutSlamsSlamID(w http.ResponseWriter, r *http.Request, slamID string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// List stages for a slam
+// (GET /slams/{slamID}/stages)
+func (_ Unimplemented) GetSlamsSlamIDStages(w http.ResponseWriter, r *http.Request, slamID string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Create a new stage for a slam
+// (POST /slams/{slamID}/stages)
+func (_ Unimplemented) PostSlamsSlamIDStages(w http.ResponseWriter, r *http.Request, slamID string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Delete a stage
+// (DELETE /stages/{stageID})
+func (_ Unimplemented) DeleteStagesStageID(w http.ResponseWriter, r *http.Request, stageID string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Get a stage
+// (GET /stages/{stageID})
+func (_ Unimplemented) GetStagesStageID(w http.ResponseWriter, r *http.Request, stageID string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Update stage
+// (PUT /stages/{stageID})
+func (_ Unimplemented) PutStagesStageID(w http.ResponseWriter, r *http.Request, stageID string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// List performances for a stage
+// (GET /stages/{stageID}/performances)
+func (_ Unimplemented) GetStagesStageIDPerformances(w http.ResponseWriter, r *http.Request, stageID string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Add a performance to a stage
+// (POST /stages/{stageID}/performances)
+func (_ Unimplemented) PostStagesStageIDPerformances(w http.ResponseWriter, r *http.Request, stageID string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Update opponents
+// (PUT /stages/{stageID}/performances)
+func (_ Unimplemented) PutStagesStageIDPerformances(w http.ResponseWriter, r *http.Request, stageID string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -143,21 +290,27 @@ func (_ Unimplemented) GetUsers(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
+// Add a new temporary user
+// (POST /users)
+func (_ Unimplemented) PostUsers(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
 // Delete a user
-// (DELETE /users/{id})
-func (_ Unimplemented) DeleteUsersId(w http.ResponseWriter, r *http.Request, id string) {
+// (DELETE /users/{userID})
+func (_ Unimplemented) DeleteUsersUserID(w http.ResponseWriter, r *http.Request, userID string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
 // Get a user by ID
-// (GET /users/{id})
-func (_ Unimplemented) GetUsersId(w http.ResponseWriter, r *http.Request, id string) {
+// (GET /users/{userID})
+func (_ Unimplemented) GetUsersUserID(w http.ResponseWriter, r *http.Request, userID string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
 // Update a user
-// (PUT /users/{id})
-func (_ Unimplemented) PutUsersId(w http.ResponseWriter, r *http.Request, id string) {
+// (PUT /users/{userID})
+func (_ Unimplemented) PutUsersUserID(w http.ResponseWriter, r *http.Request, userID string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -198,13 +351,13 @@ func (siw *ServerInterfaceWrapper) PostAuthRegister(w http.ResponseWriter, r *ht
 	handler.ServeHTTP(w, r)
 }
 
-// GetParticipationSlamsSlamIDUsers operation middleware
-func (siw *ServerInterfaceWrapper) GetParticipationSlamsSlamIDUsers(w http.ResponseWriter, r *http.Request) {
+// DeleteParticipationsSlamsSlamID operation middleware
+func (siw *ServerInterfaceWrapper) DeleteParticipationsSlamsSlamID(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
 	// ------------- Path parameter "slamID" -------------
-	var slamID int
+	var slamID string
 
 	err = runtime.BindStyledParameterWithOptions("simple", "slamID", chi.URLParam(r, "slamID"), &slamID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
@@ -219,7 +372,7 @@ func (siw *ServerInterfaceWrapper) GetParticipationSlamsSlamIDUsers(w http.Respo
 	r = r.WithContext(ctx)
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetParticipationSlamsSlamIDUsers(w, r, slamID)
+		siw.Handler.DeleteParticipationsSlamsSlamID(w, r, slamID)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -229,8 +382,181 @@ func (siw *ServerInterfaceWrapper) GetParticipationSlamsSlamIDUsers(w http.Respo
 	handler.ServeHTTP(w, r)
 }
 
-// GetParticipationUsersUserIDSlams operation middleware
-func (siw *ServerInterfaceWrapper) GetParticipationUsersUserIDSlams(w http.ResponseWriter, r *http.Request) {
+// PostParticipationsSlamsSlamID operation middleware
+func (siw *ServerInterfaceWrapper) PostParticipationsSlamsSlamID(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "slamID" -------------
+	var slamID string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "slamID", chi.URLParam(r, "slamID"), &slamID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "slamID", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostParticipationsSlamsSlamID(w, r, slamID)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetParticipationsSlamsSlamIDUsers operation middleware
+func (siw *ServerInterfaceWrapper) GetParticipationsSlamsSlamIDUsers(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "slamID" -------------
+	var slamID string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "slamID", chi.URLParam(r, "slamID"), &slamID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "slamID", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetParticipationsSlamsSlamIDUsers(w, r, slamID)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PostParticipationsSlamsSlamIDUsers operation middleware
+func (siw *ServerInterfaceWrapper) PostParticipationsSlamsSlamIDUsers(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "slamID" -------------
+	var slamID string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "slamID", chi.URLParam(r, "slamID"), &slamID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "slamID", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostParticipationsSlamsSlamIDUsers(w, r, slamID)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// DeleteParticipationsSlamsSlamIDUsersUserID operation middleware
+func (siw *ServerInterfaceWrapper) DeleteParticipationsSlamsSlamIDUsersUserID(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "slamID" -------------
+	var slamID string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "slamID", chi.URLParam(r, "slamID"), &slamID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "slamID", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "userID" -------------
+	var userID string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "userID", chi.URLParam(r, "userID"), &userID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "userID", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteParticipationsSlamsSlamIDUsersUserID(w, r, slamID, userID)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PutParticipationsSlamsSlamIDUsersUserID operation middleware
+func (siw *ServerInterfaceWrapper) PutParticipationsSlamsSlamIDUsersUserID(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "slamID" -------------
+	var slamID string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "slamID", chi.URLParam(r, "slamID"), &slamID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "slamID", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "userID" -------------
+	var userID string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "userID", chi.URLParam(r, "userID"), &userID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "userID", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PutParticipationsSlamsSlamIDUsersUserID(w, r, slamID, userID)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetParticipationsUsersUserIDSlams operation middleware
+func (siw *ServerInterfaceWrapper) GetParticipationsUsersUserIDSlams(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
@@ -250,7 +576,7 @@ func (siw *ServerInterfaceWrapper) GetParticipationUsersUserIDSlams(w http.Respo
 	r = r.WithContext(ctx)
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetParticipationUsersUserIDSlams(w, r, userID)
+		siw.Handler.GetParticipationsUsersUserIDSlams(w, r, userID)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -260,26 +586,17 @@ func (siw *ServerInterfaceWrapper) GetParticipationUsersUserIDSlams(w http.Respo
 	handler.ServeHTTP(w, r)
 }
 
-// DeleteParticipationUsersUserIDSlamsSlamID operation middleware
-func (siw *ServerInterfaceWrapper) DeleteParticipationUsersUserIDSlamsSlamID(w http.ResponseWriter, r *http.Request) {
+// DeletePerformancesPerformanceID operation middleware
+func (siw *ServerInterfaceWrapper) DeletePerformancesPerformanceID(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
-	// ------------- Path parameter "userID" -------------
-	var userID string
+	// ------------- Path parameter "performanceID" -------------
+	var performanceID string
 
-	err = runtime.BindStyledParameterWithOptions("simple", "userID", chi.URLParam(r, "userID"), &userID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions("simple", "performanceID", chi.URLParam(r, "performanceID"), &performanceID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "userID", Err: err})
-		return
-	}
-
-	// ------------- Path parameter "slamID" -------------
-	var slamID int
-
-	err = runtime.BindStyledParameterWithOptions("simple", "slamID", chi.URLParam(r, "slamID"), &slamID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "slamID", Err: err})
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "performanceID", Err: err})
 		return
 	}
 
@@ -290,7 +607,7 @@ func (siw *ServerInterfaceWrapper) DeleteParticipationUsersUserIDSlamsSlamID(w h
 	r = r.WithContext(ctx)
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.DeleteParticipationUsersUserIDSlamsSlamID(w, r, userID, slamID)
+		siw.Handler.DeletePerformancesPerformanceID(w, r, performanceID)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -300,26 +617,42 @@ func (siw *ServerInterfaceWrapper) DeleteParticipationUsersUserIDSlamsSlamID(w h
 	handler.ServeHTTP(w, r)
 }
 
-// PostParticipationUsersUserIDSlamsSlamID operation middleware
-func (siw *ServerInterfaceWrapper) PostParticipationUsersUserIDSlamsSlamID(w http.ResponseWriter, r *http.Request) {
+// GetPerformancesPerformanceID operation middleware
+func (siw *ServerInterfaceWrapper) GetPerformancesPerformanceID(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
-	// ------------- Path parameter "userID" -------------
-	var userID string
+	// ------------- Path parameter "performanceID" -------------
+	var performanceID string
 
-	err = runtime.BindStyledParameterWithOptions("simple", "userID", chi.URLParam(r, "userID"), &userID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions("simple", "performanceID", chi.URLParam(r, "performanceID"), &performanceID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "userID", Err: err})
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "performanceID", Err: err})
 		return
 	}
 
-	// ------------- Path parameter "slamID" -------------
-	var slamID int
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetPerformancesPerformanceID(w, r, performanceID)
+	}))
 
-	err = runtime.BindStyledParameterWithOptions("simple", "slamID", chi.URLParam(r, "slamID"), &slamID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PutPerformancesPerformanceID operation middleware
+func (siw *ServerInterfaceWrapper) PutPerformancesPerformanceID(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "performanceID" -------------
+	var performanceID string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "performanceID", chi.URLParam(r, "performanceID"), &performanceID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "slamID", Err: err})
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "performanceID", Err: err})
 		return
 	}
 
@@ -330,7 +663,57 @@ func (siw *ServerInterfaceWrapper) PostParticipationUsersUserIDSlamsSlamID(w htt
 	r = r.WithContext(ctx)
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostParticipationUsersUserIDSlamsSlamID(w, r, userID, slamID)
+		siw.Handler.PutPerformancesPerformanceID(w, r, performanceID)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetPerformancesPerformanceIDVotes operation middleware
+func (siw *ServerInterfaceWrapper) GetPerformancesPerformanceIDVotes(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "performanceID" -------------
+	var performanceID string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "performanceID", chi.URLParam(r, "performanceID"), &performanceID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "performanceID", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetPerformancesPerformanceIDVotes(w, r, performanceID)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PostPerformancesPerformanceIDVotes operation middleware
+func (siw *ServerInterfaceWrapper) PostPerformancesPerformanceIDVotes(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "performanceID" -------------
+	var performanceID string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "performanceID", chi.URLParam(r, "performanceID"), &performanceID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "performanceID", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostPerformancesPerformanceIDVotes(w, r, performanceID)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -374,17 +757,17 @@ func (siw *ServerInterfaceWrapper) PostSlams(w http.ResponseWriter, r *http.Requ
 	handler.ServeHTTP(w, r)
 }
 
-// DeleteSlamsId operation middleware
-func (siw *ServerInterfaceWrapper) DeleteSlamsId(w http.ResponseWriter, r *http.Request) {
+// DeleteSlamsSlamID operation middleware
+func (siw *ServerInterfaceWrapper) DeleteSlamsSlamID(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
-	// ------------- Path parameter "id" -------------
-	var id int
+	// ------------- Path parameter "slamID" -------------
+	var slamID string
 
-	err = runtime.BindStyledParameterWithOptions("simple", "id", chi.URLParam(r, "id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions("simple", "slamID", chi.URLParam(r, "slamID"), &slamID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "slamID", Err: err})
 		return
 	}
 
@@ -395,7 +778,7 @@ func (siw *ServerInterfaceWrapper) DeleteSlamsId(w http.ResponseWriter, r *http.
 	r = r.WithContext(ctx)
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.DeleteSlamsId(w, r, id)
+		siw.Handler.DeleteSlamsSlamID(w, r, slamID)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -405,22 +788,22 @@ func (siw *ServerInterfaceWrapper) DeleteSlamsId(w http.ResponseWriter, r *http.
 	handler.ServeHTTP(w, r)
 }
 
-// GetSlamsId operation middleware
-func (siw *ServerInterfaceWrapper) GetSlamsId(w http.ResponseWriter, r *http.Request) {
+// GetSlamsSlamID operation middleware
+func (siw *ServerInterfaceWrapper) GetSlamsSlamID(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
-	// ------------- Path parameter "id" -------------
-	var id int
+	// ------------- Path parameter "slamID" -------------
+	var slamID string
 
-	err = runtime.BindStyledParameterWithOptions("simple", "id", chi.URLParam(r, "id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions("simple", "slamID", chi.URLParam(r, "slamID"), &slamID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "slamID", Err: err})
 		return
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetSlamsId(w, r, id)
+		siw.Handler.GetSlamsSlamID(w, r, slamID)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -430,17 +813,17 @@ func (siw *ServerInterfaceWrapper) GetSlamsId(w http.ResponseWriter, r *http.Req
 	handler.ServeHTTP(w, r)
 }
 
-// PutSlamsId operation middleware
-func (siw *ServerInterfaceWrapper) PutSlamsId(w http.ResponseWriter, r *http.Request) {
+// PutSlamsSlamID operation middleware
+func (siw *ServerInterfaceWrapper) PutSlamsSlamID(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
-	// ------------- Path parameter "id" -------------
-	var id int
+	// ------------- Path parameter "slamID" -------------
+	var slamID string
 
-	err = runtime.BindStyledParameterWithOptions("simple", "id", chi.URLParam(r, "id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions("simple", "slamID", chi.URLParam(r, "slamID"), &slamID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "slamID", Err: err})
 		return
 	}
 
@@ -451,7 +834,237 @@ func (siw *ServerInterfaceWrapper) PutSlamsId(w http.ResponseWriter, r *http.Req
 	r = r.WithContext(ctx)
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PutSlamsId(w, r, id)
+		siw.Handler.PutSlamsSlamID(w, r, slamID)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetSlamsSlamIDStages operation middleware
+func (siw *ServerInterfaceWrapper) GetSlamsSlamIDStages(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "slamID" -------------
+	var slamID string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "slamID", chi.URLParam(r, "slamID"), &slamID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "slamID", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetSlamsSlamIDStages(w, r, slamID)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PostSlamsSlamIDStages operation middleware
+func (siw *ServerInterfaceWrapper) PostSlamsSlamIDStages(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "slamID" -------------
+	var slamID string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "slamID", chi.URLParam(r, "slamID"), &slamID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "slamID", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostSlamsSlamIDStages(w, r, slamID)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// DeleteStagesStageID operation middleware
+func (siw *ServerInterfaceWrapper) DeleteStagesStageID(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "stageID" -------------
+	var stageID string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "stageID", chi.URLParam(r, "stageID"), &stageID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "stageID", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteStagesStageID(w, r, stageID)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetStagesStageID operation middleware
+func (siw *ServerInterfaceWrapper) GetStagesStageID(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "stageID" -------------
+	var stageID string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "stageID", chi.URLParam(r, "stageID"), &stageID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "stageID", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetStagesStageID(w, r, stageID)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PutStagesStageID operation middleware
+func (siw *ServerInterfaceWrapper) PutStagesStageID(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "stageID" -------------
+	var stageID string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "stageID", chi.URLParam(r, "stageID"), &stageID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "stageID", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PutStagesStageID(w, r, stageID)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetStagesStageIDPerformances operation middleware
+func (siw *ServerInterfaceWrapper) GetStagesStageIDPerformances(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "stageID" -------------
+	var stageID string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "stageID", chi.URLParam(r, "stageID"), &stageID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "stageID", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetStagesStageIDPerformances(w, r, stageID)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PostStagesStageIDPerformances operation middleware
+func (siw *ServerInterfaceWrapper) PostStagesStageIDPerformances(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "stageID" -------------
+	var stageID string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "stageID", chi.URLParam(r, "stageID"), &stageID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "stageID", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostStagesStageIDPerformances(w, r, stageID)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PutStagesStageIDPerformances operation middleware
+func (siw *ServerInterfaceWrapper) PutStagesStageIDPerformances(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "stageID" -------------
+	var stageID string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "stageID", chi.URLParam(r, "stageID"), &stageID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "stageID", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PutStagesStageIDPerformances(w, r, stageID)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -481,19 +1094,8 @@ func (siw *ServerInterfaceWrapper) GetUsers(w http.ResponseWriter, r *http.Reque
 	handler.ServeHTTP(w, r)
 }
 
-// DeleteUsersId operation middleware
-func (siw *ServerInterfaceWrapper) DeleteUsersId(w http.ResponseWriter, r *http.Request) {
-
-	var err error
-
-	// ------------- Path parameter "id" -------------
-	var id string
-
-	err = runtime.BindStyledParameterWithOptions("simple", "id", chi.URLParam(r, "id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
-		return
-	}
+// PostUsers operation middleware
+func (siw *ServerInterfaceWrapper) PostUsers(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
@@ -502,7 +1104,7 @@ func (siw *ServerInterfaceWrapper) DeleteUsersId(w http.ResponseWriter, r *http.
 	r = r.WithContext(ctx)
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.DeleteUsersId(w, r, id)
+		siw.Handler.PostUsers(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -512,17 +1114,17 @@ func (siw *ServerInterfaceWrapper) DeleteUsersId(w http.ResponseWriter, r *http.
 	handler.ServeHTTP(w, r)
 }
 
-// GetUsersId operation middleware
-func (siw *ServerInterfaceWrapper) GetUsersId(w http.ResponseWriter, r *http.Request) {
+// DeleteUsersUserID operation middleware
+func (siw *ServerInterfaceWrapper) DeleteUsersUserID(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
-	// ------------- Path parameter "id" -------------
-	var id string
+	// ------------- Path parameter "userID" -------------
+	var userID string
 
-	err = runtime.BindStyledParameterWithOptions("simple", "id", chi.URLParam(r, "id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions("simple", "userID", chi.URLParam(r, "userID"), &userID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "userID", Err: err})
 		return
 	}
 
@@ -533,7 +1135,7 @@ func (siw *ServerInterfaceWrapper) GetUsersId(w http.ResponseWriter, r *http.Req
 	r = r.WithContext(ctx)
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetUsersId(w, r, id)
+		siw.Handler.DeleteUsersUserID(w, r, userID)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -543,17 +1145,17 @@ func (siw *ServerInterfaceWrapper) GetUsersId(w http.ResponseWriter, r *http.Req
 	handler.ServeHTTP(w, r)
 }
 
-// PutUsersId operation middleware
-func (siw *ServerInterfaceWrapper) PutUsersId(w http.ResponseWriter, r *http.Request) {
+// GetUsersUserID operation middleware
+func (siw *ServerInterfaceWrapper) GetUsersUserID(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
-	// ------------- Path parameter "id" -------------
-	var id string
+	// ------------- Path parameter "userID" -------------
+	var userID string
 
-	err = runtime.BindStyledParameterWithOptions("simple", "id", chi.URLParam(r, "id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions("simple", "userID", chi.URLParam(r, "userID"), &userID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "userID", Err: err})
 		return
 	}
 
@@ -564,7 +1166,38 @@ func (siw *ServerInterfaceWrapper) PutUsersId(w http.ResponseWriter, r *http.Req
 	r = r.WithContext(ctx)
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PutUsersId(w, r, id)
+		siw.Handler.GetUsersUserID(w, r, userID)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PutUsersUserID operation middleware
+func (siw *ServerInterfaceWrapper) PutUsersUserID(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "userID" -------------
+	var userID string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "userID", chi.URLParam(r, "userID"), &userID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "userID", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PutUsersUserID(w, r, userID)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -694,16 +1327,40 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Post(options.BaseURL+"/auth/register", wrapper.PostAuthRegister)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/participation/slams/{slamID}/users", wrapper.GetParticipationSlamsSlamIDUsers)
+		r.Delete(options.BaseURL+"/participations/slams/{slamID}", wrapper.DeleteParticipationsSlamsSlamID)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/participation/users/{userID}/slams", wrapper.GetParticipationUsersUserIDSlams)
+		r.Post(options.BaseURL+"/participations/slams/{slamID}", wrapper.PostParticipationsSlamsSlamID)
 	})
 	r.Group(func(r chi.Router) {
-		r.Delete(options.BaseURL+"/participation/users/{userID}/slams/{slamID}", wrapper.DeleteParticipationUsersUserIDSlamsSlamID)
+		r.Get(options.BaseURL+"/participations/slams/{slamID}/users", wrapper.GetParticipationsSlamsSlamIDUsers)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/participation/users/{userID}/slams/{slamID}", wrapper.PostParticipationUsersUserIDSlamsSlamID)
+		r.Post(options.BaseURL+"/participations/slams/{slamID}/users", wrapper.PostParticipationsSlamsSlamIDUsers)
+	})
+	r.Group(func(r chi.Router) {
+		r.Delete(options.BaseURL+"/participations/slams/{slamID}/users/{userID}", wrapper.DeleteParticipationsSlamsSlamIDUsersUserID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Put(options.BaseURL+"/participations/slams/{slamID}/users/{userID}", wrapper.PutParticipationsSlamsSlamIDUsersUserID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/participations/users/{userID}/slams", wrapper.GetParticipationsUsersUserIDSlams)
+	})
+	r.Group(func(r chi.Router) {
+		r.Delete(options.BaseURL+"/performances/{performanceID}", wrapper.DeletePerformancesPerformanceID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/performances/{performanceID}", wrapper.GetPerformancesPerformanceID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Put(options.BaseURL+"/performances/{performanceID}", wrapper.PutPerformancesPerformanceID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/performances/{performanceID}/votes", wrapper.GetPerformancesPerformanceIDVotes)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/performances/{performanceID}/votes", wrapper.PostPerformancesPerformanceIDVotes)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/slams", wrapper.GetSlams)
@@ -712,25 +1369,52 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Post(options.BaseURL+"/slams", wrapper.PostSlams)
 	})
 	r.Group(func(r chi.Router) {
-		r.Delete(options.BaseURL+"/slams/{id}", wrapper.DeleteSlamsId)
+		r.Delete(options.BaseURL+"/slams/{slamID}", wrapper.DeleteSlamsSlamID)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/slams/{id}", wrapper.GetSlamsId)
+		r.Get(options.BaseURL+"/slams/{slamID}", wrapper.GetSlamsSlamID)
 	})
 	r.Group(func(r chi.Router) {
-		r.Put(options.BaseURL+"/slams/{id}", wrapper.PutSlamsId)
+		r.Put(options.BaseURL+"/slams/{slamID}", wrapper.PutSlamsSlamID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/slams/{slamID}/stages", wrapper.GetSlamsSlamIDStages)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/slams/{slamID}/stages", wrapper.PostSlamsSlamIDStages)
+	})
+	r.Group(func(r chi.Router) {
+		r.Delete(options.BaseURL+"/stages/{stageID}", wrapper.DeleteStagesStageID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/stages/{stageID}", wrapper.GetStagesStageID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Put(options.BaseURL+"/stages/{stageID}", wrapper.PutStagesStageID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/stages/{stageID}/performances", wrapper.GetStagesStageIDPerformances)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/stages/{stageID}/performances", wrapper.PostStagesStageIDPerformances)
+	})
+	r.Group(func(r chi.Router) {
+		r.Put(options.BaseURL+"/stages/{stageID}/performances", wrapper.PutStagesStageIDPerformances)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/users", wrapper.GetUsers)
 	})
 	r.Group(func(r chi.Router) {
-		r.Delete(options.BaseURL+"/users/{id}", wrapper.DeleteUsersId)
+		r.Post(options.BaseURL+"/users", wrapper.PostUsers)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/users/{id}", wrapper.GetUsersId)
+		r.Delete(options.BaseURL+"/users/{userID}", wrapper.DeleteUsersUserID)
 	})
 	r.Group(func(r chi.Router) {
-		r.Put(options.BaseURL+"/users/{id}", wrapper.PutUsersId)
+		r.Get(options.BaseURL+"/users/{userID}", wrapper.GetUsersUserID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Put(options.BaseURL+"/users/{userID}", wrapper.PutUsersUserID)
 	})
 
 	return r

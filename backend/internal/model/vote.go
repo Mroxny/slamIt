@@ -2,7 +2,7 @@ package model
 
 import "github.com/Mroxny/slamIt/internal/api"
 
-type Slam struct {
-	api.Slam `gorm:"embedded"`
+type Vote struct {
+	api.Vote `gorm:"embedded"`
 	Model
 }

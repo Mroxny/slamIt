@@ -1,66 +1,70 @@
 package repository
 
 import (
-	"errors"
+	"context"
 
 	"github.com/Mroxny/slamIt/internal/api"
+	"github.com/Mroxny/slamIt/internal/model"
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type SlamRepository struct {
-	slams  []api.Slam
-	nextID int
+	*Repository[model.Slam]
 }
 
-func NewSlamRepository() *SlamRepository {
+func NewSlamRepository(db *gorm.DB) *SlamRepository {
 	return &SlamRepository{
-		slams:  []api.Slam{},
-		nextID: 1,
+		Repository: NewRepository[model.Slam](db),
 	}
 }
 
-func (r *SlamRepository) GetAll() []api.Slam {
-	return r.slams
+func (r *SlamRepository) FindAllPublic(ctx context.Context) ([]model.Slam, error) {
+	var slams []model.Slam
+	err := r.db.WithContext(ctx).
+		Find(&slams, "public = true").Error
+	return slams, err
 }
 
-func (r *SlamRepository) GetByID(id int) (*api.Slam, error) {
-	for _, s := range r.slams {
-		if *s.Id == id {
-			return &s, nil
+func (r *SlamRepository) FindByID(ctx context.Context, id string) (*model.Slam, error) {
+	var slam model.Slam
+	err := r.db.WithContext(ctx).
+		Preload("Users").
+		Preload("Stages").
+		First(&slam, "id = ?", id).Error
+	return &slam, err
+}
+
+func (r *SlamRepository) FindPublicByID(ctx context.Context, id string) (*model.Slam, error) {
+	var slam model.Slam
+	err := r.db.WithContext(ctx).
+		Where("public = true").
+		Preload("Users").
+		Preload("Stages").
+		First(&slam, "id = ?", id).Error
+	return &slam, err
+}
+
+// CreateWithCreatorTx creates a slam and a participation record for the creator in a single transaction.
+func (r *SlamRepository) CreateWithCreatorTx(ctx context.Context, slam *model.Slam, userId string) error {
+	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(slam).Error; err != nil {
+			return err
 		}
-	}
-	return nil, errors.New("slam not found")
-}
 
-func (r *SlamRepository) Create(s api.Slam) (api.Slam, error) {
-	if s.Title == "" {
-		return api.Slam{}, errors.New("title required")
-	}
-	s.Id = &r.nextID
-	r.nextID++
-	r.slams = append(r.slams, s)
-	return s, nil
-}
-
-func (r *SlamRepository) Update(id int, updated api.Slam) (*api.Slam, error) {
-	for i, s := range r.slams {
-		if *s.Id == id {
-			if updated.Title == "" {
-				return nil, errors.New("title required")
-			}
-			r.slams[i].Title = updated.Title
-			r.slams[i].Description = updated.Description
-			return &r.slams[i], nil
+		participation := model.Participation{
+			Participation: api.Participation{
+				Id:     uuid.New().String(),
+				Role:   api.Creator,
+				UserId: userId,
+				SlamId: slam.Id,
+			},
 		}
-	}
-	return nil, errors.New("slam not found")
-}
 
-func (r *SlamRepository) Delete(id int) error {
-	for i, s := range r.slams {
-		if *s.Id == id {
-			r.slams = append(r.slams[:i], r.slams[i+1:]...)
-			return nil
+		if err := tx.Create(&participation).Error; err != nil {
+			return err
 		}
-	}
-	return errors.New("slam not found")
+
+		return nil
+	})
 }

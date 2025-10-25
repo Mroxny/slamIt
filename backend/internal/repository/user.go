@@ -1,70 +1,24 @@
 package repository
 
 import (
-	"errors"
+	"context"
 
 	"github.com/Mroxny/slamIt/internal/model"
+	"gorm.io/gorm"
 )
 
 type UserRepository struct {
-	users  []model.User
-	nextID int
+	*Repository[model.User]
 }
 
-func NewUserRepository() *UserRepository {
+func NewUserRepository(db *gorm.DB) *UserRepository {
 	return &UserRepository{
-		users:  []model.User{},
-		nextID: 1,
+		Repository: NewRepository[model.User](db),
 	}
 }
 
-func (r *UserRepository) GetAll() []model.User {
-	return r.users
-}
-
-func (r *UserRepository) GetByID(id string) (*model.User, error) {
-	for _, u := range r.users {
-		if u.Id == id {
-			return &u, nil
-		}
-	}
-	return nil, errors.New("user not found")
-}
-
-func (r *UserRepository) Create(user *model.User) (*model.User, error) {
-	r.users = append(r.users, *user)
-	return user, nil
-}
-
-func (r *UserRepository) Update(id string, updated model.User) (*model.User, error) {
-	for i, u := range r.users {
-		if u.Id == id {
-			if updated.Name == "" || updated.Email == "" {
-				return nil, errors.New("invalid input")
-			}
-			r.users[i].Name = updated.Name
-			r.users[i].Email = updated.Email
-			return &r.users[i], nil
-		}
-	}
-	return nil, errors.New("user not found")
-}
-
-func (r *UserRepository) Delete(id string) error {
-	for i, u := range r.users {
-		if u.Id == id {
-			r.users = append(r.users[:i], r.users[i+1:]...)
-			return nil
-		}
-	}
-	return errors.New("user not found")
-}
-
-func (r *UserRepository) GetByEmail(email string) (*model.User, error) {
-	for _, user := range r.users {
-		if user.Email == email {
-			return &user, nil
-		}
-	}
-	return nil, errors.New("user not found")
+func (r *UserRepository) FindByEmail(ctx context.Context, email string) (*model.User, error) {
+	var user model.User
+	err := r.db.WithContext(ctx).Where("email = ?", email).First(&user).Error
+	return &user, err
 }
