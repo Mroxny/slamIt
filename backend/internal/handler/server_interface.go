@@ -84,8 +84,9 @@ func ParsePageNumAndSize(page, pageSize *int) (int, int) {
 
 	if page == nil || *page < 1 {
 		resPage = defaultPage
+	} else {
+		resPage = *page
 	}
-	resPage = *page
 
 	if pageSize == nil || *pageSize < 1 {
 		resSize = defaultPageSize
