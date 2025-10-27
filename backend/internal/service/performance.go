@@ -20,8 +20,9 @@ func NewPerformanceService(performances *repository.PerformanceRepository) *Perf
 	return &PerformanceService{perfRepo: performances}
 }
 
-func (s *PerformanceService) GetPerformances(ctx context.Context, stageId string) ([]api.Performance, error) {
-	perfs, err := s.perfRepo.FindSortedByStageId(ctx, stageId)
+func (s *PerformanceService) GetPerformances(ctx context.Context, stageId string, page, pageSize int) (*api.PerformancePagination, error) {
+	offset := (page - 1) * pageSize
+	perfs, err := s.perfRepo.FindSortedByStageId(ctx, stageId, pageSize, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -30,7 +31,13 @@ func (s *PerformanceService) GetPerformances(ctx context.Context, stageId string
 	if err = copier.Copy(&apiPerfs, &perfs); err != nil {
 		return nil, err
 	}
-	return apiPerfs, nil
+
+	pag := api.PerformancePagination{
+		Page:     &page,
+		PageSize: &pageSize,
+		Items:    &apiPerfs,
+	}
+	return &pag, nil
 }
 
 func (s *PerformanceService) GetPerformance(ctx context.Context, performanceId string) (*api.Performance, error) {

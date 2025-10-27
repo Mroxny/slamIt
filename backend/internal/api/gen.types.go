@@ -83,6 +83,13 @@ type Performance struct {
 	Stage                 *Stage         `gorm:"foreignKey:StageId;references:Id" json:"stage,omitempty"`
 }
 
+// PerformancePagination defines model for PerformancePagination.
+type PerformancePagination struct {
+	Page     *int           `json:"page,omitempty"`
+	PageSize *int           `json:"pageSize,omitempty"`
+	Items    *[]Performance `json:"items,omitempty"`
+}
+
 // PerformanceRequest defines model for PerformanceRequest.
 type PerformanceRequest struct {
 	ParticipationId       string  `json:"participationId"`
@@ -201,6 +208,15 @@ type GetSlamsParams struct {
 
 // GetSlamsSlamIDStagesParams defines parameters for GetSlamsSlamIDStages.
 type GetSlamsSlamIDStagesParams struct {
+	// Page Page number for pagination
+	Page *PageNum `form:"page,omitempty" json:"page,omitempty"`
+
+	// PageSize Number of items per page
+	PageSize *PageSize `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+}
+
+// GetStagesStageIDPerformancesParams defines parameters for GetStagesStageIDPerformances.
+type GetStagesStageIDPerformancesParams struct {
 	// Page Page number for pagination
 	Page *PageNum `form:"page,omitempty" json:"page,omitempty"`
 

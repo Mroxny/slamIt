@@ -94,7 +94,7 @@ type ServerInterface interface {
 	PutStagesStageID(w http.ResponseWriter, r *http.Request, stageID string)
 	// List performances for a stage
 	// (GET /stages/{stageID}/performances)
-	GetStagesStageIDPerformances(w http.ResponseWriter, r *http.Request, stageID string)
+	GetStagesStageIDPerformances(w http.ResponseWriter, r *http.Request, stageID string, params GetStagesStageIDPerformancesParams)
 	// Add a performance to a stage
 	// (POST /stages/{stageID}/performances)
 	PostStagesStageIDPerformances(w http.ResponseWriter, r *http.Request, stageID string)
@@ -268,7 +268,7 @@ func (_ Unimplemented) PutStagesStageID(w http.ResponseWriter, r *http.Request, 
 
 // List performances for a stage
 // (GET /stages/{stageID}/performances)
-func (_ Unimplemented) GetStagesStageIDPerformances(w http.ResponseWriter, r *http.Request, stageID string) {
+func (_ Unimplemented) GetStagesStageIDPerformances(w http.ResponseWriter, r *http.Request, stageID string, params GetStagesStageIDPerformancesParams) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -1041,8 +1041,27 @@ func (siw *ServerInterfaceWrapper) GetStagesStageIDPerformances(w http.ResponseW
 		return
 	}
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetStagesStageIDPerformancesParams
+
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page", r.URL.Query(), &params.Page)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "page", Err: err})
+		return
+	}
+
+	// ------------- Optional query parameter "pageSize" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "pageSize", r.URL.Query(), &params.PageSize)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "pageSize", Err: err})
+		return
+	}
+
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetStagesStageIDPerformances(w, r, stageID)
+		siw.Handler.GetStagesStageIDPerformances(w, r, stageID, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
