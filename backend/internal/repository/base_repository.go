@@ -24,6 +24,21 @@ func (r *Repository[T]) FindAll(ctx context.Context) ([]T, error) {
 	return entities, err
 }
 
+func (r *Repository[T]) FindAllPaginated(ctx context.Context, limit, offset int) ([]T, error) {
+	var entities []T
+
+	err := r.db.WithContext(ctx).
+		Limit(limit).
+		Offset(offset).
+		Find(&entities).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return entities, nil
+}
+
 func (r *Repository[T]) FindByID(ctx context.Context, id string) (*T, error) {
 	var entity T
 	err := r.db.WithContext(ctx).First(&entity, "id = ?", id).Error
