@@ -199,6 +199,13 @@ type Vote struct {
 	DeviceFingerprint *string `json:"deviceFingerprint,omitempty"`
 }
 
+// VotePagination defines model for VotePagination.
+type VotePagination struct {
+	Page     *int    `json:"page,omitempty"`
+	PageSize *int    `json:"pageSize,omitempty"`
+	Items    *[]Vote `json:"items,omitempty"`
+}
+
 // VoteRequest defines model for VoteRequest.
 type VoteRequest struct {
 	DeviceFingerprint string `json:"deviceFingerprint"`
@@ -215,6 +222,15 @@ type GetParticipationsSlamsSlamIDUsersParams struct {
 
 // GetParticipationsUsersUserIDSlamsParams defines parameters for GetParticipationsUsersUserIDSlams.
 type GetParticipationsUsersUserIDSlamsParams struct {
+	// Page Page number for pagination
+	Page *PageNum `form:"page,omitempty" json:"page,omitempty"`
+
+	// PageSize Number of items per page
+	PageSize *PageSize `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+}
+
+// GetPerformancesPerformanceIDVotesParams defines parameters for GetPerformancesPerformanceIDVotes.
+type GetPerformancesPerformanceIDVotesParams struct {
 	// Page Page number for pagination
 	Page *PageNum `form:"page,omitempty" json:"page,omitempty"`
 

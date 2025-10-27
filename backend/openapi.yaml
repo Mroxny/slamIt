@@ -539,15 +539,23 @@ paths:
           required: true
           schema:
             type: string
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            $ref: '#/components/schemas/PageNum'
+        - name: pageSize
+          in: query
+          description: Number of items per page
+          schema:
+            $ref: '#/components/schemas/PageSize'
       responses:
         "200":
           description: List of performances
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Vote'
+                $ref: '#/components/schemas/VotePagination'
     post:
       tags: [performances]
       summary: Cast a vote for a performance
@@ -1147,6 +1155,16 @@ components:
       properties:
         deviceFingerprint:
           type: string
+          
+    VotePagination:
+      allOf:
+        - $ref: '#/components/schemas/PaginationObject'
+        - type: object
+          properties:
+            items: 
+              type: array
+              items: 
+                $ref: '#/components/schemas/Vote'
     
     StageTypeEnum:
       type: string

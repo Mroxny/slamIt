@@ -58,7 +58,7 @@ type ServerInterface interface {
 	PutPerformancesPerformanceID(w http.ResponseWriter, r *http.Request, performanceID string)
 	// Get votes for performance
 	// (GET /performances/{performanceID}/votes)
-	GetPerformancesPerformanceIDVotes(w http.ResponseWriter, r *http.Request, performanceID string)
+	GetPerformancesPerformanceIDVotes(w http.ResponseWriter, r *http.Request, performanceID string, params GetPerformancesPerformanceIDVotesParams)
 	// Cast a vote for a performance
 	// (POST /performances/{performanceID}/votes)
 	PostPerformancesPerformanceIDVotes(w http.ResponseWriter, r *http.Request, performanceID string)
@@ -196,7 +196,7 @@ func (_ Unimplemented) PutPerformancesPerformanceID(w http.ResponseWriter, r *ht
 
 // Get votes for performance
 // (GET /performances/{performanceID}/votes)
-func (_ Unimplemented) GetPerformancesPerformanceIDVotes(w http.ResponseWriter, r *http.Request, performanceID string) {
+func (_ Unimplemented) GetPerformancesPerformanceIDVotes(w http.ResponseWriter, r *http.Request, performanceID string, params GetPerformancesPerformanceIDVotesParams) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -725,8 +725,27 @@ func (siw *ServerInterfaceWrapper) GetPerformancesPerformanceIDVotes(w http.Resp
 		return
 	}
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetPerformancesPerformanceIDVotesParams
+
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page", r.URL.Query(), &params.Page)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "page", Err: err})
+		return
+	}
+
+	// ------------- Optional query parameter "pageSize" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "pageSize", r.URL.Query(), &params.PageSize)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "pageSize", Err: err})
+		return
+	}
+
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetPerformancesPerformanceIDVotes(w, r, performanceID)
+		siw.Handler.GetPerformancesPerformanceIDVotes(w, r, performanceID, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {

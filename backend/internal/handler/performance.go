@@ -38,8 +38,9 @@ func (s *Server) PutPerformancesPerformanceID(w http.ResponseWriter, r *http.Req
 	WriteJSON(w, http.StatusOK, updated)
 }
 
-func (s *Server) GetPerformancesPerformanceIDVotes(w http.ResponseWriter, r *http.Request, performanceID string) {
-	votes, err := s.voteService.GetVotes(r.Context(), performanceID)
+func (s *Server) GetPerformancesPerformanceIDVotes(w http.ResponseWriter, r *http.Request, performanceID string, params api.GetPerformancesPerformanceIDVotesParams) {
+	page, pageSize := ParsePageNumAndSize(params.Page, params.PageSize)
+	votes, err := s.voteService.GetVotes(r.Context(), performanceID, page, pageSize)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
