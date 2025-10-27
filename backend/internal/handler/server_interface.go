@@ -36,6 +36,12 @@ func NewServer(
 	return &Server{u, s, a, p, st, pe, v}
 }
 
+const (
+	defaultPage     = 1
+	defaultPageSize = 10
+	maxPageSize     = 100
+)
+
 func WriteJSON(w http.ResponseWriter, status int, v interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
@@ -70,4 +76,27 @@ func GetUserFromContext(ctx context.Context) (string, error) {
 	}
 
 	return userID, nil
+}
+
+func ParsePageNumAndSize(page, pageSize *int) (int, int) {
+	var resPage int
+	var resSize int
+
+	if page == nil || *page < 1 {
+		resPage = defaultPage
+	}
+	resPage = *page
+
+	if pageSize == nil || *pageSize < 1 {
+		resSize = defaultPageSize
+		return resPage, resSize
+	}
+
+	if *pageSize > maxPageSize {
+		resSize = maxPageSize
+		return resPage, resSize
+	}
+	resSize = *pageSize
+
+	return resPage, resSize
 }
