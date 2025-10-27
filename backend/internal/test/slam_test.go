@@ -36,6 +36,12 @@ func TestSlam(t *testing.T) {
 			WantCode: http.StatusOK,
 		},
 		{
+			Name:     "get all slams with invalid pagination (should work)",
+			Method:   "GET",
+			Url:      "/slams?page=-1",
+			WantCode: http.StatusOK,
+		},
+		{
 			Name:     "get existing slam",
 			Method:   "GET",
 			Url:      "/slams/" + slamId,

@@ -21,6 +21,12 @@ func TestStage(t *testing.T) {
 			WantCode: http.StatusOK,
 		},
 		{
+			Name:     "get stages with invalid pagination (should work)",
+			Method:   "GET",
+			Url:      "/slams/" + slamId + "/stages?page=-1",
+			WantCode: http.StatusOK,
+		},
+		{
 			Name:     "get stages from invalid slamId",
 			Method:   "GET",
 			Url:      "/slams/xxx/stages",

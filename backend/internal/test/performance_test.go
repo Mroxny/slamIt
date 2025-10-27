@@ -29,6 +29,12 @@ func TestPerformance(t *testing.T) {
 			WantCode: http.StatusNotFound,
 		},
 		{
+			Name:     "get performances with invalid pagination (should work)",
+			Method:   "GET",
+			Url:      "/stages/" + stageId + "/performances?page=-1",
+			WantCode: http.StatusOK,
+		},
+		{
 			Name:     "create valid performance",
 			Method:   "POST",
 			Body:     `{"participationId":"` + partId2 + `"}`,

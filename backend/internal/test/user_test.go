@@ -21,6 +21,13 @@ func TestUser(t *testing.T) {
 			WantCode: http.StatusOK,
 		},
 		{
+			Name:     "get all users with invalid pagination (should work)",
+			Method:   "GET",
+			Url:      "/users?page=-1",
+			Auth:     true,
+			WantCode: http.StatusOK,
+		},
+		{
 			Name:     "create temporary user",
 			Method:   "POST",
 			Url:      "/users",
