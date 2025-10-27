@@ -20,8 +20,9 @@ func NewSlamService(slams *repository.SlamRepository) *SlamService {
 	return &SlamService{slamRepo: slams}
 }
 
-func (s *SlamService) GetAll(ctx context.Context) ([]api.Slam, error) {
-	modelSlams, err := s.slamRepo.FindAllPublic(ctx)
+func (s *SlamService) GetAll(ctx context.Context, page, pageSize int) (*api.SlamPagination, error) {
+	offset := (page - 1) * pageSize
+	modelSlams, err := s.slamRepo.FindAllPublic(ctx, pageSize, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +32,12 @@ func (s *SlamService) GetAll(ctx context.Context) ([]api.Slam, error) {
 		return nil, err
 	}
 
-	return apiSlams, nil
+	pag := api.SlamPagination{
+		Page:     &page,
+		PageSize: &pageSize,
+		Items:    &apiSlams,
+	}
+	return &pag, nil
 }
 
 func (s *SlamService) GetByID(ctx context.Context, id string) (*api.Slam, error) {

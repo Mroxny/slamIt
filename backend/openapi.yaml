@@ -180,15 +180,24 @@ paths:
     get:
       tags: [slams]
       summary: Get all slams
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            $ref: '#/components/schemas/PageNum'
+        - name: pageSize
+          in: query
+          description: Number of items per page
+          schema:
+            $ref: '#/components/schemas/PageSize'
       responses:
         "200":
           description: List of slams
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Slam'
+                $ref: '#/components/schemas/SlamPagination'
     post:
       tags: [slams]
       summary: Create a slam
@@ -814,6 +823,16 @@ components:
           x-order: 3
         public:
           type: boolean
+    
+    SlamPagination:
+      allOf:
+        - $ref: '#/components/schemas/PaginationObject'
+        - type: object
+          properties:
+            items: 
+              type: array
+              items: 
+                $ref: '#/components/schemas/Slam'
 
     RegisterRequest:
       type: object

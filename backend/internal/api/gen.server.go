@@ -64,7 +64,7 @@ type ServerInterface interface {
 	PostPerformancesPerformanceIDVotes(w http.ResponseWriter, r *http.Request, performanceID string)
 	// Get all slams
 	// (GET /slams)
-	GetSlams(w http.ResponseWriter, r *http.Request)
+	GetSlams(w http.ResponseWriter, r *http.Request, params GetSlamsParams)
 	// Create a slam
 	// (POST /slams)
 	PostSlams(w http.ResponseWriter, r *http.Request)
@@ -208,7 +208,7 @@ func (_ Unimplemented) PostPerformancesPerformanceIDVotes(w http.ResponseWriter,
 
 // Get all slams
 // (GET /slams)
-func (_ Unimplemented) GetSlams(w http.ResponseWriter, r *http.Request) {
+func (_ Unimplemented) GetSlams(w http.ResponseWriter, r *http.Request, params GetSlamsParams) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -726,8 +726,29 @@ func (siw *ServerInterfaceWrapper) PostPerformancesPerformanceIDVotes(w http.Res
 // GetSlams operation middleware
 func (siw *ServerInterfaceWrapper) GetSlams(w http.ResponseWriter, r *http.Request) {
 
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetSlamsParams
+
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page", r.URL.Query(), &params.Page)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "page", Err: err})
+		return
+	}
+
+	// ------------- Optional query parameter "pageSize" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "pageSize", r.URL.Query(), &params.PageSize)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "pageSize", Err: err})
+		return
+	}
+
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetSlams(w, r)
+		siw.Handler.GetSlams(w, r, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {

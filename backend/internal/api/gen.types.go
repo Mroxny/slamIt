@@ -114,6 +114,13 @@ type Slam struct {
 	Users       *[]User  `gorm:"many2many:participations" json:"users,omitempty"`
 }
 
+// SlamPagination defines model for SlamPagination.
+type SlamPagination struct {
+	Page     *int    `json:"page,omitempty"`
+	PageSize *int    `json:"pageSize,omitempty"`
+	Items    *[]Slam `json:"items,omitempty"`
+}
+
 // SlamRequest defines model for SlamRequest.
 type SlamRequest struct {
 	Title       string  `json:"title"`
@@ -174,6 +181,15 @@ type Vote struct {
 // VoteRequest defines model for VoteRequest.
 type VoteRequest struct {
 	DeviceFingerprint string `json:"deviceFingerprint"`
+}
+
+// GetSlamsParams defines parameters for GetSlams.
+type GetSlamsParams struct {
+	// Page Page number for pagination
+	Page *PageNum `form:"page,omitempty" json:"page,omitempty"`
+
+	// PageSize Number of items per page
+	PageSize *PageSize `form:"pageSize,omitempty" json:"pageSize,omitempty"`
 }
 
 // PutStagesStageIDPerformancesJSONBody defines parameters for PutStagesStageIDPerformances.

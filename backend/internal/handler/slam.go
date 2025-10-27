@@ -6,8 +6,9 @@ import (
 	"github.com/Mroxny/slamIt/internal/api"
 )
 
-func (s *Server) GetSlams(w http.ResponseWriter, r *http.Request) {
-	slams, err := s.slamService.GetAll(r.Context())
+func (s *Server) GetSlams(w http.ResponseWriter, r *http.Request, params api.GetSlamsParams) {
+	page, pageSize := ParsePageNumAndSize(params.Page, params.PageSize)
+	slams, err := s.slamService.GetAll(r.Context(), page, pageSize)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
