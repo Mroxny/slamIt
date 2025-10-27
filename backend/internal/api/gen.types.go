@@ -58,6 +58,13 @@ type Participation struct {
 	User   *User                 `gorm:"foreignKey:UserId;references:Id" json:"user,omitempty"`
 }
 
+// ParticipationPagination defines model for ParticipationPagination.
+type ParticipationPagination struct {
+	Page     *int             `json:"page,omitempty"`
+	PageSize *int             `json:"pageSize,omitempty"`
+	Items    *[]Participation `json:"items,omitempty"`
+}
+
 // ParticipationRequest defines model for ParticipationRequest.
 type ParticipationRequest struct {
 	UserId string                 `json:"userId"`
@@ -195,6 +202,24 @@ type Vote struct {
 // VoteRequest defines model for VoteRequest.
 type VoteRequest struct {
 	DeviceFingerprint string `json:"deviceFingerprint"`
+}
+
+// GetParticipationsSlamsSlamIDUsersParams defines parameters for GetParticipationsSlamsSlamIDUsers.
+type GetParticipationsSlamsSlamIDUsersParams struct {
+	// Page Page number for pagination
+	Page *PageNum `form:"page,omitempty" json:"page,omitempty"`
+
+	// PageSize Number of items per page
+	PageSize *PageSize `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+}
+
+// GetParticipationsUsersUserIDSlamsParams defines parameters for GetParticipationsUsersUserIDSlams.
+type GetParticipationsUsersUserIDSlamsParams struct {
+	// Page Page number for pagination
+	Page *PageNum `form:"page,omitempty" json:"page,omitempty"`
+
+	// PageSize Number of items per page
+	PageSize *PageSize `form:"pageSize,omitempty" json:"pageSize,omitempty"`
 }
 
 // GetSlamsParams defines parameters for GetSlams.

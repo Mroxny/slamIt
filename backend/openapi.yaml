@@ -617,15 +617,23 @@ paths:
           required: true
           schema:
             type: string
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            $ref: '#/components/schemas/PageNum'
+        - name: pageSize
+          in: query
+          description: Number of items per page
+          schema:
+            $ref: '#/components/schemas/PageSize'
       responses:
         "200":
           description: List of slams
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Slam'
+                $ref: '#/components/schemas/Participation'
 
   /participations/slams/{slamID}/users:
     get:
@@ -639,15 +647,23 @@ paths:
           required: true
           schema:
             type: string
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            $ref: '#/components/schemas/PageNum'
+        - name: pageSize
+          in: query
+          description: Number of items per page
+          schema:
+            $ref: '#/components/schemas/PageSize'
       responses:
         "200":
           description: List of participations
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/ParticipationPagination'
     
     post:
       tags: [participations]
@@ -1092,6 +1108,16 @@ components:
       properties:
         role:
           $ref: '#/components/schemas/ParticipationRoleEnum'
+    
+    ParticipationPagination:
+      allOf:
+        - $ref: '#/components/schemas/PaginationObject'
+        - type: object
+          properties:
+            items: 
+              type: array
+              items: 
+                $ref: '#/components/schemas/Participation'
 
     Vote:
       type: object

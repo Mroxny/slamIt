@@ -58,8 +58,9 @@ func (s *ParticipationService) RemoveUserFromSlam(ctx context.Context, userID, s
 	return err
 }
 
-func (s *ParticipationService) GetUsersForSlam(ctx context.Context, slamID string) ([]api.Participation, error) {
-	modelUsers, err := s.partRepo.FindParticipatingUsersBySlamID(ctx, slamID)
+func (s *ParticipationService) GetUsersForSlam(ctx context.Context, slamID string, page, pageSize int) (*api.ParticipationPagination, error) {
+	offset := (page - 1) * pageSize
+	modelUsers, err := s.partRepo.FindParticipatingUsersBySlamID(ctx, slamID, pageSize, offset)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, errors.New("slam not found")
 	}
@@ -69,11 +70,18 @@ func (s *ParticipationService) GetUsersForSlam(ctx context.Context, slamID strin
 
 	var apiUsers []api.Participation
 	copier.Copy(&apiUsers, &modelUsers)
-	return apiUsers, nil
+
+	pag := api.ParticipationPagination{
+		Page:     &page,
+		PageSize: &pageSize,
+		Items:    &apiUsers,
+	}
+	return &pag, nil
 }
 
-func (s *ParticipationService) GetSlamsForUser(ctx context.Context, userID string) ([]api.Participation, error) {
-	modelSlams, err := s.partRepo.FindParticipatedSlamsByUserID(ctx, userID)
+func (s *ParticipationService) GetSlamsForUser(ctx context.Context, userID string, page, pageSize int) (*api.ParticipationPagination, error) {
+	offset := (page - 1) * pageSize
+	modelSlams, err := s.partRepo.FindParticipatedSlamsByUserID(ctx, userID, pageSize, offset)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, errors.New("user not found")
 	}
@@ -83,7 +91,13 @@ func (s *ParticipationService) GetSlamsForUser(ctx context.Context, userID strin
 
 	var apiSlams []api.Participation
 	copier.Copy(&apiSlams, &modelSlams)
-	return apiSlams, nil
+
+	pag := api.ParticipationPagination{
+		Page:     &page,
+		PageSize: &pageSize,
+		Items:    &apiSlams,
+	}
+	return &pag, nil
 }
 
 func (s *ParticipationService) UpdateParticipation(ctx context.Context, slamID, userID string, req api.ParticipationUpdateRequest) (*api.Participation, error) {
