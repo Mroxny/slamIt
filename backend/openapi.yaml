@@ -693,6 +693,26 @@ components:
       bearerFormat: JWT
 
   schemas:
+    PaginationObject:
+      type: object
+      properties:
+        page:
+          type: integer
+          x-order: 1
+        pageSize:
+          type: integer
+          x-order: 2
+    
+    PageNum:
+      type: integer
+      default: 1
+    
+    PageSize:
+      type: integer
+      default: 10
+    
+    
+    
     User:
       type: object
       required: [id, email, name]

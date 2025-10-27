@@ -35,6 +35,18 @@ type LoginResponse struct {
 	Token  *string `json:"token,omitempty"`
 }
 
+// PageNum defines model for PageNum.
+type PageNum = int
+
+// PageSize defines model for PageSize.
+type PageSize = int
+
+// PaginationObject defines model for PaginationObject.
+type PaginationObject struct {
+	Page     *int `json:"page,omitempty"`
+	PageSize *int `json:"pageSize,omitempty"`
+}
+
 // Participation defines model for Participation.
 type Participation struct {
 	Id     string                `gorm:"primaryKey" json:"id"`
