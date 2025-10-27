@@ -18,8 +18,9 @@ func NewUserService(userRepo *repository.UserRepository) *UserService {
 	return &UserService{userRepo: userRepo}
 }
 
-func (s *UserService) GetAll(ctx context.Context) (*[]api.User, error) {
-	users, err := s.userRepo.FindAll(ctx)
+func (s *UserService) GetAll(ctx context.Context, page, pageSize int) (*api.UserPagination, error) {
+	offset := (page - 1) * pageSize
+	users, err := s.userRepo.FindAllPaginated(ctx, pageSize, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +29,13 @@ func (s *UserService) GetAll(ctx context.Context) (*[]api.User, error) {
 	if err = copier.Copy(&apiUsers, &users); err != nil {
 		return nil, err
 	}
-	return &apiUsers, nil
+
+	pag := api.UserPagination{
+		Page:     &page,
+		PageSize: &pageSize,
+		Items:    &apiUsers,
+	}
+	return &pag, nil
 }
 
 func (s *UserService) GetUser(ctx context.Context, id string) (*api.User, error) {

@@ -103,7 +103,7 @@ type ServerInterface interface {
 	PutStagesStageIDPerformances(w http.ResponseWriter, r *http.Request, stageID string)
 	// Get all users
 	// (GET /users)
-	GetUsers(w http.ResponseWriter, r *http.Request)
+	GetUsers(w http.ResponseWriter, r *http.Request, params GetUsersParams)
 	// Add a new temporary user
 	// (POST /users)
 	PostUsers(w http.ResponseWriter, r *http.Request)
@@ -286,7 +286,7 @@ func (_ Unimplemented) PutStagesStageIDPerformances(w http.ResponseWriter, r *ht
 
 // Get all users
 // (GET /users)
-func (_ Unimplemented) GetUsers(w http.ResponseWriter, r *http.Request) {
+func (_ Unimplemented) GetUsers(w http.ResponseWriter, r *http.Request, params GetUsersParams) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -1077,14 +1077,35 @@ func (siw *ServerInterfaceWrapper) PutStagesStageIDPerformances(w http.ResponseW
 // GetUsers operation middleware
 func (siw *ServerInterfaceWrapper) GetUsers(w http.ResponseWriter, r *http.Request) {
 
+	var err error
+
 	ctx := r.Context()
 
 	ctx = context.WithValue(ctx, BearerAuthScopes, []string{})
 
 	r = r.WithContext(ctx)
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetUsersParams
+
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page", r.URL.Query(), &params.Page)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "page", Err: err})
+		return
+	}
+
+	// ------------- Optional query parameter "pageSize" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "pageSize", r.URL.Query(), &params.PageSize)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "pageSize", Err: err})
+		return
+	}
+
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetUsers(w, r)
+		siw.Handler.GetUsers(w, r, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {

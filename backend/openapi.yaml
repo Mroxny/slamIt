@@ -74,15 +74,25 @@ paths:
       summary: Get all users
       security:
         - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            $ref: '#/components/schemas/PageNum'
+        - name: pageSize
+          in: query
+          description: Number of items per page
+          schema:
+            $ref: '#/components/schemas/PageSize'
       responses:
         "200":
           description: List of users
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserPagination'
+
     post:
       tags: [users]
       summary: Add a new temporary user
@@ -742,6 +752,16 @@ components:
           x-order: 1
         name:
           type: string
+          
+    UserPagination:
+      allOf:
+        - $ref: '#/components/schemas/PaginationObject'
+        - type: object
+          properties:
+            items: 
+              type: array
+              items: 
+                $ref: '#/components/schemas/User'
 
     Slam:
       type: object

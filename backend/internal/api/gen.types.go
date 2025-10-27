@@ -150,6 +150,13 @@ type User struct {
 	TmpUser *bool  `gorm:"default:false" json:"tmpUser,omitempty"`
 }
 
+// UserPagination defines model for UserPagination.
+type UserPagination struct {
+	Page     *int    `json:"page,omitempty"`
+	PageSize *int    `json:"pageSize,omitempty"`
+	Items    *[]User `json:"items,omitempty"`
+}
+
 // UserRequest defines model for UserRequest.
 type UserRequest struct {
 	Email *string `json:"email,omitempty"`
@@ -171,6 +178,15 @@ type VoteRequest struct {
 
 // PutStagesStageIDPerformancesJSONBody defines parameters for PutStagesStageIDPerformances.
 type PutStagesStageIDPerformancesJSONBody = []openapi_types.UUID
+
+// GetUsersParams defines parameters for GetUsers.
+type GetUsersParams struct {
+	// Page Page number for pagination
+	Page *PageNum `form:"page,omitempty" json:"page,omitempty"`
+
+	// PageSize Number of items per page
+	PageSize *PageSize `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+}
 
 // PostAuthLoginJSONRequestBody defines body for PostAuthLogin for application/json ContentType.
 type PostAuthLoginJSONRequestBody = LoginRequest
