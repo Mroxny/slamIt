@@ -139,6 +139,13 @@ type Stage struct {
 	Participations *[]Participation `gorm:"many2many:performances" json:"participations,omitempty"`
 }
 
+// StagePagination defines model for StagePagination.
+type StagePagination struct {
+	Page     *int     `json:"page,omitempty"`
+	PageSize *int     `json:"pageSize,omitempty"`
+	Items    *[]Stage `json:"items,omitempty"`
+}
+
 // StageRequest defines model for StageRequest.
 type StageRequest struct {
 	StageType StageTypeEnum `json:"stageType"`
@@ -185,6 +192,15 @@ type VoteRequest struct {
 
 // GetSlamsParams defines parameters for GetSlams.
 type GetSlamsParams struct {
+	// Page Page number for pagination
+	Page *PageNum `form:"page,omitempty" json:"page,omitempty"`
+
+	// PageSize Number of items per page
+	PageSize *PageSize `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+}
+
+// GetSlamsSlamIDStagesParams defines parameters for GetSlamsSlamIDStages.
+type GetSlamsSlamIDStagesParams struct {
 	// Page Page number for pagination
 	Page *PageNum `form:"page,omitempty" json:"page,omitempty"`
 

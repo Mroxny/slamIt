@@ -79,7 +79,7 @@ type ServerInterface interface {
 	PutSlamsSlamID(w http.ResponseWriter, r *http.Request, slamID string)
 	// List stages for a slam
 	// (GET /slams/{slamID}/stages)
-	GetSlamsSlamIDStages(w http.ResponseWriter, r *http.Request, slamID string)
+	GetSlamsSlamIDStages(w http.ResponseWriter, r *http.Request, slamID string, params GetSlamsSlamIDStagesParams)
 	// Create a new stage for a slam
 	// (POST /slams/{slamID}/stages)
 	PostSlamsSlamIDStages(w http.ResponseWriter, r *http.Request, slamID string)
@@ -238,7 +238,7 @@ func (_ Unimplemented) PutSlamsSlamID(w http.ResponseWriter, r *http.Request, sl
 
 // List stages for a slam
 // (GET /slams/{slamID}/stages)
-func (_ Unimplemented) GetSlamsSlamIDStages(w http.ResponseWriter, r *http.Request, slamID string) {
+func (_ Unimplemented) GetSlamsSlamIDStages(w http.ResponseWriter, r *http.Request, slamID string, params GetSlamsSlamIDStagesParams) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -879,8 +879,27 @@ func (siw *ServerInterfaceWrapper) GetSlamsSlamIDStages(w http.ResponseWriter, r
 		return
 	}
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetSlamsSlamIDStagesParams
+
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page", r.URL.Query(), &params.Page)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "page", Err: err})
+		return
+	}
+
+	// ------------- Optional query parameter "pageSize" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "pageSize", r.URL.Query(), &params.PageSize)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "pageSize", Err: err})
+		return
+	}
+
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetSlamsSlamIDStages(w, r, slamID)
+		siw.Handler.GetSlamsSlamIDStages(w, r, slamID, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {

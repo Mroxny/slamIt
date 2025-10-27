@@ -287,15 +287,23 @@ paths:
           required: true
           schema:
             type: string
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            $ref: '#/components/schemas/PageNum'
+        - name: pageSize
+          in: query
+          description: Number of items per page
+          schema:
+            $ref: '#/components/schemas/PageSize'
       responses:
         "200":
           description: List of stages
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Stage'
+                $ref: '#/components/schemas/StagePagination'
 
     post:
       tags: [slams]
@@ -923,6 +931,16 @@ components:
           x-order: 2
         details:
           type: string
+    
+    StagePagination:
+      allOf:
+        - $ref: '#/components/schemas/PaginationObject'
+        - type: object
+          properties:
+            items: 
+              type: array
+              items: 
+                $ref: '#/components/schemas/Stage'
 
     Performance:
       type: object

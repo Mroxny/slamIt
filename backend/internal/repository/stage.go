@@ -18,7 +18,7 @@ func NewStageRepository(db *gorm.DB) *StageRepository {
 	}
 }
 
-func (r *StageRepository) FindBySlamId(ctx context.Context, slamId string) ([]model.Stage, error) {
+func (r *StageRepository) FindBySlamId(ctx context.Context, slamId string, limit, offset int) ([]model.Stage, error) {
 	var slamCheck model.Slam
 	if err := r.db.WithContext(ctx).Select("id").First(&slamCheck, "id = ?", slamId).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -28,7 +28,11 @@ func (r *StageRepository) FindBySlamId(ctx context.Context, slamId string) ([]mo
 	}
 
 	var stages []model.Stage
-	err := r.db.WithContext(ctx).Preload("Participations").Find(&stages, "slam_id = ?", slamId).Error
+	err := r.db.WithContext(ctx).
+		Limit(limit).
+		Offset(offset).
+		Preload("Participations").
+		Find(&stages, "slam_id = ?", slamId).Error
 	return stages, err
 }
 
