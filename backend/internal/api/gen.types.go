@@ -35,6 +35,18 @@ type LoginResponse struct {
 	Token  *string `json:"token,omitempty"`
 }
 
+// PageNum defines model for PageNum.
+type PageNum = int
+
+// PageSize defines model for PageSize.
+type PageSize = int
+
+// PaginationObject defines model for PaginationObject.
+type PaginationObject struct {
+	Page     *int `json:"page,omitempty"`
+	PageSize *int `json:"pageSize,omitempty"`
+}
+
 // Participation defines model for Participation.
 type Participation struct {
 	Id     string                `gorm:"primaryKey" json:"id"`
@@ -44,6 +56,13 @@ type Participation struct {
 	Slam   *Slam                 `gorm:"foreignKey:SlamId;references:Id" json:"slam,omitempty"`
 	Stages *[]Stage              `gorm:"many2many:performances" json:"stages,omitempty"`
 	User   *User                 `gorm:"foreignKey:UserId;references:Id" json:"user,omitempty"`
+}
+
+// ParticipationPagination defines model for ParticipationPagination.
+type ParticipationPagination struct {
+	Page     *int             `json:"page,omitempty"`
+	PageSize *int             `json:"pageSize,omitempty"`
+	Items    *[]Participation `json:"items,omitempty"`
 }
 
 // ParticipationRequest defines model for ParticipationRequest.
@@ -69,6 +88,13 @@ type Performance struct {
 	Details               *string        `json:"details,omitempty"`
 	Participation         *Participation `gorm:"foreignKey:ParticipationId;references:Id" json:"participation,omitempty"`
 	Stage                 *Stage         `gorm:"foreignKey:StageId;references:Id" json:"stage,omitempty"`
+}
+
+// PerformancePagination defines model for PerformancePagination.
+type PerformancePagination struct {
+	Page     *int           `json:"page,omitempty"`
+	PageSize *int           `json:"pageSize,omitempty"`
+	Items    *[]Performance `json:"items,omitempty"`
 }
 
 // PerformanceRequest defines model for PerformanceRequest.
@@ -102,6 +128,13 @@ type Slam struct {
 	Users       *[]User  `gorm:"many2many:participations" json:"users,omitempty"`
 }
 
+// SlamPagination defines model for SlamPagination.
+type SlamPagination struct {
+	Page     *int    `json:"page,omitempty"`
+	PageSize *int    `json:"pageSize,omitempty"`
+	Items    *[]Slam `json:"items,omitempty"`
+}
+
 // SlamRequest defines model for SlamRequest.
 type SlamRequest struct {
 	Title       string  `json:"title"`
@@ -118,6 +151,13 @@ type Stage struct {
 	Round          *int             `json:"round,omitempty"`
 	Details        *string          `json:"details,omitempty"`
 	Participations *[]Participation `gorm:"many2many:performances" json:"participations,omitempty"`
+}
+
+// StagePagination defines model for StagePagination.
+type StagePagination struct {
+	Page     *int     `json:"page,omitempty"`
+	PageSize *int     `json:"pageSize,omitempty"`
+	Items    *[]Stage `json:"items,omitempty"`
 }
 
 // StageRequest defines model for StageRequest.
@@ -138,6 +178,13 @@ type User struct {
 	TmpUser *bool  `gorm:"default:false" json:"tmpUser,omitempty"`
 }
 
+// UserPagination defines model for UserPagination.
+type UserPagination struct {
+	Page     *int    `json:"page,omitempty"`
+	PageSize *int    `json:"pageSize,omitempty"`
+	Items    *[]User `json:"items,omitempty"`
+}
+
 // UserRequest defines model for UserRequest.
 type UserRequest struct {
 	Email *string `json:"email,omitempty"`
@@ -152,13 +199,83 @@ type Vote struct {
 	DeviceFingerprint *string `json:"deviceFingerprint,omitempty"`
 }
 
+// VotePagination defines model for VotePagination.
+type VotePagination struct {
+	Page     *int    `json:"page,omitempty"`
+	PageSize *int    `json:"pageSize,omitempty"`
+	Items    *[]Vote `json:"items,omitempty"`
+}
+
 // VoteRequest defines model for VoteRequest.
 type VoteRequest struct {
 	DeviceFingerprint string `json:"deviceFingerprint"`
 }
 
+// GetParticipationsSlamsSlamIDUsersParams defines parameters for GetParticipationsSlamsSlamIDUsers.
+type GetParticipationsSlamsSlamIDUsersParams struct {
+	// Page Page number for pagination
+	Page *PageNum `form:"page,omitempty" json:"page,omitempty"`
+
+	// PageSize Number of items per page
+	PageSize *PageSize `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+}
+
+// GetParticipationsUsersUserIDSlamsParams defines parameters for GetParticipationsUsersUserIDSlams.
+type GetParticipationsUsersUserIDSlamsParams struct {
+	// Page Page number for pagination
+	Page *PageNum `form:"page,omitempty" json:"page,omitempty"`
+
+	// PageSize Number of items per page
+	PageSize *PageSize `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+}
+
+// GetPerformancesPerformanceIDVotesParams defines parameters for GetPerformancesPerformanceIDVotes.
+type GetPerformancesPerformanceIDVotesParams struct {
+	// Page Page number for pagination
+	Page *PageNum `form:"page,omitempty" json:"page,omitempty"`
+
+	// PageSize Number of items per page
+	PageSize *PageSize `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+}
+
+// GetSlamsParams defines parameters for GetSlams.
+type GetSlamsParams struct {
+	// Page Page number for pagination
+	Page *PageNum `form:"page,omitempty" json:"page,omitempty"`
+
+	// PageSize Number of items per page
+	PageSize *PageSize `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+}
+
+// GetSlamsSlamIDStagesParams defines parameters for GetSlamsSlamIDStages.
+type GetSlamsSlamIDStagesParams struct {
+	// Page Page number for pagination
+	Page *PageNum `form:"page,omitempty" json:"page,omitempty"`
+
+	// PageSize Number of items per page
+	PageSize *PageSize `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+}
+
+// GetStagesStageIDPerformancesParams defines parameters for GetStagesStageIDPerformances.
+type GetStagesStageIDPerformancesParams struct {
+	// Page Page number for pagination
+	Page *PageNum `form:"page,omitempty" json:"page,omitempty"`
+
+	// PageSize Number of items per page
+	PageSize *PageSize `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+}
+
 // PutStagesStageIDPerformancesJSONBody defines parameters for PutStagesStageIDPerformances.
 type PutStagesStageIDPerformancesJSONBody = []openapi_types.UUID
+
+// GetUsersParams defines parameters for GetUsers.
+type GetUsersParams struct {
+	// Page Page number for pagination
+	Page *PageNum `form:"page,omitempty" json:"page,omitempty"`
+
+	// PageSize Number of items per page
+	PageSize *PageSize `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+}
 
 // PostAuthLoginJSONRequestBody defines body for PostAuthLogin for application/json ContentType.
 type PostAuthLoginJSONRequestBody = LoginRequest

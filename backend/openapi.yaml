@@ -74,15 +74,25 @@ paths:
       summary: Get all users
       security:
         - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            $ref: '#/components/schemas/PageNum'
+        - name: pageSize
+          in: query
+          description: Number of items per page
+          schema:
+            $ref: '#/components/schemas/PageSize'
       responses:
         "200":
           description: List of users
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserPagination'
+
     post:
       tags: [users]
       summary: Add a new temporary user
@@ -170,15 +180,24 @@ paths:
     get:
       tags: [slams]
       summary: Get all slams
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            $ref: '#/components/schemas/PageNum'
+        - name: pageSize
+          in: query
+          description: Number of items per page
+          schema:
+            $ref: '#/components/schemas/PageSize'
       responses:
         "200":
           description: List of slams
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Slam'
+                $ref: '#/components/schemas/SlamPagination'
     post:
       tags: [slams]
       summary: Create a slam
@@ -268,15 +287,23 @@ paths:
           required: true
           schema:
             type: string
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            $ref: '#/components/schemas/PageNum'
+        - name: pageSize
+          in: query
+          description: Number of items per page
+          schema:
+            $ref: '#/components/schemas/PageSize'
       responses:
         "200":
           description: List of stages
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Stage'
+                $ref: '#/components/schemas/StagePagination'
 
     post:
       tags: [slams]
@@ -374,15 +401,24 @@ paths:
           required: true
           schema:
             type: string
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            $ref: '#/components/schemas/PageNum'
+        - name: pageSize
+          in: query
+          description: Number of items per page
+          schema:
+            $ref: '#/components/schemas/PageSize'
       responses:
         "200":
           description: List of performances
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Performance'
+                $ref: '#/components/schemas/PerformancePagination'
+
 
     post:
       tags: [stages]
@@ -503,15 +539,23 @@ paths:
           required: true
           schema:
             type: string
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            $ref: '#/components/schemas/PageNum'
+        - name: pageSize
+          in: query
+          description: Number of items per page
+          schema:
+            $ref: '#/components/schemas/PageSize'
       responses:
         "200":
           description: List of performances
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Vote'
+                $ref: '#/components/schemas/VotePagination'
     post:
       tags: [performances]
       summary: Cast a vote for a performance
@@ -581,15 +625,23 @@ paths:
           required: true
           schema:
             type: string
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            $ref: '#/components/schemas/PageNum'
+        - name: pageSize
+          in: query
+          description: Number of items per page
+          schema:
+            $ref: '#/components/schemas/PageSize'
       responses:
         "200":
           description: List of slams
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Slam'
+                $ref: '#/components/schemas/Participation'
 
   /participations/slams/{slamID}/users:
     get:
@@ -603,15 +655,23 @@ paths:
           required: true
           schema:
             type: string
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            $ref: '#/components/schemas/PageNum'
+        - name: pageSize
+          in: query
+          description: Number of items per page
+          schema:
+            $ref: '#/components/schemas/PageSize'
       responses:
         "200":
           description: List of participations
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/ParticipationPagination'
     
     post:
       tags: [participations]
@@ -693,6 +753,67 @@ components:
       bearerFormat: JWT
 
   schemas:
+    PaginationObject:
+      type: object
+      properties:
+        page:
+          type: integer
+          x-order: 1
+        pageSize:
+          type: integer
+          x-order: 2
+    
+    PageNum:
+      type: integer
+      default: 1
+    
+    PageSize:
+      type: integer
+      default: 10
+    
+    RegisterRequest:
+      type: object
+      required: [name, email, password]
+      properties:
+        email:
+          type: string
+          x-order: 1
+        name:
+          type: string
+          x-order: 2
+        password:
+          type: string
+      example:
+        email: bob@example.com
+        name: Bob
+        password: P@ssw0rd
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          x-order: 1
+        password:
+          type: string
+          x-order: 2
+      example:
+        email: bob@example.com
+        password: P@ssw0rd
+
+    LoginResponse:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+          x-order: 1
+          x-go-type: string
+        token:
+          type: string
+          x-order: 2
+    
     User:
       type: object
       required: [id, email, name]
@@ -722,6 +843,16 @@ components:
           x-order: 1
         name:
           type: string
+          
+    UserPagination:
+      allOf:
+        - $ref: '#/components/schemas/PaginationObject'
+        - type: object
+          properties:
+            items: 
+              type: array
+              items: 
+                $ref: '#/components/schemas/User'
 
     Slam:
       type: object
@@ -774,49 +905,16 @@ components:
           x-order: 3
         public:
           type: boolean
-
-    RegisterRequest:
-      type: object
-      required: [name, email, password]
-      properties:
-        email:
-          type: string
-          x-order: 1
-        name:
-          type: string
-          x-order: 2
-        password:
-          type: string
-      example:
-        email: bob@example.com
-        name: Bob
-        password: P@ssw0rd
-
-    LoginRequest:
-      type: object
-      required: [email, password]
-      properties:
-        email:
-          type: string
-          x-order: 1
-        password:
-          type: string
-          x-order: 2
-      example:
-        email: bob@example.com
-        password: P@ssw0rd
-
-    LoginResponse:
-      type: object
-      properties:
-        userId:
-          type: string
-          format: uuid
-          x-order: 1
-          x-go-type: string
-        token:
-          type: string
-          x-order: 2
+    
+    SlamPagination:
+      allOf:
+        - $ref: '#/components/schemas/PaginationObject'
+        - type: object
+          properties:
+            items: 
+              type: array
+              items: 
+                $ref: '#/components/schemas/Slam'
     
     Stage:
       type: object
@@ -864,6 +962,16 @@ components:
           x-order: 2
         details:
           type: string
+    
+    StagePagination:
+      allOf:
+        - $ref: '#/components/schemas/PaginationObject'
+        - type: object
+          properties:
+            items: 
+              type: array
+              items: 
+                $ref: '#/components/schemas/Stage'
 
     Performance:
       type: object
@@ -906,7 +1014,6 @@ components:
           x-oapi-codegen-extra-tags:
             gorm: "foreignKey:StageId;references:Id"
         
-
     PerformanceRequest:
       type: object
       required: [participationId]
@@ -936,6 +1043,55 @@ components:
           x-order: 1
         details:
           type: string
+          
+    PerformancePagination:
+      allOf:
+        - $ref: '#/components/schemas/PaginationObject'
+        - type: object
+          properties:
+            items: 
+              type: array
+              items: 
+                $ref: '#/components/schemas/Performance'
+                
+    Vote:
+      type: object
+      required: [id, performanceId]
+      properties:
+        id:
+          type: string
+          format: uuid
+          x-order: 1
+          x-go-type: string
+          x-oapi-codegen-extra-tags:
+            gorm: "primaryKey"
+        performanceId:
+          type: string
+          format: uuid
+          x-order: 2
+          x-go-type: string
+        userIp:
+          type: string
+          x-order: 3
+        deviceFingerprint:
+          type: string
+
+    VoteRequest:
+      type: object
+      required: [deviceFingerprint]
+      properties:
+        deviceFingerprint:
+          type: string
+          
+    VotePagination:
+      allOf:
+        - $ref: '#/components/schemas/PaginationObject'
+        - type: object
+          properties:
+            items: 
+              type: array
+              items: 
+                $ref: '#/components/schemas/Vote'
 
     Participation:
       type: object
@@ -996,35 +1152,16 @@ components:
       properties:
         role:
           $ref: '#/components/schemas/ParticipationRoleEnum'
-
-    Vote:
-      type: object
-      required: [id, performanceId]
-      properties:
-        id:
-          type: string
-          format: uuid
-          x-order: 1
-          x-go-type: string
-          x-oapi-codegen-extra-tags:
-            gorm: "primaryKey"
-        performanceId:
-          type: string
-          format: uuid
-          x-order: 2
-          x-go-type: string
-        userIp:
-          type: string
-          x-order: 3
-        deviceFingerprint:
-          type: string
-
-    VoteRequest:
-      type: object
-      required: [deviceFingerprint]
-      properties:
-        deviceFingerprint:
-          type: string
+    
+    ParticipationPagination:
+      allOf:
+        - $ref: '#/components/schemas/PaginationObject'
+        - type: object
+          properties:
+            items: 
+              type: array
+              items: 
+                $ref: '#/components/schemas/Participation'
     
     StageTypeEnum:
       type: string

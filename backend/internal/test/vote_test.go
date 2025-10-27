@@ -14,9 +14,15 @@ func TestVote(t *testing.T) {
 
 	tests := []utils.TestParams{
 		{
-			Name:     "get votes from valid stageId",
+			Name:     "get votes from valid performanceId",
 			Method:   "GET",
 			Url:      "/performances/" + perfId + "/votes",
+			WantCode: http.StatusOK,
+		},
+		{
+			Name:     "get votes with invalid pagination (should work)",
+			Method:   "GET",
+			Url:      "/performances/" + perfId + "/votes?page=-1",
 			WantCode: http.StatusOK,
 		},
 		{

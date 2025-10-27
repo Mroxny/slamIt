@@ -18,8 +18,9 @@ func NewStageService(stages *repository.StageRepository) *StageService {
 	return &StageService{stageRepo: stages}
 }
 
-func (s *StageService) GetStages(ctx context.Context, slamId string) ([]api.Stage, error) {
-	stages, err := s.stageRepo.FindBySlamId(ctx, slamId)
+func (s *StageService) GetStages(ctx context.Context, slamId string, page, pageSize int) (*api.StagePagination, error) {
+	offset := (page - 1) * pageSize
+	stages, err := s.stageRepo.FindBySlamId(ctx, slamId, pageSize, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +29,13 @@ func (s *StageService) GetStages(ctx context.Context, slamId string) ([]api.Stag
 	if err = copier.Copy(&apiStages, &stages); err != nil {
 		return nil, err
 	}
-	return apiStages, nil
+
+	pag := api.StagePagination{
+		Page:     &page,
+		PageSize: &pageSize,
+		Items:    &apiStages,
+	}
+	return &pag, nil
 }
 
 func (s *StageService) GetStage(ctx context.Context, stageId string) (*api.Stage, error) {

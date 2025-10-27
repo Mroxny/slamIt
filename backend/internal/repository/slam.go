@@ -19,9 +19,11 @@ func NewSlamRepository(db *gorm.DB) *SlamRepository {
 	}
 }
 
-func (r *SlamRepository) FindAllPublic(ctx context.Context) ([]model.Slam, error) {
+func (r *SlamRepository) FindAllPublic(ctx context.Context, limit, offset int) ([]model.Slam, error) {
 	var slams []model.Slam
 	err := r.db.WithContext(ctx).
+		Limit(limit).
+		Offset(offset).
 		Find(&slams, "public = true").Error
 	return slams, err
 }

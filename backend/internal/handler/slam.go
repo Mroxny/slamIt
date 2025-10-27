@@ -6,8 +6,9 @@ import (
 	"github.com/Mroxny/slamIt/internal/api"
 )
 
-func (s *Server) GetSlams(w http.ResponseWriter, r *http.Request) {
-	slams, err := s.slamService.GetAll(r.Context())
+func (s *Server) GetSlams(w http.ResponseWriter, r *http.Request, params api.GetSlamsParams) {
+	page, pageSize := ParsePageNumAndSize(params.Page, params.PageSize)
+	slams, err := s.slamService.GetAll(r.Context(), page, pageSize)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -68,8 +69,9 @@ func (s *Server) PutSlamsSlamID(w http.ResponseWriter, r *http.Request, slamID s
 	WriteJSON(w, http.StatusOK, updated)
 }
 
-func (s *Server) GetSlamsSlamIDStages(w http.ResponseWriter, r *http.Request, slamID string) {
-	stages, err := s.stageService.GetStages(r.Context(), slamID)
+func (s *Server) GetSlamsSlamIDStages(w http.ResponseWriter, r *http.Request, slamID string, params api.GetSlamsSlamIDStagesParams) {
+	page, pageSize := ParsePageNumAndSize(params.Page, params.PageSize)
+	stages, err := s.stageService.GetStages(r.Context(), slamID, page, pageSize)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return

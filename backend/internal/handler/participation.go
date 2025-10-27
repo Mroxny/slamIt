@@ -35,8 +35,9 @@ func (s *Server) PostParticipationsSlamsSlamID(w http.ResponseWriter, r *http.Re
 	WriteJSON(w, http.StatusCreated, part)
 }
 
-func (s *Server) GetParticipationsSlamsSlamIDUsers(w http.ResponseWriter, r *http.Request, slamID string) {
-	users, err := s.partService.GetUsersForSlam(r.Context(), slamID)
+func (s *Server) GetParticipationsSlamsSlamIDUsers(w http.ResponseWriter, r *http.Request, slamID string, params api.GetParticipationsSlamsSlamIDUsersParams) {
+	page, pageSize := ParsePageNumAndSize(params.Page, params.PageSize)
+	users, err := s.partService.GetUsersForSlam(r.Context(), slamID, page, pageSize)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -87,8 +88,9 @@ func (s *Server) PutParticipationsSlamsSlamIDUsersUserID(w http.ResponseWriter, 
 	WriteJSON(w, http.StatusOK, updated)
 }
 
-func (s *Server) GetParticipationsUsersUserIDSlams(w http.ResponseWriter, r *http.Request, userID string) {
-	slams, err := s.partService.GetSlamsForUser(r.Context(), userID)
+func (s *Server) GetParticipationsUsersUserIDSlams(w http.ResponseWriter, r *http.Request, userID string, params api.GetParticipationsUsersUserIDSlamsParams) {
+	page, pageSize := ParsePageNumAndSize(params.Page, params.PageSize)
+	slams, err := s.partService.GetSlamsForUser(r.Context(), userID, page, pageSize)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

@@ -57,9 +57,11 @@ func (r *ParticipationRepository) DeleteBySlamAndUser(ctx context.Context, slamI
 	return nil
 }
 
-func (r *ParticipationRepository) FindParticipatingUsersBySlamID(ctx context.Context, slamID string) ([]model.Participation, error) {
+func (r *ParticipationRepository) FindParticipatingUsersBySlamID(ctx context.Context, slamID string, limit, offset int) ([]model.Participation, error) {
 	var participations []model.Participation
 	err := r.db.WithContext(ctx).
+		Limit(limit).
+		Offset(offset).
 		Preload("User").
 		Preload("Stages").
 		Where("slam_id = ?", slamID).
@@ -67,9 +69,11 @@ func (r *ParticipationRepository) FindParticipatingUsersBySlamID(ctx context.Con
 	return participations, err
 }
 
-func (r *ParticipationRepository) FindParticipatedSlamsByUserID(ctx context.Context, userID string) ([]model.Participation, error) {
+func (r *ParticipationRepository) FindParticipatedSlamsByUserID(ctx context.Context, userID string, limit, offset int) ([]model.Participation, error) {
 	var participations []model.Participation
 	err := r.db.WithContext(ctx).
+		Limit(limit).
+		Offset(offset).
 		Preload("Slam").
 		Preload("Stages").
 		Where("user_id = ?", userID).

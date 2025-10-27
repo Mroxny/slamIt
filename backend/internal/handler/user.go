@@ -6,8 +6,9 @@ import (
 	"github.com/Mroxny/slamIt/internal/api"
 )
 
-func (s *Server) GetUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := s.userService.GetAll(r.Context())
+func (s *Server) GetUsers(w http.ResponseWriter, r *http.Request, params api.GetUsersParams) {
+	page, pageSize := ParsePageNumAndSize(params.Page, params.PageSize)
+	users, err := s.userService.GetAll(r.Context(), page, pageSize)
 	if err != nil {
 		http.Error(w, "error parsing users", http.StatusInternalServerError)
 		return

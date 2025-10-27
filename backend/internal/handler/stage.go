@@ -39,8 +39,9 @@ func (s *Server) PutStagesStageID(w http.ResponseWriter, r *http.Request, stageI
 	WriteJSON(w, http.StatusOK, updated)
 }
 
-func (s *Server) GetStagesStageIDPerformances(w http.ResponseWriter, r *http.Request, stageID string) {
-	performances, err := s.perfService.GetPerformances(r.Context(), stageID)
+func (s *Server) GetStagesStageIDPerformances(w http.ResponseWriter, r *http.Request, stageID string, params api.GetStagesStageIDPerformancesParams) {
+	page, pageSize := ParsePageNumAndSize(params.Page, params.PageSize)
+	performances, err := s.perfService.GetPerformances(r.Context(), stageID, page, pageSize)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return

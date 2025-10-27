@@ -18,8 +18,9 @@ func NewVoteService(votes *repository.VoteRepository) *VoteService {
 	return &VoteService{voteRepo: votes}
 }
 
-func (s *VoteService) GetVotes(ctx context.Context, performanceId string) (*[]api.Vote, error) {
-	votes, err := s.voteRepo.FindAllByPerformanceID(ctx, performanceId)
+func (s *VoteService) GetVotes(ctx context.Context, performanceId string, page, pageSize int) (*api.VotePagination, error) {
+	offset := (page - 1) * pageSize
+	votes, err := s.voteRepo.FindAllByPerformanceID(ctx, performanceId, pageSize, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +29,13 @@ func (s *VoteService) GetVotes(ctx context.Context, performanceId string) (*[]ap
 	if err = copier.Copy(&apiVotes, &votes); err != nil {
 		return nil, err
 	}
-	return &apiVotes, nil
+
+	pag := api.VotePagination{
+		Page:     &page,
+		PageSize: &pageSize,
+		Items:    &apiVotes,
+	}
+	return &pag, nil
 }
 
 func (s *VoteService) CreateVote(ctx context.Context, performanceId string, vote api.VoteRequest) (*api.Vote, error) {

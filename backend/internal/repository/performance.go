@@ -48,7 +48,7 @@ func (r *PerformanceRepository) FindByID(ctx context.Context, performanceId stri
 
 // FindAndSortByStageID retrieves all performances for a stage and sorts them
 // based on the linked-list order defined by OpponentPerformanceId.
-func (r *PerformanceRepository) FindSortedByStageId(ctx context.Context, stageId string) ([]model.Performance, error) {
+func (r *PerformanceRepository) FindSortedByStageId(ctx context.Context, stageId string, limit, offset int) ([]model.Performance, error) {
 	var stageCheck model.Stage
 	if err := r.db.WithContext(ctx).Select("id").First(&stageCheck, "id = ?", stageId).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -58,7 +58,13 @@ func (r *PerformanceRepository) FindSortedByStageId(ctx context.Context, stageId
 	}
 
 	var allPerformances []model.Performance
-	if err := r.db.WithContext(ctx).Preload("Participation").Preload("Participation.User").Where("stage_id = ?", stageId).Find(&allPerformances).Error; err != nil {
+	if err := r.db.WithContext(ctx).
+		Limit(limit).
+		Offset(offset).
+		Preload("Participation").
+		Preload("Participation.User").
+		Where("stage_id = ?", stageId).
+		Find(&allPerformances).Error; err != nil {
 		return nil, err
 	}
 

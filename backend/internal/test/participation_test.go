@@ -69,9 +69,23 @@ func TestParticipation(t *testing.T) {
 			WantCode: http.StatusOK,
 		},
 		{
+			Name:     "list slams for user with invalid pagination (should work)",
+			Method:   "GET",
+			Url:      "/participations/users/" + bobId + "/slams?page=-1",
+			Auth:     true,
+			WantCode: http.StatusOK,
+		},
+		{
 			Name:     "list users for slam",
 			Method:   "GET",
 			Url:      "/participations/slams/" + slamId + "/users",
+			Auth:     true,
+			WantCode: http.StatusOK,
+		},
+		{
+			Name:     "list users for slam with invalid pagination (should work)",
+			Method:   "GET",
+			Url:      "/participations/slams/" + slamId + "/users?page=-1",
 			Auth:     true,
 			WantCode: http.StatusOK,
 		},

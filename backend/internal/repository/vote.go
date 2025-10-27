@@ -17,8 +17,11 @@ func NewVoteRepository(db *gorm.DB) *VoteRepository {
 	}
 }
 
-func (r *VoteRepository) FindAllByPerformanceID(ctx context.Context, performanceID string) ([]model.Vote, error) {
+func (r *VoteRepository) FindAllByPerformanceID(ctx context.Context, performanceID string, limit, offset int) ([]model.Vote, error) {
 	var votes []model.Vote
-	err := r.db.WithContext(ctx).Where("performance_id = ?", performanceID).Find(&votes).Error
+	err := r.db.WithContext(ctx).
+		Limit(limit).
+		Offset(offset).
+		Find(&votes, "performance_id = ?", performanceID).Error
 	return votes, err
 }
