@@ -1167,10 +1167,12 @@ components:
       type: string
       enum: 
         - simple
+        - rated
         - battle
         
     ParticipationRoleEnum:
       type: string
       enum: 
         - performer
+        - moderator
         - creator

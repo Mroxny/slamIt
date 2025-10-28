@@ -14,12 +14,14 @@ const (
 // Defines values for ParticipationRoleEnum.
 const (
 	Creator   ParticipationRoleEnum = "creator"
+	Moderator ParticipationRoleEnum = "moderator"
 	Performer ParticipationRoleEnum = "performer"
 )
 
 // Defines values for StageTypeEnum.
 const (
 	Battle StageTypeEnum = "battle"
+	Rated  StageTypeEnum = "rated"
 	Simple StageTypeEnum = "simple"
 )
 
