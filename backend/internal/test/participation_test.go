@@ -90,10 +90,10 @@ func TestParticipation(t *testing.T) {
 			WantCode: http.StatusOK,
 		},
 		{
-			Name:     "add valid user",
+			Name:     "add valid performer",
 			Method:   "POST",
 			Url:      "/participations/slams/" + slamId + "/users",
-			Body:     `{"userId":"` + bobId + `"}`,
+			Body:     `{"userId":"` + bobId + `","role": "performer"}`,
 			Auth:     true,
 			WantCode: http.StatusCreated,
 		},
